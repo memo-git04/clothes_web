@@ -231,6 +231,52 @@ Route::get('/blog', function () {
     ];
     return view('blog', compact('blogPosts'));
 });
+Route::get('/wishlist', function () {
+    // Giả lập dữ liệu để file Blade không bị lỗi
+    $wishlistItems = [
+        [
+            'id' => 'prod-1',
+            'name' => 'Signature Trench Coat',
+            'slug' => 'signature-trench-coat',
+            'category' => 'Outerwear',
+            'price' => '1,250',
+            'image' => 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=600&auto=format&fit=crop',
+            'in_stock' => true
+        ],
+        [
+            'id' => 'prod-2',
+            'name' => 'Classic Wool Blazer',
+            'slug' => 'classic-wool-blazer',
+            'category' => 'Suiting',
+            'price' => '890',
+            'image' => 'https://images.unsplash.com/photo-1548624149-f9b1859aa702?q=80&w=600&auto=format&fit=crop',
+            'in_stock' => false // Sẽ hiện Low Stock
+        ],
+        [
+            'id' => 'prod-3',
+            'name' => 'Silk Slip Dress',
+            'slug' => 'silk-slip-dress',
+            'category' => 'Dresses',
+            'price' => '650',
+            'image' => 'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=600&auto=format&fit=crop',
+            'in_stock' => true
+        ],
+           [
+            'id' => 'prod-4',
+            'name' => 'Silk Slip Dress',
+            'slug' => 'silk-slip-dress',
+            'category' => 'Dresses',
+            'price' => '650',
+            'image' => 'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=600&auto=format&fit=crop',
+            'in_stock' => true
+        ]
+    ];
+
+    return view('wishlist', compact('wishlistItems'));
+}); 
+
 Route::get('/contactus', function () {
     return view('contactus');
-});
+})->name('contactus');
+
+

@@ -32,7 +32,7 @@
                                     @foreach($brands as $brand)
                                         <tr>
                                             <td>
-                                                {{ $brand->id }}
+                                                {{ $loop->iteration }}
                                             </td>
                                             <td>
                                                 {{ $brand->brand_name }}

@@ -33,7 +33,7 @@
                             <tbody>
                              @foreach( $users as $admin)
                                  <tr>
-                                     <td style="">{{$admin->id}}</td>
+                                     <td style="">{{$loop->iteration}}</td>
                                      <td style="">{{$admin->full_name}}</td>
                                      <td style="">{{$admin->email}}</td>
                                      <td style="">{{$admin->phone}}</td>

@@ -31,7 +31,7 @@
                                     @foreach($colors as $color)
                                         <tr>
                                             <td>
-                                                {{ $color->id }}
+                                                {{ $loop->iteration }}
                                             </td>
                                             <td>
                                                 {{ $color->color_name }}

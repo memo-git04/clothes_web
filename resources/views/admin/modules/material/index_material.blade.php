@@ -31,7 +31,7 @@
                                     @foreach($materials as $material)
                                         <tr>
                                             <td>
-                                                {{ $material->id }}
+                                                {{$loop->iteration }}
                                             </td>
                                             <td>
                                                 {{ $material->material_name }}

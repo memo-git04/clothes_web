@@ -31,7 +31,7 @@
                                     @foreach($sizes as $size)
                                         <tr>
                                             <td>
-                                                {{ $size->id }}
+                                                {{$loop->iteration}}
                                             </td>
                                             <td>
                                                 {{ $size->size_name }}

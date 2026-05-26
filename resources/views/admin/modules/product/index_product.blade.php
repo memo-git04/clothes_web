@@ -23,7 +23,7 @@
                             <table class="table table-striped table-bordered zero-configuration">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>STT</th>
                                         <th>Name</th>
                                         <th>Base Price</th>
                                         <th>Brand</th>
@@ -34,8 +34,8 @@
                                 <tbody>
                                     @foreach($products as $product)
                                         <tr>
-{{--                                            <td>{{$loop->iteration}}</td>--}}
-                                            <td>{{$product->id}}</td>
+                                            <td>{{$loop->iteration}}</td>
+{{--                                            <td>{{$product->id}}</td>--}}
                                             <td>{{$product->product_name}}</td>
                                             <td> {{number_format($product->base_price, 2, ',', '.') }} VND</td>
                                             <td>{{$product->brand->brand_name}}</td>

@@ -21,7 +21,7 @@
                                 <tbody>
                                 @foreach( $orderStatuses as $status)
                                     <tr>
-                                        <td>{{ $status->id }}</td>
+                                        <td>{{ $loop->iteration}}</td>
                                         <td>
                                             <button type="button" class="btn btn-success btn-sm">
                                                 {{ $status->status_name }}

@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class OrderStatus extends Model
+{
+    /** @use HasFactory<\Database\Factories\OrderStatusFactory> */
+    use HasFactory;
+    protected $table = 'order_statuses';
+    protected $primaryKey = 'id';
+    protected $fillable = [
+        'status_name'
+    ];
+    public $timestamps = true;
+    // 1 status có nhiều order
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'status_id');
+    }
+}

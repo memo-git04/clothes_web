@@ -1,4 +1,4 @@
-@extends('admin.layouts.adminapp')
+@extends('admin.layouts.dashboard')
 @section('content')
     <div class="content-body">
 
@@ -27,12 +27,23 @@
                                     <div class="col-lg-6">
                                         <input type="text" class="form-control" id="val-username" name="category_name">
                                     </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-4 col-form-label">
+                                        Parent Category
+                                    </label>
+                                    <div class="col-lg-6">
+                                        <select name="parent_id" class="form-control">
+                                            <option value="">-- Don't have (Category parent) --</option>
 
-{{--                                    <label class="col-lg-4 col-form-label" for="val-username">Icon<span class="text-danger"></span>--}}
-{{--                                    </label>--}}
-{{--                                    <div class="col-lg-6 mt-3">--}}
-{{--                                        <input type="text" class="form-control" id="val-username" name="category_icon">--}}
-{{--                                    </div>--}}
+                                            @foreach($categories as $cate)
+                                                <option value="{{ $cate->id }}">
+                                                    {{ $cate->category_name }}
+                                                </option>
+                                            @endforeach
+
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div class="form-group row">
@@ -50,4 +61,4 @@
     <!-- #/ container -->
 </div>
 <!--**********************************
-@endsection 
+@endsection

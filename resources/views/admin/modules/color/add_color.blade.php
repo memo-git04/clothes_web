@@ -1,4 +1,4 @@
-@extends('admin.layouts.adminapp')
+@extends('admin.layouts.dashboard')
 @section('content')
 <div class="content-body">
 
@@ -19,13 +19,13 @@
                         <div class="card-body">
                             <h4 class="card-title">Add new brand</h4>
                             <div class="form-validation">
-                                <form class="form-valide" action="{{ route('brands.store') }}" method="post">
+                                <form class="form-valide" action="{{ route('colors.store') }}" method="post">
                                     @csrf
                                     <div class="form-group row">
                                         <label class="col-lg-4 col-form-label" for="val-username">Name<span class="text-danger"></span>
                                         </label>
                                         <div class="col-lg-6">
-                                            <input type="text" class="form-control" id="val-username" name="brand_name">
+                                            <input type="text" class="form-control" id="val-username" name="color_name">
                                         </div>
                                     </div>
 

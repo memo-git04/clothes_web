@@ -1,4 +1,4 @@
-@extends('admin.layouts.adminapp')
+@extends('admin.layouts.dashboard')
 @section('content')
 <div class="content-body">
 <div class="row page-titles mx-0">
@@ -25,30 +25,30 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Address</th>
-                                    <th>Level</th>
+                                    <th>Role</th>
+                                    <th>Permission</th>
                                     <th>Act</th>
                                 </tr>
                             </thead>
                             <tbody>
-                             @foreach( $admins as $admin)
+                             @foreach( $users as $admin)
                                  <tr>
                                      <td style="">{{$admin->id}}</td>
                                      <td style="">{{$admin->full_name}}</td>
                                      <td style="">{{$admin->email}}</td>
                                      <td style="">{{$admin->phone}}</td>
-                                     <td style="">{{$admin->address}}</td>
+                                     <td style=""></td>
                                      <td>
                                          <button type="button" class="btn btn-success btn-sm">
-                                             {{$admin->role->role_name}}
+
                                          </button>
 {{--                                         <button type="button" class="btn btn-primary btn-sm">--}}
 {{--                                             Member--}}
 {{--                                         </button>--}}
                                      </td>
                                      <td>
-                                         <a href="{{route('users.edit', $admin->id) }}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                         <form action="{{route('users.destroy', $admin->id)}}" method="post">
+                                         <a href="{{route('admin.users.edit', $admin->id) }}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                                         <form action="{{route('admin.users.destroy', $admin->id)}}" method="post">
                                              @csrf
                                              @method('DELETE')
                                              <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
@@ -63,8 +63,8 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Address</th>
-                                    <th>Level</th>
+                                    <th>Role</th>
+                                    <th>Permission</th>
                                     <th>Act</th>
                                 </tr>
                             </tfoot>
@@ -72,7 +72,7 @@
                     </div>
                     <!-- Button Add New Product -->
                     <div class="add mt-2 mx-4">
-                        <a href="{{route('users.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new member</button></a>
+                        <a href="{{route('admin.users.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new member</button></a>
                     </div>
                 </div>
             </div>

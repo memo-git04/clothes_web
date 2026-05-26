@@ -1,4 +1,4 @@
-@extends('admin.layouts.adminapp')
+@extends('admin.layouts.dashboard')
 @section('content')
  <div class="content-body">
 
@@ -23,8 +23,8 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-{{--                                        <th>Icon</th>--}}
-                                        <th>Name</th>
+                                        <th>Category Name</th>
+                                        <th>Category Parent</th>
                                         <th>Act</th>
                                     </tr>
                                 </thead>
@@ -32,13 +32,14 @@
                                     @foreach($categories as $category)
                                         <tr>
                                             <td>
-                                                {{ $category->id }}
+                                                {{$loop->iteration}}
                                             </td>
-{{--                                            <td>--}}
-{{--                                                {{ $category->icon }}--}}
-{{--                                            </td>--}}
+
                                             <td>
                                                 {{ $category->category_name }}
+                                            </td>
+                                            <td>
+                                                {{ $category->parent?->category_name ?? 'None'}}
                                             </td>
                                             <td>
                                                 <a href=" {{ route('categories.edit', $category->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>

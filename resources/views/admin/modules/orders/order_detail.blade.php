@@ -1,4 +1,4 @@
-@extends('admin.layouts.adminapp')
+@extends('admin.layouts.dashboard')
 @section('content')
     <div class="content-body">
         <div class="row page-titles mx-0">
@@ -103,4 +103,3 @@
     </div>
 @endsection
 
-    

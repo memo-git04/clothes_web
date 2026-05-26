@@ -229,7 +229,7 @@
                                 <div class="dropdown-content-body">
                                     <ul>
                                         <li>
-                                            <a href="{{route('login')}}"><i class="icon-lock"></i> <span>Login</span></a>
+                                            <a href=""><i class="icon-lock"></i> <span>Login</span></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -253,7 +253,7 @@
             <ul class="metismenu" id="menu">
                 <li class="nav-label">Dashboard</li>
                 <li>
-                    <a href="{{ route('home') }}" aria-expanded="false">
+                    <a href="{{route('dashboard')}}" aria-expanded="false">
                         <i class="icon-speedometer menu-icon"></i><span class="nav-text">Dashboard</span>
                     </a>
 
@@ -263,8 +263,8 @@
                         <i class="fa-brands fa-slack"></i><span class="nav-text">Product Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('products.index') }}">Product Management</a></li>
-                        <li><a href="{{ route('products.create') }}">Add new product</a></li>
+                        <li><a href="">Product Management</a></li>
+                        <li><a href="">Add new product</a></li>
                     </ul>
                 </li>
 
@@ -273,8 +273,8 @@
                         <i class="fa-solid fa-chart-simple"></i><span class="nav-text">Category Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href=" {{ route('categories.index') }}">Category Management</a></li>
-                        <li><a href="{{ route('categories.create') }} ">Add new category</a></li>
+                        <li><a href="{{route('categories.index')}} ">Category Management</a></li>
+                        <li><a href="{{route('categories.create')}} ">Add new category</a></li>
                     </ul>
                 </li>
 
@@ -283,18 +283,26 @@
                         <i class="fa-solid fa-cart-shopping"></i><span class="nav-text">Order Management </span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{route('orders')}}">Order management</a></li>
+                        <li><a href="">Order management</a></li>
 
                     </ul>
                 </li>
-
+                <li class="mega-menu mega-menu-sm">
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                        <i class="fa-solid fa-people-group"></i><span class="nav-text">Promotion Management</span>
+                    </a>
+                    <ul aria-expanded="false">
+                        <li><a href="{{ route('promotions.index') }}">Promotion List </a></li>
+                        <li><a href="{{ route('promotions.create') }}">Add new vouncher</a></li>
+                    </ul>
+                </li>
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                         <i class="fa-solid fa-people-group"></i><span class="nav-text">Member Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('users.index') }}">Member List </a></li>
-                        <li><a href="{{ route('users.create') }}">Add new member</a></li>
+                        <li><a href="{{route('admin.users.index')}}">Account List </a></li>
+                        <li><a href="{{route('admin.users.create')}}">Add new account</a></li>
                     </ul>
                 </li>
 
@@ -337,16 +345,6 @@
                         <li><a href="{{ route('sizes.create') }}">Add new size</a></li>
                     </ul>
                 </li>
-                <li class="mega-menu mega-menu-sm">
-                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-globe"></i><span class="nav-text">Origin Management</span>
-                    </a>
-                    <ul aria-expanded="false">
-                        <li><a href="{{ route('origins.index') }}">Origin List </a></li>
-                        <li><a href="{{ route('origins.create') }}">Add new origin</a></li>
-                    </ul>
-                </li>
-
 
                 <li class="nav-label">ADDONS</li>
                 <li>
@@ -391,11 +389,11 @@
     <!--**********************************
         Footer start
     ***********************************-->
-    <div class="footer">
-        <div class="copyright">
-            <p>Copyright &copy; Designed & Developed by <a href="https://themeforest.net/user/quixlab">Quixlab</a> 2018</p>
-        </div>
-    </div>
+{{--    <div class="footer">--}}
+{{--        <div class="copyright">--}}
+{{--            <p>Copyright &copy; Designed & Developed by <a href="https://themeforest.net/user/quixlab">Quixlab</a> 2018</p>--}}
+{{--        </div>--}}
+{{--    </div>--}}
     <!--**********************************
         Footer end
     ***********************************-->

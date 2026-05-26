@@ -1,4 +1,4 @@
-@extends('admin.layouts.adminapp')
+@extends('admin.layouts.dashboard')
 @section('content')
 
     <div class="content-body">
@@ -20,79 +20,89 @@
                     <div class="card-body">
                         <h4 class="card-title">Add new member</h4>
                         <div class="form-validation">
-                            <form class="form-valide" action="{{route('users.store')}}" method="post">
+                            <form class="form-valide" action="{{ route('admin.users.store') }}" method="POST">
                                 @csrf
-                                <div class="form-group row">
-                                    <label class="col-lg-4 col-form-label" for="val-username">Username <span class="text-danger"></span>
-                                    </label>
-                                    <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="val-username" name="user_name" value="">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-4 col-form-label" for="val-fullname">Fullname <span class="text-danger"></span>
-                                    </label>
-                                    <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="val-fullname" name="full_name" value="">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-4 col-form-label" for="val-email">Email <span class="text-danger"></span>
-                                    </label>
-                                    <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="val-email" name="email" value="">
-                                        <span class="text-danger">
 
-                                        </span>
-                                    </div>
-                                </div>
+                                {{-- Username --}}
                                 <div class="form-group row">
-                                    <label class="col-lg-4 col-form-label" for="val-password">Password <span class="text-danger"></span>
-                                    </label>
+                                    <label class="col-lg-4 col-form-label">Username</label>
                                     <div class="col-lg-6">
-                                        <input type="password" class="form-control" id="val-password" name="password">
-                                        <span class="text-danger">
-
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-4 col-form-label" for="val-confirm-password">Address <span class="text-danger"></span>
-                                    </label>
-                                    <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="" name="address">
-                                        <span class="text-danger">
-
-                                        </span>
+                                        <input type="text" class="form-control" name="user_name" value="">
                                     </div>
                                 </div>
 
+                                {{-- Full name --}}
                                 <div class="form-group row">
-                                    <label class="col-lg-4 col-form-label" for="val-phone">Phone<span class="text-danger"></span>
-                                    </label>
+                                    <label class="col-lg-4 col-form-label">Fullname</label>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="phone" value="" name="phone">
+                                        <input type="text" class="form-control" name="full_name" value="">
                                     </div>
                                 </div>
 
+                                {{-- Email --}}
                                 <div class="form-group row">
-                                    <label class="col-lg-4 col-form-label" for="val-skill">Level <span class="text-danger"></span>
-                                    </label>
+                                    <label class="col-lg-4 col-form-label">Email</label>
                                     <div class="col-lg-6">
-                                        <select class="form-control" id="val-skill" name="role_id">
-                                            <option>Please select</option>
-                                            @foreach($roles as $role)
-                                                <option value="{{$role->id}}">
-                                                    {{$role->role_name}}
-                                                </option>
-                                            @endforeach
+                                        <input type="email" class="form-control" name="email" value="">
+                                    </div>
+                                </div>
+
+                                {{-- Password --}}
+                                <div class="form-group row">
+                                    <label class="col-lg-4 col-form-label">Password</label>
+                                    <div class="col-lg-6">
+                                        <input type="password" class="form-control" name="password">
+                                    </div>
+                                </div>
+
+                                {{-- Phone --}}
+                                <div class="form-group row">
+                                    <label class="col-lg-4 col-form-label">Phone</label>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" name="phone" value="">
+                                    </div>
+                                </div>
+
+                                {{-- Gender --}}
+                                <div class="form-group row">
+                                    <label class="col-lg-4 col-form-label">Gender</label>
+                                    <div class="col-lg-6">
+                                        <select class="form-control" name="gender">
+                                            <option value="">-- Select --</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
                                         </select>
                                     </div>
                                 </div>
 
+                                {{-- Date of birth --}}
+                                <div class="form-group row">
+                                    <label class="col-lg-4 col-form-label">Date of Birth</label>
+                                    <div class="col-lg-6">
+                                        <input type="date" class="form-control" name="date_of_birth">
+                                    </div>
+                                </div>
+
+                                {{-- Address --}}
+                                <div class="form-group row">
+                                    <label class="col-lg-4 col-form-label">Address</label>
+                                    <div class="col-lg-6">
+                                        <textarea class="form-control" name="address"></textarea>
+                                    </div>
+                                </div>
+
+                                {{-- Role --}}
+                                <div class="form-group row">
+                                    <label class="col-lg-4 col-form-label">Role</label>
+                                    <div class="col-lg-6">
+                                        <input type="date" class="form-control" name="date_of_birth">
+                                    </div>
+                                </div>
+
+                                {{-- Submit --}}
                                 <div class="form-group row">
                                     <div class="col-lg-8 ml-auto">
-                                        <button type="submit" name="submit" class="btn btn-primary">Add new</button>
+                                        <button type="submit" class="btn btn-primary">Add new</button>
                                     </div>
                                 </div>
                             </form>

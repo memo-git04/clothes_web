@@ -1,4 +1,4 @@
-@extends('admin.layouts.adminapp')
+@extends('admin.layouts.dashboard')
 @section('content')
     <div class="content-body">
 
@@ -23,10 +23,27 @@
                                 @method('PUT')
                                 @csrf
                                 <div class="form-group row">
-                                    <label class="col-lg-4 col-form-label" for="val-username">Name<span class="text-danger"></span>
+                                    <label class="col-lg-4 col-form-label" for="val-username">Category Name<span class="text-danger"></span>
                                     </label>
                                     <div class="col-lg-6">
                                         <input type="text" class="form-control" id="val-username" name="update_category" value="{{ $category->category_name }}">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-4 col-form-label" for="val-username">Category Parent<span class="text-danger"></span>
+                                    </label>
+                                    <div class="col-lg-6">
+                                        <select name="parent_id" class="form-control" {{ $category->is_root ? 'disabled' : '' }}>
+                                            <option value="">-- Don't have (Category parent) --</option>
+                                            @foreach($categories as $cate)
+                                                @if($cate->id != $category->id && $cate->is_root)
+                                                    <option value="{{ $cate->id }}"
+                                                        {{ $category->parent_id == $cate->id ? 'selected' : '' }}>
+                                                        {{ $cate->category_name }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
 

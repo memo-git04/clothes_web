@@ -1,5 +1,5 @@
-@extends('admin.layouts.adminapp')
-@section('content') 
+@extends('admin.layouts.dashboard')
+@section('content')
      <div class="content-body">
 
         <div class="row page-titles mx-0">

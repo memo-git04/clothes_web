@@ -146,8 +146,14 @@ Route::prefix('/products')->group(function () {
         ->name('products.edit');
     Route::put('/edit/{product}', [\App\Http\Controllers\ProductController::class, 'update'])
         ->name('products.update');
+    Route::get('/show/{product}', [\App\Http\Controllers\ProductController::class, 'show'])
+        ->name('products.show');
     Route::delete('/{product}', [\App\Http\Controllers\ProductController::class, 'destroy'])
         ->name('products.destroy');
+    Route::delete('/variant-image/{id}', [\App\Http\Controllers\ProductController::class, 'deleteImage'])
+        ->name('variant.image.delete');
+    Route::delete('/variants/{id}', [\App\Http\Controllers\ProductController::class, 'destroyVariant'])
+        ->name('variants.destroy');
 });
 
 

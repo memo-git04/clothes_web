@@ -38,6 +38,24 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
+    //all stock_quantity variants
+    public function getTotalStockAttribute()
+    {
+        return $this->variants->sum('stock_quantity');
+    }
+    // Status theo rule
+    public function getStockStatusAttribute()
+    {
+        if ($this->total_stock == 0) {
+            return 'out_of_stock';
+        }
+
+        if ($this->total_stock < 50) {
+            return 'low_stock';
+        }
+
+        return 'in_stock';
+    }
 
     public function reviews()
     {

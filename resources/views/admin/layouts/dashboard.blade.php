@@ -263,8 +263,8 @@
                         <i class="fa-brands fa-slack"></i><span class="nav-text">Product Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="">Product Management</a></li>
-                        <li><a href="">Add new product</a></li>
+                        <li><a href="{{route('products.index')}}">Product Management</a></li>
+                        <li><a href="{{route('products.create')}}">Add new product</a></li>
                     </ul>
                 </li>
 

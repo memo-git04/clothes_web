@@ -17,67 +17,123 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body ">
-                            <h4 class="card-title mb-3">Product Detail</h4>
+                            <h4 class="card-title mb-3">Thông tin sản phẩm</h4>
 
                             <div style="display: flex">
                                 <div class="col-sm-5">
-
                                     <div class="form-group">
-                                        <label for="exampleFormControlInput1"><b>Name: </b>{{$product->product_name}}</label>
+                                        <label for="exampleFormControlInput1"><b>Tên sản phẩm: {{ $product->product_name }}</b></label>
                                     </div>
-
                                     <div class="form-group">
-                                        <label for="exampleFormControlInput1"><b>Base Price: </b>$ {{ number_format($product->base_price, 0, ',', '.')}} VND</label>
+                                        <label for="exampleFormControlFile1"><b>Description: {{ $product->description }}</b> </label>
                                     </div>
-
                                     <div class="form-group">
-                                        <label for="exampleFormControlFile1"><b>Category: {{$product->category->category_name}}</b></label>
+                                        <label for="exampleFormControlFile1"><b>Category: {{ $product->category->category_name ?? '' }} </div> </b></label>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="exampleFormControlFile1"><b>Material: {{$product->material->material_name}}</b></label>
+                                        <label for="exampleFormControlFile1"><b>Material: {{ $product->material->name ?? '' }}</b></label>
                                     </div>
                                     <div class="form-group">
-                                        <label for="exampleFormControlFile1"><b>Brand: {{$product->brand->brand_name}}</b> </label>
+                                        <label for="exampleFormControlFile1"><b>Brand: {{ $product->brand->brand_name ?? '' }}</b> </label>
                                     </div>
-                                </div>
-                                <div class="col-sm-7">
-                                    <div class="mb-3 mt-3">
-                                        <label for="exampleFormControlFile1"><b>Origin: {{$product->origin->origin_name}}</b> </label>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="exampleFormControlFile1"><b>Description: {{$product->description}}</b> </label>
-                                    </div>
-                                    @foreach($variants as $variant  )
-                                        <div class="form-group">
-                                            <label for="exampleFormControlInput1"><b>Selling Price: </b> {{ number_format($variant->price, 2, ',', '.')}} VND</label>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleFormControlInput1"><b>Stock Quantity: {{$variant->stock_quantity}}</b></label>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleFormControlFile1"><b>Color: {{$variant->color->color_name}}</b> </label>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="exampleFormControlFile1"><b>Size: {{$variant->size->size_name}}</b> </label>
-                                        </div>
-
-                                        <div class="form-group">
-                                            @foreach ($variant->images as $image)
-                                                <img src="{{ asset('storage/' . $image->url) }}" alt="Image of {{ $variant->color->name }} - {{ $variant->size->name }}" width="100">
-                                            @endforeach
-                                        </div>
-                                    @endforeach
                                 </div>
                             </div>
+                            <h4 class="card-title mb-3">Thông tin biến thể sản phẩm</h4>
+                            <div style="overflow-x:auto;">
+                                <table class="table table-striped table-bordered ">
+                                    <thead>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Ảnh</th>
+                                        <th>Màu sắc</th>
+                                        <th>Size</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá nhập</th>
+                                        <th>Giá bán</th>
+                                        <th>Giá gốc</th>
+                                        <th>Act</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($product->variants as $variant)
+                                        <form action="" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+                                        <tr>
+                                            <td>{{ $variant->sku }}</td>
+
+                                            <td style="min-width:250px">
+
+                                                <!-- HIỂN THỊ ẢNH CŨ -->
+                                                <div style="display:flex; flex-wrap:wrap; gap:5px;">
+                                                    @foreach($variant->images as $img)
+                                                        <div style="position:relative">
+                                                            <img src="{{ asset('storage/'.$img->image_url) }}" width="60">
+
+                                                            <!-- ❌ NÚT XOÁ ẢNH -->
+                                                            <form action="{{ route('variant.image.delete', $img->id) }}" method="POST"
+                                                                  style="position:absolute; top:0; right:0;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button style="background:red;color:#fff;border:none;">x</button>
+                                                            </form>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+
+                                                <!-- ➕ UPLOAD ẢNH MỚI -->
+                                                <input type="file" name="images[]" multiple
+                                                       class="form-control mt-1 preview-input">
+
+                                                <!-- 👀 PREVIEW ẢNH MỚI -->
+                                                <div class="preview mt-1" style="display:flex; gap:5px; flex-wrap:wrap;"></div>
+
+                                            </td>
+
+                                            <td>{{ $variant->color->color_name ?? '' }}</td>
+                                            <td>{{ $variant->size->size_name ?? '' }}</td>
+
+                                                <td> <input type="number" name="stock_quantity" value="{{ $variant->stock_quantity }}" class="form-control" style="width:80px"> </td>
+                                            <td>{{ $variant->base_price }}</td>
+                                            <td>
+                                                <input type="number" name="selling_price" value="{{ $variant->selling_price }}" class="form-control" style="width:80px">
+                                            </td>
+                                            <td>{{ $variant->original_price }}</td>
+                                        </form>
+                                        <td>
+{{--                                        button delete--}}
+                                                <form action="{{ route('variants.destroy', $variant->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                        <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
+                                                </form>
+                                        </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Ảnh</th>
+                                        <th>Màu sắc</th>
+                                        <th>Size</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá nhập </th>
+                                        <th>Giá bán</th>
+                                        <th>Giá gốc</th>
+                                        <th>Act</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
                             <div  style="display: flex">
                                 <div class="add mt-2 mx-4">
                                     <a href="{{route('products.index')}}"><button type="button" class="btn btn-success"> Back </button></a>
                                 </div>
                                 <div class="add mt-2 mx-4">
-                                    <a href="{{route('products.edit', $product->id) }}"><button type="button" class="btn btn-primary"> Edit </button></a>
+                                    <a href="{{route('products.edit', $product->id) }}"><button type="button" class="btn btn-primary"> Update </button></a>
                                 </div>
                             </div>
                         </div>
@@ -86,3 +142,25 @@
             </div>
         </div>
 @endsection
+
+<script>
+    document.querySelectorAll('.preview-input').forEach(input => {
+        input.addEventListener('change', function(e){
+            let preview = this.closest('td').querySelector('.preview');
+            preview.innerHTML = "";
+
+            Array.from(e.target.files).forEach(file => {
+                let reader = new FileReader();
+
+                reader.onload = function(e){
+                    let img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '60px';
+                    preview.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            });
+        });
+    });
+</script>

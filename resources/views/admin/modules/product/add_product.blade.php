@@ -102,11 +102,6 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="exampleFormControlInput1"><b>SKU</b></label>
-                                            <input type="text" name="variants[0][sku]" class="form-control" id="exampleFormControlInput1">
-                                        </div>
-
-                                        <div class="form-group">
                                             <label for="exampleFormControlInput1"><b>Selling Price</b></label>
                                             <input type="text" name="variants[0][selling_price]" class="form-control" id="exampleFormControlInput1">
                                         </div>

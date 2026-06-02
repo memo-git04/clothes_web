@@ -81,19 +81,20 @@
         <div class="lg:w-1/2 bg-white flex items-center justify-center p-8 lg:p-16" 
              x-data="{ showPassword: false, rememberMe: false }">
             
-            <div class="w-full max-w-md">
-                <!-- Form Header -->
+           <div class="w-full max-w-md">
                 <div class="mb-10">
                     <h2 class="font-serif text-3xl lg:text-4xl text-black font-light mb-2">Sign In</h2>
                     <p class="text-gray-500 font-sans text-sm">Enter your credentials to access your account</p>
                 </div>
 
-                <!-- Login Form -->
-                <form action="/login" method="POST" class="space-y-6">
-                    @csrf <!-- BẮT BUỘC TRONG LARAVEL -->
+                @if($errors->has('customerError'))
+                    <div class="mb-6 p-4 bg-red-50 border-l border-red-500 text-xs uppercase tracking-widest text-red-600 font-sans font-medium">
+                        {{ $errors->first('customerError') }}
+                    </div>
+                @endif
 
-                    <!-- Email Field -->
-                    <div>
+                <form action="{{ route('customer.loginProcess') }}" method="POST" class="space-y-6">
+                    @csrf <div>
                         <label for="email" class="block text-[10px] font-sans uppercase tracking-[0.15em] text-gray-400 mb-2">
                             Email Address
                         </label>
@@ -101,13 +102,15 @@
                             id="email"
                             name="email"
                             type="email"
-                            required
+                            value="{{ old('email') }}" required
                             class="w-full px-0 py-3 bg-transparent border-0 border-b border-gray-200 text-black placeholder:text-gray-300 focus:outline-none focus:border-black transition-colors duration-300 font-sans"
                             placeholder="your@email.com"
                         >
+                        @error('email')
+                            <p class="text-red-500 text-[11px] mt-1 font-sans">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Password Field -->
                     <div>
                         <label for="password" class="block text-[10px] font-sans uppercase tracking-[0.15em] text-gray-400 mb-2">
                             Password
@@ -121,7 +124,6 @@
                                 class="w-full px-0 py-3 pr-10 bg-transparent border-0 border-b border-gray-200 text-black placeholder:text-gray-300 focus:outline-none focus:border-black transition-colors duration-300 font-sans"
                                 placeholder="Enter your password"
                             >
-                            <!-- Show/Hide Button -->
                             <button
                                 type="button"
                                 @click="showPassword = !showPassword"
@@ -135,9 +137,11 @@
                                 </template>
                             </button>
                         </div>
+                        @error('password')
+                            <p class="text-red-500 text-[11px] mt-1 font-sans">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <!-- Remember Me & Forgot Password -->
                     <div class="flex items-center justify-between">
                         <label class="flex items-center gap-2 cursor-pointer group">
                             <div class="relative">
@@ -158,7 +162,6 @@
                         </a>
                     </div>
 
-                    <!-- Login Button -->
                     <div>
                         <button
                             type="submit"

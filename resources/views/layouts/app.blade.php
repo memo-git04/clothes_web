@@ -65,12 +65,48 @@
             <span class="text-[10px] uppercase tracking-[0.2em]">Cart (0)</span>
         </a>
 
-        <a href="/login" class="flex items-center gap-2 hover:text-gray-400 transition-colors duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+@guest
+    <a href="{{ url('/login') }}" class="flex items-center gap-2 hover:text-gray-400 transition-colors duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+        <span class="text-[10px] uppercase tracking-[0.2em] hidden xl:inline">Login</span>
+    </a>
+@endguest
+
+@auth
+    <div class="relative group" x-data="{ open: false }">
+        <button @click="open = !open" class="flex items-center gap-2 hover:text-gray-400 transition-colors duration-300 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
             </svg>
-            <span class="text-[10px] uppercase tracking-[0.2em] hidden xl:inline">Account</span>
-        </a>
+            <span class="text-[10px] uppercase tracking-[0.2em] hidden xl:inline font-medium">
+                {{ Auth::user()->full_name }}
+            </span>
+        </button>
+
+        <div class="absolute right-0 top-full pt-4 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
+            <div class="bg-white border border-gray-100 shadow-xl w-48 py-2">
+                <a href="{{ url('/profile') }}" class="block px-6 py-3 text-[11px] text-gray-600 hover:bg-gray-50 hover:text-black transition-colors border-b border-gray-50 uppercase tracking-wider">
+                    My Profile
+                </a>
+                
+                @if(Auth::user()->role === 'admin') {{-- Nếu đồ án có phân quyền admin --}}
+                <a href="{{ url('/admin') }}" class="block px-6 py-3 text-[11px] text-red-600 hover:bg-gray-50 transition-colors border-b border-gray-50 uppercase tracking-wider">
+                    Admin Dashboard
+                </a>
+                @endif
+
+                <form method="POST" action="{{ route('logout') }}" class="m-0">
+                    @csrf
+                    <button type="submit" class="w-full text-left block px-6 py-3 text-[11px] text-gray-600 hover:bg-gray-50 hover:text-black transition-colors uppercase tracking-wider">
+                        Log Out
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+@endauth
         </div>
         </header>
         <main>

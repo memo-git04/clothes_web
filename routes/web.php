@@ -9,8 +9,9 @@ Route::get('/code', function () {
     return bcrypt('1234567');
 });
 
+
 //admin - login/logout
-Route::get('/login', [\App\Http\Controllers\Admin\DashboardController::class, 'login'])
+Route::get('/admin/login', [\App\Http\Controllers\Admin\DashboardController::class, 'login'])
     ->name('login');
 Route::post('/login', [\App\Http\Controllers\Admin\DashboardController::class, 'loginProcess'])
     ->name('loginProcess');
@@ -20,6 +21,10 @@ Route::get('/logout', [\App\Http\Controllers\Admin\DashboardController::class, '
 Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
     ->name('dashboard');
 
+//customer - login/logout
+Route::get('/login', [\App\Http\Controllers\Customer\CustomerAuthController::class, 'showLogin'])->name('login');
+Route::post('/customer/login-process', [\App\Http\Controllers\Customer\CustomerAuthController::class, 'loginProcess'])->name('customer.loginProcess');
+Route::post('/logout', [\App\Http\Controllers\Customer\CustomerAuthController::class, 'logout'])->name('logout');
 
 //CURD
 //category
@@ -121,17 +126,17 @@ Route::prefix('/promotions')->group(function () {
 });
 //account
 Route::prefix('admin/users')->group(function () {
-    Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])
+    Route::get('/', [\App\Http\Controllers\Admin\UserController::class, 'index'])
         ->name('admin.users.index');
-    Route::get('/create', [\App\Http\Controllers\UserController::class, 'create'])
+    Route::get('/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])
         ->name('admin.users.create');
-    Route::post('/store', [\App\Http\Controllers\UserController::class, 'store'])
+    Route::post('/store', [\App\Http\Controllers\Admin\UserController::class, 'store'])
         ->name('admin.users.store');
-    Route::get('/edit/{user}', [\App\Http\Controllers\UserController::class, 'edit'])
+    Route::get('/edit/{user}', [\App\Http\Controllers\Admin\UserController::class, 'edit'])
         ->name('admin.users.edit');
-    Route::put('/update/{user}', [\App\Http\Controllers\UserController::class, 'update'])
+    Route::put('/update/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])
         ->name('admin.users.update');
-    Route::delete('/delete/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])
+    Route::delete('/delete/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])
         ->name('admin.users.destroy');
 });
 //product
@@ -426,5 +431,3 @@ Route::get('/wishlist', function () {
 Route::get('/contactus', function () {
     return view('contactus');
 })->name('contactus');
-
-

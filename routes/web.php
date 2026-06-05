@@ -5,18 +5,22 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('home');
 });
-Route::get('/code', function () {
+Route::get('/code_cus', function () {
     return bcrypt('1234567');
+});
+Route::get('/code_admin', function () {
+    return bcrypt('admin123');
 });
 
 
 //admin - login/logout
 Route::get('/admin/login', [\App\Http\Controllers\Admin\DashboardController::class, 'login'])
-    ->name('login');
-Route::post('/login', [\App\Http\Controllers\Admin\DashboardController::class, 'loginProcess'])
-    ->name('loginProcess');
-Route::get('/logout', [\App\Http\Controllers\Admin\DashboardController::class, 'logout'])
-    ->name('logout');
+    ->name('admin.login');
+Route::post('/admin/login', [\App\Http\Controllers\Admin\DashboardController::class, 'loginProcess'])
+    ->name('admin.loginProcess');
+Route::get('/admin/logout', [\App\Http\Controllers\Admin\DashboardController::class, 'logout'])
+    ->name('admin.logout');
+Route::get('/logout', [\App\Http\Controllers\Admin\DashboardController::class, 'logout'])->name('logout');
 //admin - dashboard
 Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
     ->name('dashboard');

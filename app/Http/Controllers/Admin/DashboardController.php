@@ -20,7 +20,7 @@ class DashboardController extends Controller
     /**
      * Hiển thị giao diện đăng nhập Admin
      */
-    public function login()
+    public function login ()
     {
         // Nếu admin đã đăng nhập từ trước, tự động chuyển hướng thẳng vào dashboard
         if (Auth::guard('admin')->check()) {
@@ -50,32 +50,32 @@ class DashboardController extends Controller
             $admin = Auth::guard('admin')->user();
 
             /**
-             * LƯU Ý QUAN TRỌNG: Kiểm tra phân quyền để chặn khách hàng.
-             * Giả sử bảng users của bạn có cột 'role' (1 là Admin, 0 là Khách hàng).
-             * Nếu không phải Admin thì logout ngay lập tức và báo lỗi.
+             * Kiểm tra dựa trên cột role_id thực tế trong DB
+             * Nếu role_id khác 1 (tức là không phải Admin) thì lập tức tống cổ ra ngoài.
              */
-            if (isset($admin->role) && $admin->role !== 1) {
+            if (!isset($admin->role_id) || $admin->role_id != 1) {
                 Auth::guard('admin')->logout();
-                return Redirect::back()->withErrors([
-                    'adminError' => 'Tài khoản của bạn không có quyền truy cập trang Quản trị.'
-                ])->onlyInput('email');
+                 
+                // ĐÃ SỬA: Xóa bỏ ->onlyInput('email') ở đây
+                return redirect()->back()->withErrors([
+                    'adminError' => 'Thông tin đăng nhập tài khoản không chính xác.'
+                ]);
             }
 
             // Làm mới session để chống tấn công giả mạo (Session Fixation)
             $request->session()->regenerate();
 
-            // Lưu thông tin admin vào session giống như code cũ của bạn (nếu cần dùng)
+            // Lưu thông tin admin vào session giống như code cũ của bạn
             session(['admin' => $admin]);
 
-            // Chuyển hướng về trang Dashboard chính 
-            // (Hoặc trỏ về 'admin.modules.brand.index_brand' tùy theo route của bạn)
+            // Chuyển hướng về trang Dashboard chính
             return Redirect::route('dashboard')->with('success', 'Đăng nhập thành công!');
         }
 
-        // Đăng nhập thất bại: Quay lại trang cũ, hiển thị lỗi và giữ lại email vừa nhập
-        return Redirect::back()->withErrors([
-            'adminError' => 'Email hoặc mật khẩu Admin không chính xác.'
-        ])->onlyInput('email');
+    
+        return redirect()->back()->withErrors([
+            'adminError' => 'Thông tin đăng nhập tài khoản không chính xác.'
+        ]);
     }
 
     /**

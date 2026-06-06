@@ -1,13 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<main class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-10" 
-      x-data="{ 
-        selectedColor: 'Black', 
-        selectedSize: '', 
-        quantity: 1
-      }">
-    
+<main class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-10">
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-8">
         <a href="/" class="hover:text-black">Home</a>
@@ -89,25 +83,43 @@
                 </div>
             </div>
 
-            <!-- Số lượng & Nút mua -->
+            <!-- Số lượng & Nút mua -->>
             <div class="flex flex-col gap-4">
                 <span class="text-[11px] font-medium uppercase tracking-[0.15em]">Quantity</span>
                 <div class="flex gap-4">
+                    
                     <div class="relative w-24">
                         <select x-model="quantity" class="w-full h-14 border border-gray-200 pl-4 pr-8 appearance-none text-sm focus:outline-none focus:border-black bg-white">
                             @for($i=1; $i<=5; $i++)
                                 <option value="{{ $i }}">{{ $i }}</option>
                             @endfor
                         </select>
-                        <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </div>
                     </div>
-                    <button class="flex-1 bg-black text-white uppercase tracking-[0.2em] text-[11px] font-medium hover:bg-[#222] transition-colors active:scale-[0.98]">
+                    <button type="button" 
+                        @click="
+                            fetch('{{ route('cart.add') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({ product_id: 1, size: selectedSize, quantity: quantity })
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if(data.success) {
+                                    // Bắn sự kiện để menu tự cập nhật số lượng
+                                    window.dispatchEvent(new CustomEvent('cart-updated', { detail: data.newCount }));
+                                    alert('Đã thêm vào giỏ hàng!');
+                               }
+                            })
+                        "
+                        class="bg-black text-white px-8 py-4 uppercase">
                         Add to Cart
                     </button>
                 </div>
             </div>
+
 
             <!-- Additional Info -->
             <div class="mt-12 pt-8 border-t border-gray-100 space-y-4">

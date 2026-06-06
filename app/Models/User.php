@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -67,4 +68,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+  
 }

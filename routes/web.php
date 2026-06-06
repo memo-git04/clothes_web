@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+
 Route::get('/', function () {
     return view('home');
 });
@@ -11,6 +12,11 @@ Route::get('/code_cus', function () {
 Route::get('/code_admin', function () {
     return bcrypt('admin123');
 });
+
+Route::get('/home', function () {
+    return view('home');
+})->name('home');
+
 
 
 //admin - login/logout
@@ -29,6 +35,8 @@ Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class
 Route::get('/login', [\App\Http\Controllers\Customer\CustomerAuthController::class, 'showLogin'])->name('login');
 Route::post('/customer/login-process', [\App\Http\Controllers\Customer\CustomerAuthController::class, 'loginProcess'])->name('customer.loginProcess');
 Route::post('/logout', [\App\Http\Controllers\Customer\CustomerAuthController::class, 'logout'])->name('logout');
+Route::get('/signup', [\App\Http\Controllers\Customer\RegisterController::class, 'showRegistrationForm'])->name('signup');
+Route::post('/signup', [\App\Http\Controllers\Customer\RegisterController::class, 'register'])->name('register.process');
 
 //CURD
 //category
@@ -164,26 +172,17 @@ Route::prefix('/products')->group(function () {
     Route::delete('/variants/{id}', [\App\Http\Controllers\ProductController::class, 'destroyVariant'])
         ->name('variants.destroy');
 });
+Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [App\Http\Controllers\CartController::class, 'store'])->name('cart.add');
+Route::post('/cart/update', [\App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [\App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
 
-
-
-Route::get('/home', function () {
-    return view('home');
-});
-
-Route::get('/checkout', function () {
-    return view('checkout'); // Đảm bảo tên file là checkout.blade.php
-})->name('checkout.index');
 
 // 2. Route xử lý dữ liệu khi người dùng nhấn "Pay Now" (Phương thức POST)
 // Route này bắt buộc phải có để khớp với action="{{ route('checkout.store') }}"
-Route::post('/checkout/store', function ($request) {
-    // Logic xử lý thanh toán của bạn sẽ nằm ở đây
-    return response()->json([
-        'message' => 'Đơn hàng đang được xử lý!',
-        'data' => $request->all()
-    ]);
-})->name('checkout.store');
+Route::get('/checkout', [\App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [\App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+
 Route::get('/shop', function () {
     // Giả lập dữ liệu hoặc lấy từ Database
     $products = [
@@ -360,22 +359,6 @@ Route::get('/product/{id}', function ($id) {
     return view('product_details', ['product' => $product]);
 })->name('product.details');
 
-Route::get('/cart', function () {
-    // Giả lập dữ liệu giỏ hàng từ Session hoặc DB
-    $cartItems = [
-        [
-            'id' => '1',
-            'name' => 'Oversized Pea Blazer in Black',
-            'price' => 245,
-            'image' => 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80',
-            'size' => 'M',
-            'color' => 'Black',
-            'quantity' => 1,
-        ],
-        // ... các item khác
-    ];
-    return view('cart')->with('cartItems', $cartItems);
-});
 
 Route::get('/blog', function () {
     $blogPosts = [

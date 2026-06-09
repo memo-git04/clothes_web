@@ -9,9 +9,8 @@ class OrderAddress extends Model
 {
     /** @use HasFactory<\Database\Factories\OrderAddressFactory> */
     use HasFactory;
-    protected $table = 'order_addresses';
-    protected $primaryKey = 'id',
-        $keyType = 'int';   
+    protected $table = 'order_addresses'
+    protected $primaryKey = 'id';
     protected $fillable = [
         'order_id',
         'receiver_name',

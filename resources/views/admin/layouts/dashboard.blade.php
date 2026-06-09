@@ -376,13 +376,9 @@
     <!--**********************************
         Content body start
     ***********************************-->
-    <div class="content-body">
-        
-        <div class="container-fluid mt-3">
-            @yield('content')
-        </div>
-    </div>
-    
+
+@yield('content')
+
 
 <!-- /.End Page Content -->
     <!--**********************************

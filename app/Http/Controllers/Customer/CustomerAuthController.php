@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers\Customer;
 
-use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,37 +26,20 @@ class CustomerAuthController extends Controller
             'email.required' => 'Email không được để trống.',
             'password.required' => 'Mật khẩu không được để trống.',
         ]);
-        $remember = $request->has('remember'); // Kiểm tra xem có tích remember me không
+
+        $remember = $request->has('remember');
+
+        // Đăng nhập thông qua Guard 'web' mặc định của Khách hàng
         if (Auth::guard('web')->attempt($credentials, $remember)) {
-        
-        // NẾU CÓ TÍCH CHỌN REMEMBER ME -> LƯU EMAIL VÀO COOKIE 1 NĂM
-        if ($remember) {
-            Cookie::queue('remember_customer_email', $request->email, 525600);
-            Cookie::queue('remember_customer_password', $request->password, 525600);
-        } else {
-            // NẾU KHÔNG TÍCH -> XOÁ COOKIE CŨ ĐI
-            Cookie::queue(Cookie::forget('remember_customer_email'));
-            Cookie::queue(Cookie::forget('remember_customer_password'));
+            $request->session()->regenerate();
+            return redirect()->intended('/')->with('success', 'Đăng nhập thành công!');
         }
 
-        $request->session()->regenerate();
-        return redirect()->intended('/')->with('success', 'Đăng nhập thành công!');
-        }
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password,
-            'role_id' => 2 
-        ];
-        if (Auth::attempt($credentials, $request->has('remember'))) {
-        // Đăng nhập thành công, chuyển hướng về trang chủ khách hàng
-            return redirect('/'); 
-        }
-
-    // 4. Thất bại thì trả về lỗi
-    return redirect()->back()->withErrors([
-        'customerError' => 'Thông tin đăng nhập tài khoản khách hàng không chính xác.'
-    ]);
+        return back()->withErrors([
+            'customerError' => 'Thông tin đăng nhập không chính xác.',
+        ])->onlyInput('email');
     }
+
     // Đăng xuất Khách hàng
     public function logout(Request $request)
     {
@@ -66,6 +48,6 @@ class CustomerAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/');
     }
 }

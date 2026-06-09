@@ -87,15 +87,14 @@
                     <p class="text-gray-500 font-sans text-sm">Enter your credentials to access your account</p>
                 </div>
 
-                @if($errors->has('customerError') || $errors->has('email'))
+                @if($errors->has('customerError'))
                     <div class="mb-6 p-4 bg-red-50 border-l border-red-500 text-xs uppercase tracking-widest text-red-600 font-sans font-medium">
-                        {{ $errors->first('customerError') ?: $errors->first('email') }}
+                        {{ $errors->first('customerError') }}
                     </div>
                 @endif
 
                 <form action="{{ route('customer.loginProcess') }}" method="POST" class="space-y-6">
-                    @csrf 
-                    <div>
+                    @csrf <div>
                         <label for="email" class="block text-[10px] font-sans uppercase tracking-[0.15em] text-gray-400 mb-2">
                             Email Address
                         </label>

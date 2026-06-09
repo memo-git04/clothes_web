@@ -46,7 +46,7 @@
                             <input type="password" name="password" class="form-control" placeholder="Password">
                         </div>
                         <button class="btn login-form__btn submit w-100" name="login" value="login" type="submit">Log In</button>
-                        
+                        <p class="mt-5 login-form__footer">Dont have account? <a href="" class="text-primary">Sign Up</a> now</p>
                     </form>
 
                     </div>

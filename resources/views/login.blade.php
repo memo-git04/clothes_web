@@ -169,7 +169,7 @@
                             class="w-full bg-black text-white py-4 font-sans text-[10px] uppercase tracking-[0.2em] hover:bg-gray-800 transition-colors duration-300"
                         >
                             Sign In
-                    </button>
+                        </button>
                     </div>
                 </form>
 
@@ -204,7 +204,7 @@
                 <!-- Sign Up Link -->
                 <p class="text-center mt-10 text-[10px] uppercase tracking-widest text-gray-400">
                     Don't have an account? 
-                    <a href="{{ route('signup') }}" class="text-black hover:text-gray-600 transition-colors fashion-link ml-1">Sign Up</a>
+                    <a href="#" class="text-black hover:text-gray-600 transition-colors fashion-link ml-1">Sign Up</a>
                 </p>
             </div>
         </div>

@@ -3,39 +3,31 @@
 @section('content')
 <main class="min-h-screen bg-white" 
     x-data="{ 
-    cartItems: {{ json_encode($cartItems) }},
-    
-    // Hàm cập nhật số lượng
-    updateQuantity(item, delta) {
-        let newQty = item.quantity + delta;
-        if (newQty < 1) return;
-
-        fetch('{{ route('cart.update') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ id: item.id, quantity: newQty })
-        }).then(() => {
-            item.quantity = newQty; // Chỉ cập nhật giao diện khi server báo thành công
-        });
-    },
-
-    // Hàm xóa sản phẩm
-    removeItem(item) {
-        fetch('{{ route('cart.remove') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ id: item.id })
-        }).then(() => {
-            this.cartItems = this.cartItems.filter(i => i.id != item.id);
-        });
-    }
-}"
+        cartItems: {{ json_encode($cartItems) }},
+        couponOpen: false,
+        couponCode: '',
+        shippingThreshold: 500,
+        shippingCost: 15,
+        
+        get subtotal() {
+            return this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        },
+        get currentShipping() {
+            return this.subtotal > this.shippingThreshold ? 0 : this.shippingCost;
+        },
+        get total() {
+            return this.subtotal + this.currentShipping;
+        },
+        updateQuantity(id, delta) {
+            const item = this.cartItems.find(i => i.id == id);
+            if (item) {
+                item.quantity = Math.max(1, item.quantity + delta);
+            }
+        },
+        removeItem(id) {
+            this.cartItems = this.cartItems.filter(i => i.id != id);
+        }
+    }">
     
     <div class="mx-auto max-w-7xl px-6 py-12 lg:px-12 lg:py-20">
         <!-- Nút quay lại -->

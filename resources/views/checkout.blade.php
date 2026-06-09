@@ -56,18 +56,17 @@
                     <!-- STEP 1: INFORMATION -->
                     <div x-show="step === 'information'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-x-4">
                         <section class="mb-12">
-                            <h2 class="text-xs uppercase tracking-widest font-semibold mb-6">Shipping Address</h2>
-                            <div class="space-y-5">
-                                <input type="text" name="receiver_name" placeholder="Full Name" class="w-full py-3 border-b border-gray-200" required>
-                                <input type="text" name="receiver_phone" placeholder="Phone Number" class="w-full py-3 border-b border-gray-200" required>
-                                <input type="text" name="detailed_address" placeholder="Address" class="w-full py-3 border-b border-gray-200" required>
-                                <div class="grid grid-cols-3 gap-4">
-                                    <input type="text" name="province" placeholder="Province" class="py-3 border-b border-gray-200">
-                                    <input type="text" name="district" placeholder="District" class="py-3 border-b border-gray-200">
-                                    <input type="text" name="ward" placeholder="Ward" class="py-3 border-b border-gray-200">
-                                </div>
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-xs uppercase tracking-widest font-semibold">Contact Information</h2>
+                                <p class="text-xs text-gray-500">Already have an account? <a href="/login" class="underline hover:text-black">Log in</a></p>
+                            </div>
+                            <input type="email" name="email" placeholder="Email" class="w-full py-3 border-b border-gray-200 focus:outline-none focus:border-black transition-all" required>
+                            <div class="mt-4 flex items-center gap-2">
+                                <input type="checkbox" id="marketing" class="w-4 h-4 accent-black">
+                                <label for="marketing" class="text-xs text-gray-600 cursor-pointer">Email me with news and offers</label>
                             </div>
                         </section>
+
                         <section class="mb-12">
                             <h2 class="text-xs uppercase tracking-widest font-semibold mb-6">Shipping Address</h2>
                             <div class="space-y-5">
@@ -168,19 +167,12 @@
         <div class="hidden lg:block w-[40%] bg-gray-50 min-h-screen">
             <div class="max-w-md px-10 py-16 sticky top-0">
                 @php
-                    $cartItems = session()->get('cart', []);
-                    $subtotal = array_reduce($cartItems, function ($sum, $item) {
-                        return $sum + ($item['quantity'] * $item['price']);
-                    }, 0);
+                    // Giả lập dữ liệu cart, thực tế bạn truyền từ Controller
+                    $cartItems = [
+                        ['name' => 'Signature Cotton Trench', 'variant' => 'Sand / M', 'price' => 1250, 'quantity' => 1, 'image' => 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=1200'],
+                        ['name' => 'Wool Cashmere Scarf', 'variant' => 'Oatmeal', 'price' => 1090, 'quantity' => 1, 'image' => 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=1200']
+                    ];
                 @endphp
-
-                @foreach($cartItems as $item)
-                <div class="flex items-center gap-4">
-                    <p class="text-sm font-medium text-gray-900 font-serif">${{ number_format($item['price'] * $item['quantity']) }}</p>
-                </div>
-                @endforeach
-
-<span class="text-black font-medium">${{ number_format($subtotal, 2) }}</span>
 
                 <!-- Macro-like display for summary -->
                 <div class="space-y-6">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductVariant;
 use App\Http\Requests\StoreProductVariantRequest;
 use App\Http\Requests\UpdateProductVariantRequest;
+use Illuminate\Support\Facades\Storage;
 
 class ProductVariantController extends Controller
 {
@@ -61,6 +62,31 @@ class ProductVariantController extends Controller
      */
     public function destroy(ProductVariant $productVariant)
     {
-        //
+        // check đơn hàng
+        if ($productVariant->orderItems()->exists()) {
+            return back()->with('error', 'Không thể xoá vì đã có đơn hàng');
+        }
+
+        // check còn hàng
+        if ($productVariant->stock_quantity > 0) {
+            return back()->with('error', 'Phải hết hàng mới được xoá');
+        }
+        //get product truoc khi xoa
+        $product = $productVariant->product;
+        // xoá ảnh
+        foreach ($productVariant->images as $img) {
+            Storage::disk('public')->delete($img->image_url);
+            $img->delete();
+        }
+        // soft delete
+        $productVariant->delete();
+        //check sau khi delete
+        if ($product->variants()->count() == 0) {
+            $product->update([
+                'status' => 'inactive'
+            ]);
+        }
+
+        return back()->with('success', 'Đã xoá biến thể');
     }
 }

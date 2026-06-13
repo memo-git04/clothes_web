@@ -19,15 +19,31 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Add new member</h4>
+                        @if(session('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         <div class="form-validation">
-                            <form class="form-valide" action="{{ route('admin.users.store') }}" method="POST">
+                            <form class="form-valide" action="{{ route('users.store') }}" method="POST">
                                 @csrf
-
                                 {{-- Username --}}
                                 <div class="form-group row">
                                     <label class="col-lg-4 col-form-label">Username</label>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" name="user_name" value="">
+                                        <input type="text" class="form-control" name="user_name" value="{{ old('user_name') }}">
+                                        @error('user_name')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -35,7 +51,10 @@
                                 <div class="form-group row">
                                     <label class="col-lg-4 col-form-label">Fullname</label>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" name="full_name" value="">
+                                        <input type="text" class="form-control" name="full_name" value="{{ old('full_name') }}">
+                                        @error('full_name')
+                                        <small class="text-danger">{{ $message }}</small>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -43,7 +62,10 @@
                                 <div class="form-group row">
                                     <label class="col-lg-4 col-form-label">Email</label>
                                     <div class="col-lg-6">
-                                        <input type="email" class="form-control" name="email" value="">
+                                        <input type="email" class="form-control" name="email" value="{{ old('email') }}">
+                                        @error('email')
+                                        <small class="text-danger">{{ $message }}</small>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -52,6 +74,16 @@
                                     <label class="col-lg-4 col-form-label">Password</label>
                                     <div class="col-lg-6">
                                         <input type="password" class="form-control" name="password">
+                                        @error('password')
+                                        <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
+                                {{-- Confirm Password --}}
+                                <div class="form-group row">
+                                    <label class="col-lg-4 col-form-label">Confirm Password</label>
+                                    <div class="col-lg-6">
+                                        <input type="password" class="form-control" name="password_confirmation">
                                     </div>
                                 </div>
 
@@ -59,7 +91,7 @@
                                 <div class="form-group row">
                                     <label class="col-lg-4 col-form-label">Phone</label>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" name="phone" value="">
+                                        <input type="text" class="form-control" name="phone" value="{{old('phone')}}">
                                     </div>
                                 </div>
 
@@ -87,15 +119,8 @@
                                 <div class="form-group row">
                                     <label class="col-lg-4 col-form-label">Address</label>
                                     <div class="col-lg-6">
-                                        <textarea class="form-control" name="address"></textarea>
-                                    </div>
-                                </div>
+                                        <textarea class="form-control" name="address">{{ old('address') }}</textarea>
 
-                                {{-- Role --}}
-                                <div class="form-group row">
-                                    <label class="col-lg-4 col-form-label">Role</label>
-                                    <div class="col-lg-6">
-                                        <input type="date" class="form-control" name="date_of_birth">
                                     </div>
                                 </div>
 

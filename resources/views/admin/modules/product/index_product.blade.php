@@ -37,15 +37,25 @@
                                                 <td>
                                                     @php
                                                         $variant = $product->variants->first();
-                                                        $image = optional($variant->firstImg)->image_url;
+                                                        $image = optional(optional($variant)->firstImg)->image_url;
                                                     @endphp
-                                                    <img src="{{ asset('storage/'.$image) }}" width="60" style="margin-top:10px;">
+                                                    <img src="{{ $image ? asset('storage/'.$image) : asset('images/no-image.png') }}" width="60">
                                                 </td>
                                                 <td>{{$product->product_name}}</td>
-                                                <td>  {{ number_format(optional($product->variants->first())->selling_price ?? 0, 0, ',', '.') }} VND</td>
+                                                <td>
+                                                    @if($variant)
+                                                        {{ number_format($variant->selling_price, 0, ',', '.') }} VND
+                                                    @else
+                                                        <span class="text-muted">N/A</span>
+                                                    @endif
+                                                </td>
                                                 <td>{{$product->category->category_name}}</td>
                                                 <td>
                                                     @switch($product->stock_status)
+                                                        @case('inactive')
+                                                        <span class="badge badge-secondary">Tạm ngưng bán</span>
+                                                        @break
+
                                                         @case('out_of_stock')
                                                         <span class="badge badge-danger">Hết hàng</span>
                                                         @break
@@ -60,11 +70,7 @@
                                                 </td>
                                                 <td>
                                                     <a href="{{route('products.show',$product->id )}}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-eye"></i></button></a>
-                                                    <form action="{{route('products.destroy',$product->id)}}" method="post">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
-                                                    </form>
+
                                                 </td>
                                             </tr>
                                         @endforeach

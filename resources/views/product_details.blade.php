@@ -1,31 +1,33 @@
 @extends('layouts.app')
 
+{{--<pre>{{ json_encode($product->variants, JSON_PRETTY_PRINT) }}</pre>--}}
 @section('content')
-<main class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-10" 
-      x-data="{ 
-        selectedColor: 'Black', 
-        selectedSize: '', 
-        quantity: 1
-      }">
-    
+    @php
+        $variant = $product->variants->first();
+    @endphp
+<main class="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-10"
+      x-data="productData({{ $product->variants->toJson() }})">
+
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-8">
         <a href="/" class="hover:text-black">Home</a>
         <span>/</span>
         <a href="/shop" class="hover:text-black">Shop</a>
         <span>/</span>
-        <a href="#" class="hover:text-black">Jackets</a>
+        <a href="#" class="hover:text-black">{{ $product->category->category_name ?? '' }}</a>
         <span>/</span>
-        <span class="text-black italic">Oversized Pea Blazer</span>
+        <span class="text-black italic">{{ $product->product_name }}</span>
     </nav>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
         <!-- Bên trái: Ảnh sản phẩm (Chiếm 7 cột) -->
+
         <div class="lg:col-span-7">
             <div class="aspect-[4/5] bg-[#f5f5f5] overflow-hidden group relative">
                 <!-- Thay ảnh placeholder bằng ảnh thật từ DB của ông -->
-                <img src="{{ asset('https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1200') }}" alt="Product Image" class="w-full h-full object-cover">
-                
+                @if($product->variants->first() && $product->variants->first()->images->first())
+                    <img src="{{ asset('storage/' . $product->variants->first()->images->first()->image_url) }}" alt="Product Image" class="w-full h-full object-cover">
+                @endif
                 <!-- Badge (nếu có) -->
                 <div class="absolute top-6 left-6">
                     <span class="bg-black text-white text-[10px] tracking-widest uppercase px-3 py-1">New Collection</span>
@@ -35,9 +37,9 @@
 
         <!-- Bên phải: Thông tin sản phẩm (Chiếm 5 cột) -->
         <div class="lg:col-span-5 flex flex-col">
-            <span class="text-[11px] tracking-[0.2em] uppercase text-gray-400 mb-2">Jackets</span>
-            <h1 class="text-4xl font-light italic tracking-tight mb-4 text-[#1a1a1a]">Oversized Pea Blazer in Black</h1>
-            
+            <span class="text-[11px] tracking-[0.2em] uppercase text-gray-400 mb-2">{{ $product->category->category_name ?? '' }}</span>
+            <h1 class="text-4xl font-light italic tracking-tight mb-4 text-[#1a1a1a]">{{ $product->product_name }}</h1>
+
             <!-- Đánh giá sao -->
             <div class="flex items-center gap-4 mb-6">
                 <div class="flex text-black gap-0.5">
@@ -51,8 +53,8 @@
 
             <!-- Giá tiền -->
             <div class="flex items-center gap-4 mb-8">
-                <span class="text-2xl text-[#d97771] font-light">$245</span>
-                <span class="text-lg text-gray-300 line-through font-light">$295</span>
+                <span class="text-2xl text-[#d97771] font-light">{{ number_format($variant->selling_price ?? 0) }} VNĐ</span>
+                <span class="text-lg text-gray-300 line-through font-light">{{ number_format($variant->base_price ?? 0) }} VNĐ</span>
                 <span class="px-2 py-0.5 bg-[#fdf2f2] text-[#d97771] text-[10px] tracking-wider uppercase">Save $50</span>
             </div>
 
@@ -63,12 +65,19 @@
             <!-- Chọn màu (Color Selection) -->
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-[11px] font-medium uppercase tracking-[0.15em]">Color: <span class="font-light text-gray-500" x-text="selectedColor"></span></span>
+                    <span class="text-[11px] font-medium uppercase tracking-[0.15em]">
+                        Color: <span class="font-light text-gray-500" x-text="selectedColor"></span>
+                    </span>
                 </div>
                 <div class="flex gap-3">
-                    <button @click="selectedColor = 'Black'" :class="selectedColor === 'Black' ? 'ring-1 ring-black ring-offset-2' : ''" class="w-8 h-8 bg-black border border-black/10 transition-all"></button>
-                    <button @click="selectedColor = 'Navy'" :class="selectedColor === 'Navy' ? 'ring-1 ring-black ring-offset-2' : ''" class="w-8 h-8 bg-[#1a1c2c] border border-black/10 transition-all"></button>
-                    <button @click="selectedColor = 'Tan'" :class="selectedColor === 'Tan' ? 'ring-1 ring-black ring-offset-2' : ''" class="w-8 h-8 bg-[#c2a679] border border-black/10 transition-all"></button>
+                    <template x-for="color in colors" :key="color">
+                        <button
+                            @click="selectColor(color)"
+                            :class="selectedColor === color ? 'ring-2 ring-black' : ''"
+                            class="w-8 h-8 border"
+                            x-text="color"
+                        ></button>
+                    </template>
                 </div>
             </div>
 
@@ -79,13 +88,23 @@
                     <button  class="text-[10px] uppercase tracking-widest text-gray-400 border-b border-gray-200 hover:text-black transition">Size Guide</button>
                 </div>
                 <div class="grid grid-cols-5 gap-2">
-                    @foreach(['XS', 'S', 'M', 'L', 'XL'] as $size)
-                        <button @click="selectedSize = '{{ $size }}'"
-                                :class="selectedSize === '{{ $size }}' ? 'bg-black text-white' : 'bg-white text-black hover:border-black'"
-                                class="h-12 border border-gray-200 text-[11px] transition-all duration-300">
-                            {{ $size }}
-                        </button>
-                    @endforeach
+                    <template x-for="size in sizes" :key="size">
+                        <button
+                            @click="selectSize(size)"
+                            :class="selectedSize === size
+                                ? 'bg-black text-white'
+                                : 'bg-white text-black'"
+                            class="h-12 border"
+                            x-text="size"
+                        ></button>
+                    </template>
+                </div>
+            </div>
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[11px] font-medium uppercase tracking-[0.15em]">
+                        Stock: <span class="font-light text-gray-500" x-text="selectedStock" ></span>
+                    </span>
                 </div>
             </div>
 
@@ -94,18 +113,28 @@
                 <span class="text-[11px] font-medium uppercase tracking-[0.15em]">Quantity</span>
                 <div class="flex gap-4">
                     <div class="relative w-24">
-                        <select x-model="quantity" class="w-full h-14 border border-gray-200 pl-4 pr-8 appearance-none text-sm focus:outline-none focus:border-black bg-white">
-                            @for($i=1; $i<=5; $i++)
-                                <option value="{{ $i }}">{{ $i }}</option>
-                            @endfor
+                        <select x-model="quantity">
+                            <template x-for="i in selectedStock > 0 ? selectedStock : 0">
+                                <option :value="i" x-text="i"></option>
+                            </template>
                         </select>
                         <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
                     </div>
-                    <button class="flex-1 bg-black text-white uppercase tracking-[0.2em] text-[11px] font-medium hover:bg-[#222] transition-colors active:scale-[0.98]">
-                        Add to Cart
-                    </button>
+                    <form action="{{route('cart.add') }}" method="POST">
+                        @csrf
+
+                        <input type="hidden" name="variant_id" :value="selectedVariantId">
+                        <input type="hidden" name="quantity" :value="quantity">
+
+                        <button
+                            type="submit"
+                            :disabled="!selectedVariantId"
+                            class="flex-1 bg-black text-white uppercase">
+                            Add to Cart
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -127,140 +156,96 @@
 
         <div class="flex items-center justify-between mb-10">
             <h2 class="text-sm tracking-[0.2em] uppercase font-medium">You Might Also Like</h2>
-            <a href="/shop" class="text-[10px] tracking-[0.2em] uppercase text-gray-400 hover:text-black transition-colors border-b border-gray-200">View All</a>
+            <a href="" class="text-[10px] tracking-[0.2em] uppercase text-gray-400 hover:text-black transition-colors border-b border-gray-200">View All</a>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-12">
-            <div class="group">
-                <div class="relative group overflow-hidden aspect-[3/4]">
-                    <img src="https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1200" 
-                        class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="Product">
-                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                        <button class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </button>
-                        <a href="/product_details/1" class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
-                            </svg>
-                        </a>
-                    </div>    
-                </div>
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="font-serif text-sm font-light">Silk Drape Dress</h3>
-                        <p class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">Ready-to-wear</p>
+            @foreach($relatedProducts as $item)
+                @php
+                    $variant = $item->variants->first();
+                    $image = $variant && $variant->images->count()
+                                ? $variant->images->first()->image_url
+                                : 'default.jpg';
+                @endphp
+                <div class="group">
+                    <div class="relative group overflow-hidden aspect-[3/4]">
+                        <img src="{{ asset('storage/' . $image) }}"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="Product">
+                        <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                            <button class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                            </button>
+                            <a href="{{ route('product.detail', $item->id) }}" class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
+                                </svg>
+                            </a>
+                        </div>
                     </div>
-                    <p class="text-xs font-light">$450</p>
-                </div>
-            </div>
-
-            <div class="group"> 
-                <div class="relative group overflow-hidden aspect-[3/4]">
-                    <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=1200" 
-                        class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="">
-                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                        <button class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </button>
-                        <a href="/product_details/2" class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
-                            </svg>
-                        </a>
-                    </div>     
-                </div>
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="font-serif text-sm font-light">Tailored Wool Trousers</h3>
-                        <p class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">Limited Edition</p>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-serif text-sm font-light">
+                                {{ $item->product_name }}
+                            </h3>
+                            <p class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">
+                                {{ $item->category->category_name ?? '' }}
+                            </p>
+                        </div>
+                        <p class="text-xs font-light"> {{ number_format($variant->selling_price ?? 0) }}đ</p>
                     </div>
-                    <p class="text-xs font-light">$320</p>
                 </div>
-            </div>
-
-            <div class="group">
-                <div class="relative group overflow-hidden aspect-[3/4]">
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200" 
-                        class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="">
-                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                        <button class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </button>
-                        <a href="/product_details/3" class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
-                            </svg>
-                        </a>
-                    </div> 
-                </div>
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="font-serif text-sm font-light">Summer Knit Top</h3>
-                        <p class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">New Arrival</p>
-                    </div>
-                    <p class="text-xs font-light">$180</p>
-                </div>
-            </div>
-
-            <div class="group ">
-                <div class="relative group overflow-hidden aspect-[3/4]">
-                    <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1200" 
-                        class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="">
-                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                        <button class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </button>
-                        <a href="/product_details/4" class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
-                            </svg>
-                        </a>
-                    </div>     
-                </div>
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="font-serif text-sm font-light">Classic Trench</h3>
-                        <p class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">Essential</p>
-                    </div>
-                    <p class="text-xs font-light">$890</p>
-                </div>
-            </div>
-
-            <div class="group">
-                <div class="relative group overflow-hidden aspect-[3/4]">
-                    <img src="https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=1200" 
-                        class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="">
-                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                        <button class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                        </button>
-                        <a href="/product_details/5" class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-black hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
-                            </svg>
-                        </a>
-                    </div>     
-                </div>
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="font-serif text-sm font-light">Linen Blouse</h3>
-                        <p class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">Limited</p>
-                    </div>
-                    <p class="text-xs font-light">$210</p>
-                </div>
-            </div>
-
+            @endforeach
         </div>
     </section>
 </main>
+    <script>
+        function productData(variants) {
+            return {
+                variants: variants,
+                selectedColor: '',
+                selectedSize: '',
+                selectedStock: 0,
+                selectedVariantId: null,
+                quantity: 1,
+
+                get colors() {
+                    return [...new Set(this.variants.map(v => v.color?.color_name))];
+                },
+
+                get sizes() {
+                    return this.variants
+                        .filter(v => v.color?.color_name === this.selectedColor)
+                        .map(v => v.size?.size_name);
+                },
+
+                selectColor(color) {
+                    this.selectedColor = color;
+                    this.selectedSize = '';
+                    this.selectedStock = 0;
+                    this.selectedVariantId = null;
+                },
+
+                selectSize(size) {
+                    this.selectedSize = size;
+
+                    let variant = this.variants.find(v =>
+                        v.color?.color_name === this.selectedColor &&
+                        v.size?.size_name === size
+                    );
+
+                    if (variant) {
+                        this.selectedStock = variant.stock_quantity;
+                        this.selectedVariantId = variant.id;
+                        this.quantity = 1;
+                    } else {
+                        this.selectedStock = 0;
+                        this.selectedVariantId = null;
+                        this.quantity = 0;
+                    }
+                },
+
+            }
+        }
+    </script>
 @endsection

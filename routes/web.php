@@ -119,20 +119,50 @@ Route::prefix('/promotions')->group(function () {
     Route::delete('/{promotion}', [\App\Http\Controllers\PromotionController::class, 'destroy'])
         ->name('promotions.destroy');
 });
+//role
+Route::prefix('/roles')->group(function () {
+    Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])
+        ->name('roles.index');
+    Route::get('/create', [\App\Http\Controllers\RoleController::class, 'create'])
+        ->name('roles.create');
+    Route::post('/store', [\App\Http\Controllers\RoleController::class, 'store'])
+        ->name('roles.store');
+    Route::get('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'edit'])
+        ->name('roles.edit');
+    Route::put('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'update'])
+        ->name('roles.update');
+    Route::delete('/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])
+        ->name('roles.destroy');
+});
+//role
+Route::prefix('/roles')->group(function () {
+    Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])
+        ->name('roles.index');
+    Route::get('/create', [\App\Http\Controllers\RoleController::class, 'create'])
+        ->name('roles.create');
+    Route::post('/store', [\App\Http\Controllers\RoleController::class, 'store'])
+        ->name('roles.store');
+    Route::get('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'edit'])
+        ->name('roles.edit');
+    Route::put('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'update'])
+        ->name('roles.update');
+    Route::delete('/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])
+        ->name('roles.destroy');
+});
 //account
-Route::prefix('admin/users')->group(function () {
+Route::prefix('/users')->group(function () {
     Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])
-        ->name('admin.users.index');
+        ->name('users.index');
     Route::get('/create', [\App\Http\Controllers\UserController::class, 'create'])
-        ->name('admin.users.create');
+        ->name('users.create');
     Route::post('/store', [\App\Http\Controllers\UserController::class, 'store'])
-        ->name('admin.users.store');
+        ->name('users.store');
     Route::get('/edit/{user}', [\App\Http\Controllers\UserController::class, 'edit'])
-        ->name('admin.users.edit');
+        ->name('users.edit');
     Route::put('/update/{user}', [\App\Http\Controllers\UserController::class, 'update'])
-        ->name('admin.users.update');
+        ->name('users.update');
     Route::delete('/delete/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])
-        ->name('admin.users.destroy');
+        ->name('users.destroy');
 });
 //product
 Route::prefix('/products')->group(function () {
@@ -142,25 +172,28 @@ Route::prefix('/products')->group(function () {
         ->name('products.create');
     Route::post('/store', [\App\Http\Controllers\ProductController::class, 'store'])
         ->name('products.store');
-    Route::get('/edit/{product}', [\App\Http\Controllers\ProductController::class, 'edit'])
-        ->name('products.edit');
-    Route::put('/edit/{product}', [\App\Http\Controllers\ProductController::class, 'update'])
+    Route::put('/show/{product}', [\App\Http\Controllers\ProductController::class, 'update'])
         ->name('products.update');
     Route::get('/show/{product}', [\App\Http\Controllers\ProductController::class, 'show'])
         ->name('products.show');
-    Route::delete('/{product}', [\App\Http\Controllers\ProductController::class, 'destroy'])
-        ->name('products.destroy');
-    Route::delete('/variant-image/{id}', [\App\Http\Controllers\ProductController::class, 'deleteImage'])
-        ->name('variant.image.delete');
-    Route::delete('/variants/{id}', [\App\Http\Controllers\ProductController::class, 'destroyVariant'])
-        ->name('variants.destroy');
+    Route::delete('/variants/{productVariant}',
+        [\App\Http\Controllers\ProductVariantController::class, 'destroy']
+    )->name('variants.destroy');
 });
 
 
+//customer
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])
+    ->name('home');
+use App\Http\Controllers\ProductController;
 
-Route::get('/home', function () {
-    return view('home');
-});
+Route::get('/product/{id}', [\App\Http\Controllers\HomeController::class, 'productDetail'])
+    ->name('product.detail');
+Route::post('/cart', [\App\Http\Controllers\CartController::class, 'addToCart'])
+    ->name('cart.add');
+Route::get('/cart', function () {
+    return view('cart');
+})->name('cart.index');
 
 Route::get('/checkout', function () {
     return view('checkout'); // Đảm bảo tên file là checkout.blade.php
@@ -228,145 +261,9 @@ Route::get('/shop_women', function () {
     return view('shop_women', ['products' => $products]);
 });
 
-Route::get('/product/{id}', function ($id) {
-    // Trong thực tế, ông sẽ dùng: $product = Product::findOrFail($id);
-    // Ở đây tôi giả lập lấy dữ liệu theo ID
-    $products = collect([
-        (object)[
-            'id' => 1,
-            'name' => 'Oversized Pea Blazer',
-            'price' => 245,
-            'old_price' => 295,
-            'category' => 'Jackets',
-            'description' => 'An oversized pea blazer crafted from premium wool blend fabric...',
-            'image' => 'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1200',
-            'colors' => ['Black', 'Navy', 'Tan'],
-            'sizes' => ['XS', 'S', 'M', 'L', 'XL']
-        ],
-        (object)[
-            'id' => 2,
-            'name' => 'Silk Drape Dress',
-            'price' => 450,
-            'old_price' => null,
-            'category' => 'Ready-to-wear',
-            'description' => 'A luxurious silk drape dress that flows elegantly with every step...',
-            'image' => 'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1200',
-            'colors' => ['Red', 'Emerald', 'Sapphire'],
-            'sizes' => ['XS', 'S', 'M', 'L']
-        ],
-         (object)[
-            'id' => 3,
-            'name' => 'Wool Trousers',
-            'price' => 320,
-            'old_price' => 350,
-            'category' => 'Limited',
-            'description' => 'Tailored wool trousers that combine comfort and sophistication...',
-            'image' => 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=1200',
-            'colors' => ['Gray', 'Charcoal', 'Navy'],
-            'sizes' => ['28', '30', '32', '34', '36']
-        ],
-         (object)[
-            'id' => 4,
-            'name' => 'Leather Jacket',
-            'price' => 600,
-            'old_price' => null,
-            'category' => 'Ready-to-wear',
-            'description' => 'A classic leather jacket made from premium materials for a timeless look...',
-            'image' => 'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1200',
-            'colors' => ['Black', 'Brown', 'Burgundy'],
-            'sizes' => ['XS', 'S', 'M', 'L', 'XL']
-        ],
-         (object)[
-            'id' => 5,
-            'name' => 'Cashmere Sweater',
-            'price' => 280,
-            'old_price' => 320,
-            'category' => 'Limited',
-            'description' => 'A soft cashmere sweater that provides warmth and style during colder months   ...',
-            'image' => 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=1200',
-            'colors' => ['Beige', 'Cream', 'Light Gray'],
-            'sizes' => ['XS', 'S', 'M', 'L', 'XL']
-        ],
-            (object)[
-            'id' => 6,
-            'name' => 'Oversized Pea Blazer',
-            'price' => 245,
-            'old_price' => 295,
-            'category' => 'Jackets',
-            'description' => 'An oversized pea blazer crafted from premium wool blend fabric...',
-            'image' => 'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1200',
-            'colors' => ['Black', 'Navy', 'Tan'],
-            'sizes' => ['XS', 'S', 'M', 'L', 'XL']
-        ],
-        (object)[
-            'id' => 7,
-            'name' => 'Silk Drape Dress',
-            'price' => 450,
-            'old_price' => null,
-            'category' => 'Ready-to-wear',
-            'description' => 'A luxurious silk drape dress that flows elegantly with every step...',
-            'image' => 'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1200',
-            'colors' => ['Red', 'Emerald', 'Sapphire'],
-            'sizes' => ['XS', 'S', 'M', 'L']
-        ],
-         (object)[
-            'id' => 8,
-            'name' => 'Wool Trousers',
-            'price' => 320,
-            'old_price' => 350,
-            'category' => 'Limited',
-            'description' => 'Tailored wool trousers that combine comfort and sophistication...',
-            'image' => 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=1200',
-            'colors' => ['Gray', 'Charcoal', 'Navy'],
-            'sizes' => ['28', '30', '32', '34', '36']
-        ],
-         (object)[
-            'id' => 9,
-            'name' => 'Leather Jacket',
-            'price' => 600,
-            'old_price' => null,
-            'category' => 'Ready-to-wear',
-            'description' => 'A classic leather jacket made from premium materials for a timeless look...',
-            'image' => 'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=1200',
-            'colors' => ['Black', 'Brown', 'Burgundy'],
-            'sizes' => ['XS', 'S', 'M', 'L', 'XL']
-        ],
-         (object)[
-            'id' => 10,
-            'name' => 'Cashmere Sweater',
-            'price' => 280,
-            'old_price' => 320,
-            'category' => 'Limited',
-            'description' => 'A soft cashmere sweater that provides warmth and style during colder months   ...',
-            'image' => 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=1200',
-            'colors' => ['Beige', 'Cream', 'Light Gray'],
-            'sizes' => ['XS', 'S', 'M', 'L', 'XL']
-        ],
-    ]);
 
-    $product = $products->firstWhere('id', $id);
 
-    if (!$product) abort(404);
 
-    return view('product_details', ['product' => $product]);
-})->name('product.details');
-
-Route::get('/cart', function () {
-    // Giả lập dữ liệu giỏ hàng từ Session hoặc DB
-    $cartItems = [
-        [
-            'id' => '1',
-            'name' => 'Oversized Pea Blazer in Black',
-            'price' => 245,
-            'image' => 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80',
-            'size' => 'M',
-            'color' => 'Black',
-            'quantity' => 1,
-        ],
-        // ... các item khác
-    ];
-    return view('cart')->with('cartItems', $cartItems);
-});
 
 Route::get('/blog', function () {
     $blogPosts = [

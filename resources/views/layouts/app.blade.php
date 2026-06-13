@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -12,11 +13,11 @@
     </style>
 </head>
 <body>
-    
+
     <header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100">
     <div class="max-w-[1800px] mx-auto px-6 lg:px-10 py-6 flex justify-between items-center">
         <div class="flex-1">
-            <h1 class="font-serif text-3xl tracking-[0.4em] font-light pl-10">INNOVE</h1>      
+            <h1 class="font-serif text-3xl tracking-[0.4em] font-light pl-10">INNOVE</h1>
         </div>
         <nav class="hidden lg:flex gap-10 text-[13px] uppercase tracking-[0.2em]">
             <a href="/home" class="hover:text-gray-400 transition">Home</a>
@@ -41,12 +42,12 @@
             <a href="/blog" class="hover:text-gray-400 transition">Blog</a>
             <a href="/contactus" class="hover:text-gray-400 transition">Contact Us</a>
         </nav>
-            
-    <div class="flex-1 flex items-center justify-end gap-6"> 
+
+    <div class="flex-1 flex items-center justify-end gap-6">
         <div class="relative hidden sm:block group">
-        <input type="text" 
-                placeholder="SEARCH" 
-                class="bg-[#f9f9f9] border border-gray-100 py-2 px-4 pr-10 text-[9px] tracking-[0.2em] focus:outline-none focus:border-black w-48 transition-all duration-500 uppercase placeholder:text-gray-300"> 
+        <input type="text"
+                placeholder="SEARCH"
+                class="bg-[#f9f9f9] border border-gray-100 py-2 px-4 pr-10 text-[9px] tracking-[0.2em] focus:outline-none focus:border-black w-48 transition-all duration-500 uppercase placeholder:text-gray-300">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-black transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
@@ -81,7 +82,7 @@
             <div class="col-span-2">
                 <h4 class="font-serif text-2xl tracking-widest mb-6">BKACAD</h4>
                 <p class="text-gray-400 text-xs max-w-xs leading-loose">
-                    Đồ án tốt nghiệp BKACAD - 2026. 
+                    Đồ án tốt nghiệp BKACAD - 2026.
                     HoangNguyenThanhQuan-NguyenThiMai.
                 </p>
             </div>

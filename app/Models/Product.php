@@ -16,7 +16,8 @@ class Product extends Model
         'description',
         'brand_id',
         'category_id',
-        'material_id'
+        'material_id',
+        'status'
     ];
     public $timestamps = true;
     public function brand()
@@ -38,19 +39,20 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
-    //all stock_quantity variants
-    public function getTotalStockAttribute()
-    {
-        return $this->variants->sum('stock_quantity');
-    }
-    // Status theo rule
     public function getStockStatusAttribute()
     {
-        if ($this->total_stock == 0) {
+        // không có variant
+        if ($this->variants()->count() == 0) {
+            return 'inactive';
+        }
+
+        $totalStock = $this->variants()->sum('stock_quantity');
+
+        if ($totalStock == 0) {
             return 'out_of_stock';
         }
 
-        if ($this->total_stock < 50) {
+        if ($totalStock < 10) {
             return 'low_stock';
         }
 

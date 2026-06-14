@@ -52,7 +52,7 @@ class UserController extends Controller
                 'date_of_birth' => $request->date_of_birth,
                 'address' => $request->address,
             ]);
-            dd($users);
+//            dd($users);
             return redirect()->route('users.index')->with('success', 'Thêm user thành công!');
         }
 

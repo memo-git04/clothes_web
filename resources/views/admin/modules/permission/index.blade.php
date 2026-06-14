@@ -16,31 +16,28 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Role List</h4>
+                            <h4 class="card-title">Permission List</h4>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered zero-configuration">
                                     <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Role Name</th>
-                                        <th>Add Permission</th>
+                                        <th>Permission Name</th>
+                                        <th>Add Role</th>
                                         <th>Act</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach( $roles as $role)
+                                    @foreach( $permissions as $permission)
                                         <tr>
                                             <td style="">{{$loop->iteration}}</td>
-                                            <td style="">{{$role->name}}</td>
+                                            <td style="">{{$permission->name}}</td>
                                             <td>
-                                                <a href="{{ route('roles.permissions.edit', $role->id) }}"
-                                                   class="btn btn-primary">
-                                                    Quản lý quyền
-                                                </a>
+                                                <a href="{{ route('permissions.assign', $permission->id) }}" class="btn btn-primary">Add Role</a>
                                             </td>
                                             <td>
-                                                <a href="{{route('roles.edit', $role->id) }}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                                <form action="{{route('roles.destroy', $role->id)}}" method="post">
+                                                <a href="{{route('permissions.edit', $permission->id) }}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                                                <form action="{{route('permissions.destroy', $permission->id)}}" method="post">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
@@ -52,8 +49,8 @@
                                     <tfoot>
                                     <tr>
                                         <th>#</th>
-                                        <th>Role Name</th>
-                                        <th>Add Permission</th>
+                                        <th>Permission Name</th>
+                                        <th>Add Role</th>
                                         <th>Act</th>
                                     </tr>
                                     </tfoot>
@@ -61,7 +58,7 @@
                             </div>
                             <!-- Button Add New Product -->
                             <div class="add mt-2 mx-4">
-                                <a href="{{route('roles.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Tạo vai trò mới</button></a>
+                                <a href="{{route('permissions.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Tạo vai trò mới</button></a>
                             </div>
                         </div>
                     </div>

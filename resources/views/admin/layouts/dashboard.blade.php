@@ -298,11 +298,12 @@
                 </li>
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-people-group"></i><span class="nav-text">Member Management</span>
+                        <i class="fa-solid fa-people-group"></i><span class="nav-text">Account Management</span>
                     </a>
                     <ul aria-expanded="false">
                         <li><a href="{{route('users.index')}}">Account List </a></li>
                         <li><a href="{{route('users.create')}}">Add new account</a></li>
+                        <li><a href="{{route('roles.index')}}">Role - Permission Management</a></li>
                     </ul>
                 </li>
 

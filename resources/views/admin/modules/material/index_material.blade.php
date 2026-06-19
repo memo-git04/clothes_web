@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
      <div class="content-body">
 
@@ -37,8 +37,8 @@
                                                 {{ $material->material_name }}
                                             </td>
                                             <td>
-                                                <a href=" {{ route('materials.edit', $material->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                                <form action="{{ route('materials.destroy',$material->id ) }}" method="POST">
+                                                <a href=" {{ route('admin.materials.edit', $material->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                                                <form action="{{ route('admin.materials.destroy',$material->id ) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
@@ -57,7 +57,7 @@
                                 </table>
                             </div>
                             <div class="add mt-2 mx-4">
-                                <a href="{{ route('materials.create') }}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new material</button></a>
+                                <a href="{{ route('admin.materials.create') }}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new material</button></a>
                             </div>
                         </div>
 

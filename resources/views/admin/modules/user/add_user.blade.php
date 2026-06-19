@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
 
     <div class="content-body">
@@ -34,7 +34,7 @@
                             </div>
                         @endif
                         <div class="form-validation">
-                            <form class="form-valide" action="{{ route('users.store') }}" method="POST">
+                            <form class="form-valide" action="{{ route('admin.users.store') }}" method="POST">
                                 @csrf
                                 {{-- Username --}}
                                 <div class="form-group row">

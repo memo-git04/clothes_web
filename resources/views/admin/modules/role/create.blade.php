@@ -1,12 +1,12 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 
 @section('content')
     <div class="content-body">
         <div class="row page-titles mx-0">
             <div class="col p-md-0">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('roles.index') }}">Roles</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.roles.index') }}">Roles</a></li>
                     <li class="breadcrumb-item active">Tạo Vai Trò Mới</li>
                 </ol>
             </div>
@@ -33,7 +33,7 @@
                                 </div>
                             @endif
 
-                            <form action="{{ route('roles.store') }}" method="POST">
+                            <form action="{{ route('admin.roles.store') }}" method="POST">
                             @csrf
 
                             <!-- Tên Role -->
@@ -50,7 +50,7 @@
                                 <div class="form-group row">
                                     <div class="col-lg-8 ml-auto">
                                         <button type="submit" class="btn btn-primary">Tạo Vai Trò</button>
-                                        <a href="{{ route('roles.index') }}" class="btn btn-secondary">Hủy</a>
+                                        <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">Hủy</a>
                                     </div>
                                 </div>
                             </form>

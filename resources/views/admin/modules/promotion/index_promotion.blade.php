@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
 
     <div class="content-body">
@@ -104,7 +104,7 @@
 
                             <!-- Add button -->
                             <div class="add mt-2 mx-4">
-                                <a href="{{ route('promotions.create') }}">
+                                <a href="{{ route('admin.promotions.create') }}">
                                     <button type="button" class="btn btn-success">
                                         <i class="fa-solid fa-plus"></i> Add new promotion
                                     </button>

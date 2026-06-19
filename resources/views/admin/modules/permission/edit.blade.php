@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 
 @section('content')
 
@@ -7,7 +7,7 @@
             <div class="col p-md-0">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('permissions.index') }}">Permission</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.permissions.index') }}">Permission</a></li>
                     <li class="breadcrumb-item active">Edit Permission</li>
                 </ol>
             </div>
@@ -33,7 +33,7 @@
                                 </div>
                             @endif
 
-                            <form action="{{ route('permissions.update', $permission->id) }}" method="POST">
+                            <form action="{{ route('admin.permissions.update', $permission->id) }}" method="POST">
                             @csrf
                             @method('PUT')
 
@@ -59,7 +59,7 @@
                                 <div class="form-group row">
                                     <div class="col-lg-8 ml-auto">
                                         <button type="submit" class="btn btn-primary">Cập nhật</button>
-                                        <a href="{{ route('permissions.index') }}" class="btn btn-secondary">Hủy</a>
+                                        <a href="{{ route('admin.permissions.index') }}" class="btn btn-secondary">Hủy</a>
                                     </div>
                                 </div>
                             </form>

@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
 
     <div class="content-body">
@@ -9,7 +9,7 @@
 
                     <h4 class="card-title mb-4">Add new product</h4>
 
-                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         {{-- ROW 1 --}}

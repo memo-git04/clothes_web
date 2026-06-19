@@ -4,10 +4,45 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
 {
-        /**
+
+    //admin login-logout
+    public function login()
+    {
+        return view('admin.login.page-login');
+    }
+    public function loginProcess(Request $request)
+    {
+        $accounts = $request->only(['email', 'password']);
+        //        dd($accounts);
+        if (Auth::attempt($accounts)){
+            $user = Auth::user();
+
+            if (!$user->hasRole('admin')) {
+                Auth::logout();
+                return back()->withErrors(['email' => 'Bạn không có quyền Admin.']);
+            }
+
+            // Kiểm tra status
+            if ($user->status !== 'active') {
+                Auth::logout();
+                return back()->withErrors(['email' => 'Tài khoản của bạn đã bị khóa.']);
+            }
+            return redirect()->intended(route('admin.users.index'));
+        }
+        return Redirect::back()->withErrors(['email' => 'Invalid email or password.']);
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return Redirect::route('admin.loginAdmin');
+    }
+    /**
         * Display a listing of the resource.
         */
         public function index()
@@ -51,9 +86,11 @@ class UserController extends Controller
                 'gender' => $request->gender,
                 'date_of_birth' => $request->date_of_birth,
                 'address' => $request->address,
+                'status'        => 'active',
             ]);
+            $users->assignRole('admin');
 //            dd($users);
-            return redirect()->route('users.index')->with('success', 'Thêm user thành công!');
+            return redirect()->route('admin.users.index')->with('success', 'Thêm user thành công!');
         }
 
         /**
@@ -67,9 +104,14 @@ class UserController extends Controller
         /**
         * Show the form for editing the specified resource.
         */
-        public function edit($id)
+        public function edit(User $user)
         {
-            //
+
+            $roles = \App\Models\Role::all();
+            return view('admin.modules.user.edit_user', [
+                'user' => $user,
+                'roles' => $roles
+            ]);
         }
 
         /**

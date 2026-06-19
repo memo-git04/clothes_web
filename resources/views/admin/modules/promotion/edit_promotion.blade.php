@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 
 @section('content')
 
@@ -20,7 +20,7 @@
                         <div class="card-body">
                             <h4 class="card-title">Edit Promotion</h4>
 
-                            <form action="{{ route('promotions.update', $promotion->id) }}" method="POST">
+                            <form action="{{ route('admin.promotions.update', $promotion->id) }}" method="POST">
                             @csrf
                             @method('PUT')
 
@@ -101,7 +101,7 @@
                                 <div class="form-group row">
                                     <div class="col-lg-8 ml-auto">
                                         <button type="submit" class="btn btn-primary">Update Promotion</button>
-                                        <a href="{{ route('promotions.index') }}" class="btn btn-success">Back</a>
+                                        <a href="{{ route('admin.promotions.index') }}" class="btn btn-success">Back</a>
                                     </div>
                                 </div>
 

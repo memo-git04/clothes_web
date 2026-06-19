@@ -18,7 +18,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
+
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
+
+        //redirect khi chưa đăng nhập
+        $middleware->redirectGuestsTo(function () {
+            return route('admin.loginAdmin');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

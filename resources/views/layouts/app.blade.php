@@ -20,7 +20,7 @@
             <h1 class="font-serif text-3xl tracking-[0.4em] font-light pl-10">INNOVE</h1>
         </div>
         <nav class="hidden lg:flex gap-10 text-[13px] uppercase tracking-[0.2em]">
-            <a href="/home" class="hover:text-gray-400 transition">Home</a>
+            <a href="{{route('home')}}" class="hover:text-gray-400 transition">Home</a>
             <div class="relative group">
                 <a href="/shop" class="hover:text-gray-400 transition flex items-center gap-1">
                     Shop
@@ -63,21 +63,78 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
-            <span class="text-[10px] uppercase tracking-[0.2em]">Cart (0)</span>
+            <span class="text-[10px] uppercase tracking-[0.2em]">
+                Cart (
+                {{ collect(session('cart', []))->sum('quantity') }}
+                )</span>
         </a>
 
-        <a href="/login" class="flex items-center gap-2 hover:text-gray-400 transition-colors duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-            </svg>
-            <span class="text-[10px] uppercase tracking-[0.2em] hidden xl:inline">Account</span>
-        </a>
+{{--        <a href="/login" class="flex items-center gap-2 hover:text-gray-400 transition-colors duration-300">--}}
+{{--            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">--}}
+{{--                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />--}}
+{{--            </svg>--}}
+{{--            <span class="text-[10px] uppercase tracking-[0.2em] hidden xl:inline">Account</span>--}}
+{{--        </a>--}}
+    <!-- Account Dropdown -->
+        <!-- Account Dropdown -->
+        <div x-data="{ open: false }" class="relative" @click.outside="open = false">
+            @if(Auth::check())
+                <button @click="open = !open"
+                        class="flex items-center gap-2 hover:text-gray-400 transition-colors duration-300 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    <span class="text-[10px] uppercase tracking-[0.2em] hidden xl:inline">
+                {{ Auth::user()->user_name ?? Auth::user()->full_name }}
+            </span>
+                </button>
+
+                <!-- Dropdown -->
+                <div x-show="open"
+                     x-transition
+                     class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100">
+
+                    <div class="px-4 py-3 border-b">
+                        <p class="text-sm font-medium text-gray-900">{{ Auth::user()->full_name }}</p>
+                        <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+                    </div>
+
+                    <div class="py-1">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                            Thông tin tài khoản
+                        </a>
+                        <a href="{{route('orderHistory')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                            Lịch sử đơn hàng
+                        </a>
+                        <a href="{{ route('logout') }}"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                           class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">
+                            Đăng xuất
+                        </a>
+                    </div>
+                </div>
+            @else
+                <a href="{{ route('login') }}" class="flex items-center gap-2 hover:text-gray-400 transition-colors duration-300">
+                    <svg ... > ... </svg>
+                    <span class="text-[10px] uppercase tracking-[0.2em] hidden xl:inline">Account</span>
+                </a>
+            @endif
+        </div>
+
+        <!-- Form Logout -->
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
+
         </div>
         </header>
+{{--        BODY CONTENT--}}
         <main>
             @yield('content')
         </main>
-        <footer class="border-t py-20 px-10">
+    {{--        BODY CONTENT--}}
+
+    <footer class="border-t py-20 px-10">
         <div class="max-w-[1800px] mx-auto grid grid-cols-1 lg:grid-cols-4 gap-12">
             <div class="col-span-2">
                 <h4 class="font-serif text-2xl tracking-widest mb-6">BKACAD</h4>

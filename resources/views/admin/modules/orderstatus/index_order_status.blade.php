@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
 
     <div class="content-body">
@@ -39,7 +39,7 @@
                                 </tbody>
                             </table>
 
-                            <a href="{{ route('order-status.create') }}" class="btn btn-success mt-2">
+                            <a href="{{ route('admin.order-status.create') }}" class="btn btn-success mt-2">
                                 Add new status
                             </a>
 

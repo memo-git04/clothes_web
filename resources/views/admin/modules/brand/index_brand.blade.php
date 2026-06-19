@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
 
     <div class="content-body">
@@ -38,8 +38,8 @@
                                                 {{ $brand->brand_name }}
                                             </td>
                                             <td>
-                                                <a href=" {{ route('brands.edit', $brand->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                                <form action="{{ route('brands.destroy',$brand->id ) }}" method="POST">
+                                                <a href=" {{ route('admin.brands.edit', $brand->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                                                <form action="{{ route('admin.brands.destroy',$brand->id ) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
@@ -59,7 +59,7 @@
                                 </table>
                             </div>
                             <div class="add mt-2 mx-4">
-                                <a href="{{ route('brands.create') }}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new brand</button></a>
+                                <a href="{{ route('admin.brands.create') }}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new brand</button></a>
                             </div>
                         </div>
 

@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 
 @section('content')
 
@@ -13,7 +13,7 @@
                         Gán Permission cho Role: {{ $role->name }}
                     </h4>
 
-                    <form method="POST" action="{{ route('roles.permissions.update', $role->id) }}">
+                    <form method="POST" action="{{ route('admin.roles.permissions.update', $role->id) }}">
                         @csrf
 
 {{--                        --}}{{-- Role --}}
@@ -68,7 +68,7 @@
                             Lưu
                         </button>
 
-                        <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">
                             Quay lại
                         </a>
 

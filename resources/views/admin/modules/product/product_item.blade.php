@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
 <div class="content-body">
 
@@ -17,7 +17,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body ">
-                            <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <h4 class="card-title">Thông tin sản phẩm</h4>
@@ -172,7 +172,7 @@
 
                                 <div  style="display: flex">
                                     <div class="add mt-2 mx-4">
-                                        <a href="{{route('products.index')}}"><button type="button" class="btn btn-success"> Back </button></a>
+                                        <a href="{{route('admin.products.index')}}"><button type="button" class="btn btn-success"> Back </button></a>
                                     </div>
                                     <div class="add mt-2 mx-4">
                                         <button type="submit" class="btn btn-primary"> Update </button>

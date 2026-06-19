@@ -1,6 +1,6 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
-
+@can('user.test')
     <div class="content-body">
         <div class="row page-titles mx-0">
             <div class="col p-md-0">
@@ -69,7 +69,7 @@
                                                     @endswitch
                                                 </td>
                                                 <td>
-                                                    <a href="{{route('products.show',$product->id )}}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-eye"></i></button></a>
+                                                    <a href="{{route('admin.products.show',$product->id )}}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-eye"></i></button></a>
 
                                                 </td>
                                             </tr>
@@ -90,7 +90,7 @@
                             </div>
 
                             <div class="add mt-2 mx-4">
-                                <a href="{{route('products.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new</button></a>
+                                <a href="{{route('admin.products.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new</button></a>
                             </div>
                         </div>
                     </div>
@@ -98,4 +98,5 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection

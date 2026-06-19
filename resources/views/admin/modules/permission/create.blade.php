@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 
 @section('content')
     <div class="content-body">
@@ -6,10 +6,10 @@
             <div class="col p-md-0">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="{{ route('dashboard') }}">Dashboard</a>
+                        <a href="{{ route('admin.dashboard') }}">Dashboard</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('permissions.index') }}">Permissions</a>
+                        <a href="{{ route('admin.permissions.index') }}">Permissions</a>
                     </li>
                     <li class="breadcrumb-item active">Tạo Permission</li>
                 </ol>
@@ -45,7 +45,7 @@
                             {{-- Check permission --}}
 {{--                            @can('Create permission')--}}
 
-                                <form action="{{ route('permissions.store') }}" method="POST">
+                                <form action="{{ route('admin.permissions.store') }}" method="POST">
                                     @csrf
 
                                     <div class="form-group row">
@@ -72,7 +72,7 @@
                                             <button type="submit" class="btn btn-primary">
                                                 Tạo Permission
                                             </button>
-                                            <a href="{{ route('permissions.index') }}" class="btn btn-secondary">
+                                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-secondary">
                                                 Hủy
                                             </a>
                                         </div>

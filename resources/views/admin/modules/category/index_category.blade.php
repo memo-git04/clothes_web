@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
  <div class="content-body">
 
@@ -42,10 +42,10 @@
                                                 {{ $category->parent?->category_name ?? 'None'}}
                                             </td>
                                             <td>
-                                                <a href=" {{ route('categories.edit', $category->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                                                <a href=" {{ route('admin.categories.edit', $category->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
                                                 <!-- <a href="#"><button type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button></a> -->
 
-                                                <form action="{{ route('categories.destroy',$category->id ) }}" method="POST">
+                                                <form action="{{ route('admin.categories.destroy',$category->id ) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
@@ -66,7 +66,7 @@
                             </table>
                         </div>
                         <div class="add mt-2 mx-4">
-                            <a href="{{ route('categories.create') }}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new category</button></a>
+                            <a href="{{ route('admin.categories.create') }}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new category</button></a>
                         </div>
                     </div>
 

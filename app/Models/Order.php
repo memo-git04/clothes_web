@@ -34,7 +34,7 @@ class Order extends Model
         return $this->belongsTo(Promotion::class, 'promotion_id');
     }
 
-    public function items()
+    public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
     }

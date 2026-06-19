@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
     <div class="content-body">
 
@@ -19,7 +19,7 @@
                     <div class="card-body">
                         <h4 class="card-title">Edit category</h4>
                         <div class="form-validation">
-                            <form class="form-valide" action="{{ route('categories.update', $category->id) }}" method="post">
+                            <form class="form-valide" action="{{ route('admin.categories.update', $category->id) }}" method="post">
                                 @method('PUT')
                                 @csrf
                                 <div class="form-group row">
@@ -52,7 +52,7 @@
                                         <button type="submit" name="submit" class="btn btn-primary">Update</button>
                                     </div>
                                     <div class="col-lg-8">
-                                        <a href="{{ route('categories.index') }}" class="btn btn-success">Back</a>
+                                        <a href="{{ route('admin.categories.index') }}" class="btn btn-success">Back</a>
                                     </div>
                                 </div>
                             </form>

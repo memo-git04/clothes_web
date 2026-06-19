@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
 <div class="content-body">
 <div class="row page-titles mx-0">
@@ -47,8 +47,8 @@
 {{--                                         </button>--}}
                                      </td>
                                      <td>
-                                         <a href="{{route('users.edit', $admin->id) }}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                         <form action="{{route('users.destroy', $admin->id)}}" method="post">
+                                         <a href="{{route('admin.users.edit', $admin->id) }}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                                         <form action="{{route('admin.users.destroy', $admin->id)}}" method="post">
                                              @csrf
                                              @method('DELETE')
                                              <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
@@ -72,7 +72,8 @@
                     </div>
                     <!-- Button Add New Product -->
                     <div class="add mt-2 mx-4">
-                        <a href="{{route('users.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new member</button></a>
+                        <a href="{{route('admin.users.create')}}">
+                            <button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new member</button></a>
                     </div>
                 </div>
             </div>

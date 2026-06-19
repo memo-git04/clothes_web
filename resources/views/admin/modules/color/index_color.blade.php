@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
      <div class="content-body">
 
@@ -37,8 +37,8 @@
                                                 {{ $color->color_name }}
                                             </td>
                                             <td>
-                                                <a href=" {{ route('colors.edit', $color->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                                <form action="{{ route('colors.destroy',$color->id ) }}" method="POST">
+                                                <a href=" {{ route('admin.colors.edit', $color->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                                                <form action="{{ route('admin.colors.destroy',$color->id ) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
@@ -57,7 +57,7 @@
                                 </table>
                             </div>
                             <div class="add mt-2 mx-4">
-                                <a href="{{ route('colors.create') }}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new color</button></a>
+                                <a href="{{ route('admin.colors.create') }}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Add new color</button></a>
                             </div>
                         </div>
 

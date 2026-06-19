@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 
 @section('content')
     <div class="content-body">
@@ -9,7 +9,7 @@
                         <a href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('permissions.index') }}">Permissions</a>
+                        <a href="{{ route('admin.permissions.index') }}">Permissions</a>
                     </li>
                     <li class="breadcrumb-item active">Gán Role cho Permission</li>
                 </ol>
@@ -37,7 +37,7 @@
 
 {{--                            @can('Role Has Permission')--}}
 
-                                <form method="POST" action="{{ route('permissions.assign.store', $permission->id) }}">
+                                <form method="POST" action="{{ route('admin.permissions.assign.store', $permission->id) }}">
                                     @csrf
 
                                     {{-- Permission name --}}
@@ -89,7 +89,7 @@
                                                 Gán Role
                                             </button>
 
-                                            <a href="{{ route('permissions.index') }}" class="btn btn-secondary">
+                                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-secondary">
                                                 Hủy
                                             </a>
                                         </div>

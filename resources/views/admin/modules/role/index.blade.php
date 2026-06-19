@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
     <div class="content-body">
         <div class="row page-titles mx-0">
@@ -33,14 +33,14 @@
                                             <td style="">{{$loop->iteration}}</td>
                                             <td style="">{{$role->name}}</td>
                                             <td>
-                                                <a href="{{ route('roles.permissions.edit', $role->id) }}"
+                                                <a href="{{ route('admin.roles.permissions.edit', $role->id) }}"
                                                    class="btn btn-primary">
                                                     Quản lý quyền
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="{{route('roles.edit', $role->id) }}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                                <form action="{{route('roles.destroy', $role->id)}}" method="post">
+                                                <a href="{{route('admin.roles.edit', $role->id) }}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                                                <form action="{{route('admin.roles.destroy', $role->id)}}" method="post">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
@@ -61,7 +61,7 @@
                             </div>
                             <!-- Button Add New Product -->
                             <div class="add mt-2 mx-4">
-                                <a href="{{route('roles.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Tạo vai trò mới</button></a>
+                                <a href="{{route('admin.roles.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Tạo vai trò mới</button></a>
                             </div>
                         </div>
                     </div>

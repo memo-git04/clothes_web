@@ -23,8 +23,6 @@
     <!-- Custom Stylesheet -->
     <link href="{{ asset('admin/css/style.css') }} " rel="stylesheet">
 
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
-
 {{--    Link Chart--}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js"
@@ -33,10 +31,6 @@
 
     </script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-{{--    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />--}}
-{{--    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>--}}
-
 
     <!-- font awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -204,7 +198,7 @@
                     </li>
 
                     <li class="icons dropdown">
-                        @if(session()->has('admin'))
+                        @if(\Illuminate\Support\Facades\Auth::check())
                             <div class="user-img c-pointer position-relative" data-toggle="dropdown">
                                 <span class="activity active"></span>
                                 <img src="{{ asset('admin/images/user/1.png') }}" height="40" width="40" alt="">
@@ -213,10 +207,24 @@
                                 <div class="dropdown-content-body">
                                     <ul>
                                         <li>
-                                            <a href=""><i class="icon-user"></i> <span>{{ session()->get('admin')->full_name }}</span></a>
+                                            <a href=""><i class="icon-user"></i>
+                                                <span>
+                                                    {{ Auth::user()->user_name }}
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                <i class="icon-envelope"></i>
+                                                <span>{{ Auth::user()->email }}</span>
+                                            </a>
                                         </li>
                                         <hr class="my-2">
-                                        <li><a href="{{ route('logout')}}"><i class="icon-key"></i> <span>Log out</span></a></li>
+                                        <li><a href="{{ route('admin.logoutAdmin')}}">
+                                                <i class="icon-key"></i>
+                                                <span>Đăng xuất</span>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -229,7 +237,7 @@
                                 <div class="dropdown-content-body">
                                     <ul>
                                         <li>
-                                            <a href=""><i class="icon-lock"></i> <span>Login</span></a>
+                                            <a href="{{ route('admin.loginAdmin')}}"><i class="icon-lock"></i> <span>Login</span></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -253,7 +261,7 @@
             <ul class="metismenu" id="menu">
                 <li class="nav-label">Dashboard</li>
                 <li>
-                    <a href="{{route('dashboard')}}" aria-expanded="false">
+                    <a href="{{route('admin.dashboard')}}" aria-expanded="false">
                         <i class="icon-speedometer menu-icon"></i><span class="nav-text">Dashboard</span>
                     </a>
 
@@ -263,8 +271,8 @@
                         <i class="fa-brands fa-slack"></i><span class="nav-text">Product Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{route('products.index')}}">Product Management</a></li>
-                        <li><a href="{{route('products.create')}}">Add new product</a></li>
+                        <li><a href="{{route('admin.products.index')}}">Product Management</a></li>
+                        <li><a href="{{route('admin.products.create')}}">Add new product</a></li>
                     </ul>
                 </li>
 
@@ -273,8 +281,8 @@
                         <i class="fa-solid fa-chart-simple"></i><span class="nav-text">Category Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{route('categories.index')}} ">Category Management</a></li>
-                        <li><a href="{{route('categories.create')}} ">Add new category</a></li>
+                        <li><a href="{{route('admin.categories.index')}} ">Category Management</a></li>
+                        <li><a href="{{route('admin.categories.create')}} ">Add new category</a></li>
                     </ul>
                 </li>
 
@@ -283,7 +291,7 @@
                         <i class="fa-solid fa-cart-shopping"></i><span class="nav-text">Order Management </span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="">Order management</a></li>
+                        <li><a href="{{route('admin.orders.index')}}">Order management</a></li>
 
                     </ul>
                 </li>
@@ -292,8 +300,8 @@
                         <i class="fa-solid fa-people-group"></i><span class="nav-text">Promotion Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('promotions.index') }}">Promotion List </a></li>
-                        <li><a href="{{ route('promotions.create') }}">Add new vouncher</a></li>
+                        <li><a href="{{ route('admin.promotions.index') }}">Promotion List </a></li>
+                        <li><a href="{{ route('admin.promotions.create') }}">Add new vouncher</a></li>
                     </ul>
                 </li>
                 <li class="mega-menu mega-menu-sm">
@@ -301,9 +309,9 @@
                         <i class="fa-solid fa-people-group"></i><span class="nav-text">Account Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{route('users.index')}}">Account List </a></li>
-                        <li><a href="{{route('users.create')}}">Add new account</a></li>
-                        <li><a href="{{route('roles.index')}}">Role - Permission Management</a></li>
+                        <li><a href="{{route('admin.users.index')}}">Account List </a></li>
+                        <li><a href="{{route('admin.users.create')}}">Add new account</a></li>
+                        <li><a href="{{route('admin.roles.index')}}">Role - Permission Management</a></li>
                     </ul>
                 </li>
 
@@ -312,8 +320,8 @@
                         <i class="fa-solid fa-shirt"></i><span class="nav-text">Brand Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('brands.index') }}">Brand List </a></li>
-                        <li><a href="{{ route('brands.create') }}">Add new brand</a></li>
+                        <li><a href="{{ route('admin.brands.index') }}">Brand List </a></li>
+                        <li><a href="{{ route('admin.brands.create') }}">Add new brand</a></li>
                     </ul>
                 </li>
 
@@ -322,8 +330,8 @@
                         <i class="fa-solid fa-palette"></i></i><span class="nav-text">Color Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('colors.index') }}">Color List </a></li>
-                        <li><a href="{{ route('colors.create') }}">Add new Color</a></li>
+                        <li><a href="{{ route('admin.colors.index') }}">Color List </a></li>
+                        <li><a href="{{ route('admin.colors.create') }}">Add new Color</a></li>
                     </ul>
                 </li>
 
@@ -332,8 +340,8 @@
                         <i class="fa-brands fa-cotton-bureau"></i></i><span class="nav-text">Material Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('materials.index') }}">Material List </a></li>
-                        <li><a href="{{ route('materials.create') }}">Add new material</a></li>
+                        <li><a href="{{ route('admin.materials.index') }}">Material List </a></li>
+                        <li><a href="{{ route('admin.materials.create') }}">Add new material</a></li>
                     </ul>
                 </li>
 
@@ -342,29 +350,18 @@
                         <i class="fa-solid fa-hat-cowboy-side"></i><span class="nav-text">Size Management</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('sizes.index') }}">Size List </a></li>
-                        <li><a href="{{ route('sizes.create') }}">Add new size</a></li>
+                        <li><a href="{{ route('admin.sizes.index') }}">Size List </a></li>
+                        <li><a href="{{ route('admin.sizes.create') }}">Add new size</a></li>
                     </ul>
                 </li>
 
-                <li class="nav-label">ADDONS</li>
-                <li>
-                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-file-circle-check"></i> <span class="nav-text">Report</span>
-                    </a>
-                    <ul aria-expanded="false">
-                        <li><a href="">Inbox</a></li>
-                        <li><a href="">Read</a></li>
-                        <li><a href="">Compose</a></li>
-                    </ul>
-                </li>
                 <li>
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                         <i class="fa-solid fa-file-shield"></i></i><span class="nav-text">Settings</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="">Profile</a></li>
-                        <li><a href="">Logout</a></li>
+                        <li><a href="{{route('admin.logoutAdmin')}}">Profile</a></li>
+                        <li><a href="{{route('admin.logoutAdmin')}}">Logout</a></li>
                     </ul>
                 </li>
             </ul>

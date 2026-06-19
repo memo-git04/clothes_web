@@ -27,7 +27,9 @@
                             </a>
                         </div>
 
-                        <form class="mt-5 mb-5 login-input" action="{{route('loginProcess')}}" method="post" style="padding: 30px">
+                        <form class="mt-5 mb-5 login-input"
+                              action="{{route('admin.loginProcess')}}"
+                              method="post" style="padding: 30px">
                             @csrf
                             <div class="form-group">
                                 {{--                                    <label>Email</label>--}}

@@ -39,7 +39,7 @@ class PermissionController extends Controller
         SpatiePermission::create([
             'name' => $request->name,
         ]);
-        return redirect()->route('permissions.index')->with('success', 'Permission created successfully!');
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission created successfully!');
     }
 
     /**
@@ -71,7 +71,7 @@ class PermissionController extends Controller
         $permission->update([
             'name' => $request->name,
         ]);
-        return redirect()->route('permissions.index')->with('success', 'Permission updated successfully!');
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully!');
     }
 
     /**
@@ -80,7 +80,7 @@ class PermissionController extends Controller
     public function destroy(Permission $permission)
     {
         $permission->delete();
-        return redirect()->route('permissions.index')->with('success', 'Permission deleted successfully!');
+        return redirect()->route('admin.permissions.index')->with('success', 'Permission deleted successfully!');
     }
     public function assignRole(Permission $permission)
     {
@@ -98,6 +98,6 @@ class PermissionController extends Controller
 
         $permission->roles()->sync($request->roles);
 
-        return redirect()->route('permissions.index')->with('success', 'Gán role thành công!');
+        return redirect()->route('admin.permissions.index')->with('success', 'Gán role thành công!');
     }
 }

@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
 
     <div class="content-body">
@@ -9,7 +9,7 @@
                         <div class="card-body">
                             <h4 class="card-title">Add Order Status</h4>
 
-                            <form action="{{ route('order-status.store') }}" method="POST">
+                            <form action="{{ route('admin.order-status.store') }}" method="POST">
                                 @csrf
 
                                 <div class="form-group row">

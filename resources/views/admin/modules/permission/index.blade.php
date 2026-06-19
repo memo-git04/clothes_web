@@ -1,4 +1,4 @@
-@extends('admin.layouts.dashboard')
+@extends('admin.dashboard')
 @section('content')
     <div class="content-body">
         <div class="row page-titles mx-0">
@@ -33,11 +33,11 @@
                                             <td style="">{{$loop->iteration}}</td>
                                             <td style="">{{$permission->name}}</td>
                                             <td>
-                                                <a href="{{ route('permissions.assign', $permission->id) }}" class="btn btn-primary">Add Role</a>
+                                                <a href="" class="btn btn-primary">Add Role</a>
                                             </td>
                                             <td>
-                                                <a href="{{route('permissions.edit', $permission->id) }}"><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                                <form action="{{route('permissions.destroy', $permission->id)}}" method="post">
+                                                <a href=""><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                                                <form action="" method="post">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
@@ -58,7 +58,7 @@
                             </div>
                             <!-- Button Add New Product -->
                             <div class="add mt-2 mx-4">
-                                <a href="{{route('permissions.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Tạo vai trò mới</button></a>
+                                <a href="{{route('admin.permissions.create')}}"><button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i> Tạo vai trò mới</button></a>
                             </div>
                         </div>
                     </div>

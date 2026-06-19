@@ -18,7 +18,9 @@ class PermissionSeeder extends Seeder
             'category',
             'brand',
             'order',
-            'user'
+            'user',
+            'role',
+            'permission'
         ];
         $actions = [
             'view',
@@ -28,11 +30,12 @@ class PermissionSeeder extends Seeder
         ];
         foreach ($modules as $module) {
             foreach ($actions as $action) {
-                Permission::create([
+                Permission::firstOrCreate([
                     'name' => $module . '.' . $action,
                     'guard_name' => 'web'
                 ]);
             }
+            $this->command->info('Permissions đã được tạo.');
         }
     }
 }

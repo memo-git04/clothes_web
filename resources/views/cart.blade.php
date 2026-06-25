@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <main class="min-h-screen bg-white">
+    <main class="min-h-screen bg-white mt-2">
         <div class="mx-auto max-w-7xl px-6 py-12 lg:px-12 lg:py-20">
             <a href="/shop" class="group mb-12 inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.15em] text-gray-500 hover:text-black">
                 ← Return to Shop

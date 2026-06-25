@@ -137,14 +137,19 @@ class AuthController extends Controller
             $user = \Illuminate\Support\Facades\Auth::user();
             if ($user->status !== 'active') {
                 \Illuminate\Support\Facades\Auth::logout();
-                return redirect()->route('login')->with('error', 'Tài khoản của bạn đã bị khóa.');
+                return redirect()
+                    ->route('login')
+                    ->with('error', 'Tài khoản của bạn đã bị khóa.');
             }
-            return redirect()->route('home')->with('success', 'Đăng nhập thành công!');
+            return redirect()
+                ->route('home')
+                ->with('success', 'Đăng nhập thành công!');
         }
         return redirect()->route('login')->with('error', 'Email hoặc mật khẩu không đúng.');
     }
     public function logoutCustomer(){
         \Illuminate\Support\Facades\Auth::logout();
-        return redirect()->route('login');
+        session()->forget('cart'); // Xóa giỏ hàng khỏi session khi đăng xuất
+        return redirect()->route('home');
     }
 }

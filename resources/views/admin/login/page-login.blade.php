@@ -27,6 +27,16 @@
                             </a>
                         </div>
 
+{{--                        @if ($errors->any())--}}
+{{--                            <div class="alert alert-danger">--}}
+{{--                                <ul style="margin-bottom:0;">--}}
+{{--                                    @foreach ($errors->all() as $error)--}}
+{{--                                        <li>{{ $error }}</li>--}}
+{{--                                    @endforeach--}}
+{{--                                </ul>--}}
+{{--                            </div>--}}
+{{--                        @endif--}}
+
                         <form class="mt-5 mb-5 login-input"
                               action="{{route('admin.loginProcess')}}"
                               method="post" style="padding: 30px">
@@ -34,13 +44,18 @@
                             <div class="form-group">
                                 {{--                                    <label>Email</label>--}}
                                 <input type="email" value="" name="email" class="form-control" placeholder="Email">
+                                @error('email')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="form-group">
                                 {{--                                    <label>Email</label>--}}
                                 <input type="password" name="password" class="form-control" placeholder="Password">
+                                @error('password')
+                                    <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <button class="btn login-form__btn submit w-100" name="login" value="login" type="submit">Log In</button>
-                            <p class="mt-5 login-form__footer">Dont have account? <a href="" class="text-primary">Sign Up</a> now</p>
                         </form>
 
                     </div>

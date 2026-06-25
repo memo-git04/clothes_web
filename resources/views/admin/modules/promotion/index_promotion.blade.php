@@ -67,14 +67,14 @@
                                             <td class="d-flex">
 
                                                 <!-- Edit -->
-                                                <a href="{{ route('promotions.edit', $promotion->id) }}">
+                                                <a href="{{ route('admin.promotions.edit', $promotion->id) }}">
                                                     <button type="button" class="btn btn-primary btn-sm mr-1">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                     </button>
                                                 </a>
 
                                                 <!-- Delete -->
-                                                <form action="{{ route('promotions.destroy', $promotion->id) }}" method="POST">
+                                                <form action="{{ route('admin.promotions.destroy', $promotion->id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm">

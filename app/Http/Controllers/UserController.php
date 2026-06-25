@@ -17,6 +17,15 @@ class UserController extends Controller
     }
     public function loginProcess(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6'
+        ], [
+            'email.required' => 'Email không được để trống',
+            'email.email' => 'Email không đúng định dạng',
+            'password.required' => 'Mật khẩu không được để trống',
+            'password.min' => 'Mật khẩu phải ít nhất 6 ký tự'
+        ]);
         $accounts = $request->only(['email', 'password']);
         //        dd($accounts);
         if (Auth::attempt($accounts)){
@@ -30,9 +39,13 @@ class UserController extends Controller
             // Kiểm tra status
             if ($user->status !== 'active') {
                 Auth::logout();
-                return back()->withErrors(['email' => 'Tài khoản của bạn đã bị khóa.']);
+                return back()->withErrors([
+                    'email' => 'Tài khoản của bạn đã bị khóa'
+                ]);
             }
-            return redirect()->intended(route('admin.users.index'));
+            return redirect()
+                ->route('admin.dashboard')
+                ->with('success', 'Chúc mừng bạn đã đăng nhập thành công!');
         }
         return Redirect::back()->withErrors(['email' => 'Invalid email or password.']);
     }

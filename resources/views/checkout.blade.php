@@ -64,9 +64,23 @@
                         </section>
 
                         <!-- PAYMENT -->
+                        <!-- PAYMENT -->
                         <section class="mb-12">
                             <h2 class="text-xs uppercase tracking-widest font-semibold mb-4">Payment</h2>
-                            <p class="text-sm text-gray-500">Thanh toán khi nhận hàng (COD)</p>
+
+                            <div class="space-y-3">
+                                <!-- COD -->
+                                <label class="flex items-center space-x-2">
+                                    <input type="radio" name="payment_method" value="cod" class="accent-black" checked>
+                                    <span class="text-sm text-gray-700">Thanh toán khi nhận hàng (COD)</span>
+                                </label>
+
+                                <!-- Online -->
+                                <label class="flex items-center space-x-2">
+                                    <input type="radio" name="payment_method" value="online" class="accent-black">
+                                    <span class="text-sm text-gray-700">Thanh toán Online (VNPay, QR, ...)</span>
+                                </label>
+                            </div>
                         </section>
 
                         <div class="flex justify-between items-center">

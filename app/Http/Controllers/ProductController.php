@@ -146,7 +146,7 @@ class ProductController extends Controller
         }
 
 //        dd($request->all());
-        return redirect()->route('products.index');
+        return redirect()->route('admin.products.index');
     }
 
     /**

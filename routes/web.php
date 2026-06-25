@@ -54,6 +54,10 @@ Route::get('/checkout', [\App\Http\Controllers\CartController::class, 'checkout'
 Route::post('/checkout', [\App\Http\Controllers\CartController::class, 'store'])
     ->name('checkout.store');
 
+Route::get('/payment-return', function (){
+    return view('payment_return');
+});
+
 Route::post('/apply-discount', [\App\Http\Controllers\CartController::class, 'applyDiscount'])->name('discount.apply');
 
 //Order - History
@@ -68,8 +72,6 @@ Route::post('/order/{order}/cancel', [\App\Http\Controllers\OrderController::cla
 
 
 
-
-
 //admin - login/logout
 Route::prefix('admin')->name('admin.')->group(function () {
 
@@ -79,11 +81,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->name('loginProcess');
     Route::get('/logout', [\App\Http\Controllers\UserController::class, 'logout'])
         ->name('logoutAdmin');
+    //admin - dashboard
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
+        ->name('dashboard');
 
     Route::middleware(['auth', 'admin'])->group(function (){
-        //admin - dashboard
-        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
-            ->name('dashboard');
         //account
         Route::prefix('users')->group(function () {
             Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])
@@ -99,21 +101,81 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('/delete/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])
                 ->name('users.destroy');
         });
-        //
-        Route::resource('categories', \App\Http\Controllers\CategoryController::class)
-            ->except(['show', 'edit', 'update', 'destroy']);
-        Route::resource('brands', \App\Http\Controllers\BrandController::class)
-            ->except(['show', 'edit', 'update', 'destroy']);
+        //category, brand, material
+        Route::resource('categories', \App\Http\Controllers\CategoryController::class)->names([
+            'index' => 'categories.index',
+            'create' => 'categories.create',
+            'store' => 'categories.store',
+            'edit' => 'categories.edit',
+            'update' => 'categories.update',
+            'destroy' => 'categories.destroy',
+        ]);
+        Route::resource('brands', \App\Http\Controllers\BrandController::class)->names([
+            'index' => 'brands.index',
+            'create' => 'brands.create',
+            'store' => 'brands.store',
+            'edit' => 'brands.edit',
+            'update' => 'brands.update',
+            'destroy' => 'brands.destroy',
+        ]);
         Route::resource('materials', \App\Http\Controllers\MaterialController::class)
-            ->except(['show', 'edit', 'update', 'destroy']);
+            ->names([
+                'index' => 'materials.index',
+                'create' => 'materials.create',
+                'store' => 'materials.store',
+                'edit' => 'materials.edit',
+                'update' => 'materials.update',
+                'destroy' => 'materials.destroy',
+                ]);
+        //color, size
         Route::resource('colors', \App\Http\Controllers\ColorController::class)
-            ->except(['show', 'edit', 'update', 'destroy']);
+            ->names([
+                'index' => 'colors.index',
+                'create' => 'colors.create',
+                'store' => 'colors.store',
+                'edit' => 'colors.edit',
+                'update' => 'colors.update',
+                'destroy' => 'colors.destroy',
+            ]);
         Route::resource('sizes', \App\Http\Controllers\SizeController::class)
-            ->except(['show', 'edit', 'update', 'destroy']);
-        // Promotions & Order Status
-        Route::resource('promotions', \App\Http\Controllers\PromotionController::class)->except(['show']);
+            ->names([
+                'index' => 'sizes.index',
+                'create' => 'sizes.create',
+                'store' => 'sizes.store',
+                'edit' => 'sizes.edit',
+                'update' => 'sizes.update',
+                'destroy' => 'sizes.destroy',
+            ]);
+        // Promotions
+        Route::resource('promotions', \App\Http\Controllers\PromotionController::class)
+            ->names([
+                'index' => 'promotions.index',
+                'create' => 'promotions.create',
+                'store' => 'promotions.store',
+                'edit' => 'promotions.edit',
+                'update' => 'promotions.update',
+                'destroy' => 'promotions.destroy',
+            ]);
+        // Order Status
         Route::resource('order-status', \App\Http\Controllers\OrderStatusController::class)
-            ->except(['show', 'edit', 'update', 'destroy']);
+            ->names([
+                'index' => 'order-status.index',
+                'create' => 'order-status.create',
+                'store' => 'order-status.store',
+                'edit' => 'order-status.edit',
+                'update' => 'order-status.update',
+                'destroy' => 'order-status.destroy',
+            ]);
+        //Promotion
+        Route::resource('promotions', \App\Http\Controllers\PromotionController::class)
+            ->names([
+                'index' => 'promotions.index',
+                'create' => 'promotions.create',
+                'store' => 'promotions.store',
+                'edit' => 'promotions.edit',
+                'update' => 'promotions.update',
+                'destroy' => 'promotions.destroy',
+            ]);
         // Roles & Permissions
         Route::prefix('roles')->group(function () {
             Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])
@@ -134,9 +196,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->name('roles.permissions.edit');
             Route::post('/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])
                 ->name('roles.permissions.update');
-        });
+            });
             Route::resource('permissions', \App\Http\Controllers\PermissionController::class)
-                ->except(['show', 'edit', 'update', 'destroy']);
+                ->names(
+[
+                    'index' => 'permissions.index',
+                    'create' => 'permissions.create',
+                    'store' => 'permissions.store',
+                    'edit' => 'permissions.edit',
+                    'update' => 'permissions.update',
+                    'destroy' => 'permissions.destroy',
+            ]);
 
 
             // Products

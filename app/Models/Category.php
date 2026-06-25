@@ -16,10 +16,34 @@ class Category extends Model
     protected $fillable = [
         'category_name',
         'description',
-        'parent_id',
+        'level',
         'is_root',
+        'order',
     ];
     public $timestamps = true;
+
+    // Thêm hàm lấy tất cả cha (ancestors) đệ quy
+    public function getAllParents()
+    {
+        $parents = collect();
+
+        $currentParents = $this->parents;
+
+        while ($currentParents->isNotEmpty()) {
+            $parents = $parents->merge($currentParents);
+            $nextLevel = collect();
+
+            foreach ($currentParents as $parent) {
+                $nextLevel = $nextLevel->merge($parent->parents);
+            }
+
+            $currentParents = $nextLevel;
+        }
+
+        return $parents->unique('id');
+    }
+
+
 
     //function get all id
     public function getAllChildrenIds()
@@ -35,15 +59,19 @@ class Category extends Model
     }
 
     //category parent
-    public function parent()
+    public function parents()
     {
-        return $this->belongsTo(Category::class, 'parent_id');
+        return $this->belongsToMany(Category::class, 'category_parent', 'category_id', 'parent_id')
+            ->withPivot('order')
+            ->orderBy('order');
     }
 
     // Category con
     public function children()
     {
-        return $this->hasMany(Category::class, 'parent_id');
+        return $this->belongsToMany(Category::class, 'category_parent', 'parent_id', 'category_id')
+            ->withPivot('order')
+            ->orderBy('order');
     }
 
     public function products()

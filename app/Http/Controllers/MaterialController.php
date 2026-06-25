@@ -36,7 +36,7 @@ class MaterialController extends Controller
             'material_name' => $request->material_name,
         ]);
         //return
-        return redirect()->route('materials.index');
+        return redirect()->route('admin.materials.index');
     }
 
     /**
@@ -74,6 +74,6 @@ class MaterialController extends Controller
     public function destroy(Material $material)
     {
         $material->delete();
-        return redirect()->route('materials.index');
+        return redirect()->route('admin.materials.index');
     }
 }

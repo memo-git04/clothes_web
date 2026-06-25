@@ -37,7 +37,7 @@ class ColorController extends Controller
         ]);
 //        dd($request->color_name);
         //return
-        return redirect()->route('colors.index');
+        return redirect()->route('admin.colors.index');
     }
 
     /**
@@ -75,6 +75,6 @@ class ColorController extends Controller
     public function destroy(Color $color)
     {
         $color->delete();
-        return redirect()->route('colors.index');
+        return redirect()->route('admin.colors.index');
     }
 }

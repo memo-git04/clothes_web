@@ -151,6 +151,7 @@ class CartController extends Controller
     }
     public function store(Request $request)
     {
+
         $cartItems = session()->get('cart', []);
 
         if (empty($cartItems)) {
@@ -164,28 +165,87 @@ class CartController extends Controller
         $discount = 0;
         $final = $subtotal;
 
-        $order = Order::create([
-            'user_id' => auth()->id(),
-            'order_code' => 'ORD' . time(),
-            'promotion_id' => null,
-            'status_id' => 1, // pending (tuỳ DB bạn)
-            'total_amount' => $subtotal,
-            'discount_amount' => $discount,
-            'final_amount' => $final,
-        ]);
-
-        foreach ($cartItems as $cartItemId => $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_variant_id' => $cartItemId,
-                'price' => $item['price'],
-                'quantity' => $item['quantity'],
+        if ($request->has('payment_method') && $request->payment_method === 'cod') {
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'order_code' => 'ORD' . time(),
+                'promotion_id' => null,
+                'status_id' => 1, // pending (tuỳ DB bạn)
+                'total_amount' => $subtotal,
+                'discount_amount' => $discount,
+                'final_amount' => $final,
             ]);
-        }
 
+            foreach ($cartItems as $cartItemId => $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_variant_id' => $cartItemId,
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity'],
+                ]);
+            }
         session()->forget('cart');
 
         return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
+        } else {
+            $vnp_TmnCode = env('VNP_TMNCODE');
+            $vnp_HashSecret = env('VNP_HASH_SECRET');
+            $vnp_Url = env('VNP_URL');
+            $vnp_Returnurl = "http://localhost:8000/payment-return";
+            $vnp_TxnRef = 'ORD' . time();
+            $vnp_OrderInfo = "Thanh toán hóa đơn phí dich vụ";
+            $vnp_OrderType = 'billpayment';
+            $vnp_Amount = $final * 100;
+            $vnp_Locale = 'vn';
+            $vnp_IpAddr = request()->ip();
+
+            $inputData = array(
+                "vnp_Version" => "2.0.0",
+                "vnp_TmnCode" => $vnp_TmnCode,
+                "vnp_Amount" => $vnp_Amount,
+                "vnp_Command" => "pay",
+                "vnp_CreateDate" => date('YmdHis'),
+                "vnp_CurrCode" => "VND",
+                "vnp_IpAddr" => $vnp_IpAddr,
+                "vnp_Locale" => $vnp_Locale,
+                "vnp_OrderInfo" => $vnp_OrderInfo,
+                "vnp_OrderType" => $vnp_OrderType,
+                "vnp_ReturnUrl" => $vnp_Returnurl,
+                "vnp_TxnRef" => $vnp_TxnRef,
+            );
+
+//            dd($inputData);
+
+            if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+                $inputData['vnp_BankCode'] = $vnp_BankCode;
+            }
+            ksort($inputData);
+            $query = "";
+            $i = 0;
+            $hashdata = "";
+            foreach ($inputData as $key => $value) {
+                if ($i == 1) {
+                    $hashdata .= '&' . $key . "=" . $value;
+                } else {
+                    $hashdata .= $key . "=" . $value;
+                    $i = 1;
+                }
+                $query .= urlencode($key) . "=" . urlencode($value) . '&';
+            }
+
+            $vnp_Url = $vnp_Url . "?" . $query;
+            if (isset($vnp_HashSecret)) {
+                // $vnpSecureHash = md5($vnp_HashSecret . $hashdata);
+                $vnpSecureHash = hash_hmac('sha512', $hashdata , $vnp_HashSecret);
+                $vnp_Url .= 'vnp_SecureHashType=SHA512&vnp_SecureHash=' . $vnpSecureHash;
+            }
+
+//            dd($vnp_Url);
+
+            session()->forget('cart');
+            return redirect($vnp_Url);
+        }
+
     }
 
 }

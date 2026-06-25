@@ -2,28 +2,39 @@
 
 @section('content')
     <div class="min-h-screen flex items-center justify-center p-4">
-        <div class="w-full max-w-5xl mx-auto flex flex-col lg:flex-row shadow-2xl rounded-3xl overflow-hidden bg-white">
+        <div  style="margin-top: 100px" class="w-full max-w-5xl mx-auto flex flex-col lg:flex-row shadow-2xl rounded-3xl overflow-hidden bg-white">
 
             <!-- LEFT SECTION -->
-            <div class="lg:w-1/2 bg-[#1a2744] relative flex flex-col justify-between p-8 lg:p-16 min-h-[420px] lg:min-h-screen">
+            <div class="lg:w-1/2 bg-[#1a2744] relative flex flex-col justify-between p-8 lg:p-16 min-h-[420px] lg:min-h-screen"
+                 >
                 <div>
-                    <span class="text-white text-xl tracking-[0.3em] font-sans uppercase">BKACAD</span>
+                    <span class="text-white text-xl tracking-[0.3em] font-sans uppercase">INNOVE COUTURE</span>
                 </div>
 
                 <div class="flex-1 flex flex-col justify-center items-center text-center py-8 lg:py-0">
                     <h1 class="font-serif text-5xl lg:text-6xl text-white font-light tracking-tight mb-4">
-                        HNTQxNTM
+                        THỜI TRANG
+
+                        HIỆN ĐẠI
                     </h1>
                     <p class="text-white/80 text-base max-w-xs leading-relaxed">
-                        Hoàn tất thông tin tài khoản của bạn.
+                        Đăng nhập để truy cập tài khoản của bạn và tiếp tục hành trình thời trang cùng chúng tôi!
                     </p>
+                </div>
+
+                <div class="absolute bottom-0 left-0 right-0 h-64 opacity-10 pointer-events-none">
+                    <svg viewBox="0 0 400 200" class="w-full h-full" preserveAspectRatio="xMidYMax slice">
+                        <circle cx="50" cy="180" r="120" fill="white"/>
+                        <circle cx="350" cy="200" r="80" fill="white"/>
+                        <rect x="150" y="100" width="100" height="100" fill="white" transform="rotate(45 200 150)"/>
+                    </svg>
                 </div>
             </div>
 
             <!-- RIGHT SECTION - COMPLETE INFO -->
             <div class="lg:w-1/2 bg-white flex items-center justify-center p-8 lg:p-12">
                 <div class="w-full max-w-md space-y-6">
-                    <h2 class="font-serif text-4xl text-black font-light">Hoàn tất đăng ký</h2>
+                    <h2 class="font-serif text-4xl text-black font-light">Hoàn thiện đăng ký</h2>
                     <p class="text-gray-600">Vui lòng điền thông tin cá nhân</p>
 
                     <form action="{{ route('register.store') }}" method="POST" class="space-y-5">

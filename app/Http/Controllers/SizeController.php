@@ -36,7 +36,7 @@ class SizeController extends Controller
             'size_name' => $request->size_name,
         ]);
         //return
-        return redirect()->route('sizes.index');
+        return redirect()->route('admin.sizes.index');
     }
 
     /**
@@ -74,6 +74,6 @@ class SizeController extends Controller
     public function destroy(Size $size)
     {
         $size->delete();
-        return redirect()->route('sizes.index');
+        return redirect()->route('admin.sizes.index');
     }
 }

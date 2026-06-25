@@ -297,7 +297,8 @@
                 </li>
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-people-group"></i><span class="nav-text">Promotion Management</span>
+                        <i class="fa-solid fa-gift"></i>
+                        <span class="nav-text">Promotion Management</span>
                     </a>
                     <ul aria-expanded="false">
                         <li><a href="{{ route('admin.promotions.index') }}">Promotion List </a></li>
@@ -347,7 +348,8 @@
 
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-hat-cowboy-side"></i><span class="nav-text">Size Management</span>
+                        <i class="fa-solid fa-ruler"></i></i>
+                       <span class="nav-text">Size Management</span>
                     </a>
                     <ul aria-expanded="false">
                         <li><a href="{{ route('admin.sizes.index') }}">Size List </a></li>

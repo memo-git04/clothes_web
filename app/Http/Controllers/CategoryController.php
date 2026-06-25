@@ -14,7 +14,11 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::with('parent')->get();
+        $categories = Category::with('parents', 'children')
+            ->orderBy('order')
+            ->orderBy('level')
+            ->orderBy('category_name')
+            ->get();
         return view('admin.modules.category.index_category', [
             'categories' => $categories
         ]);
@@ -25,10 +29,51 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
+
+        $categoryTreeHtml = $this->buildCategoryTreeCheckbox();
         return view('admin.modules.category.add_category',[
-            'categories' => $categories
+            'categoryTreeHtml' => $categoryTreeHtml
         ]);
+    }
+    private function buildCategoryTreeCheckbox($level = 0)
+    {
+        $html = '';
+        // Lấy root categories (không có cha)
+        $roots = Category::whereDoesntHave('parents')
+            ->with('children')
+            ->orderBy('order')
+            ->orderBy('category_name')
+            ->get();
+
+        foreach ($roots as $root) {
+            $html .= $this->renderCategoryNode($root, $level);
+        }
+
+        return $html;
+    }
+
+    private function renderCategoryNode($category, $level = 0)
+    {
+        $html = '<div class="form-check ms-' . ($level * 6) . ' mb-2">';
+
+        $html .= '<input class="form-check-input" type="checkbox"
+                     name="parent_ids[]"
+                     id="cat_' . $category->id . '"
+                     value="' . $category->id . '">';
+
+        $html .= '<label class="form-check-label" for="cat_' . $category->id . '">';
+        $html .= str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $level);
+        if ($level > 0) $html .= '└─ ';
+        $html .= $category->category_name . ' <small class="text-muted">(L' . $category->level . ')</small>';
+        $html .= '</label>';
+        $html .= '</div>';
+
+        // Đệ quy con
+        foreach ($category->children as $child) {
+            $html .= $this->renderCategoryNode($child, $level + 1);
+        }
+
+        return $html;
     }
 
     /**
@@ -36,11 +81,28 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        Category::create([
+        $parentIds = $request->parent_ids ?? [];
+        $parentIds = array_filter($parentIds);           // Loại bỏ rỗng
+        $parentIds = array_unique($parentIds);           // Loại bỏ trùng lặp
+        $isRoot = empty($parentIds);
+
+        $category = Category::create([
             'category_name' => $request->category_name,
-            'parent_id' => $request->parent_id
+            'description'   => $request->description,
+            'order'         => $request->order ?? 0,
+            'is_root'       => $isRoot,
+            'level'         => 1,
         ]);
-        return redirect()->route('categories.index');
+
+        if (!$isRoot && count($parentIds) > 0) {
+            $category->parents()->attach($parentIds);
+
+            // Tính level
+            $maxLevel = Category::whereIn('id', $parentIds)->max('level') ?? 0;
+            $category->update(['level' => $maxLevel + 1]);
+        }
+        return redirect()->route('admin.categories.index')
+            ->with('success', 'Danh mục đã được tạo thành công!');
     }
 
     /**
@@ -54,16 +116,59 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    private function buildCategoryTreeCheckboxForEdit($currentCategory, $level = 0)
+    {
+        $html = '';
+        $roots = Category::whereDoesntHave('parents')
+            ->with('children')
+            ->orderBy('order')
+            ->orderBy('category_name')
+            ->get();
+
+        foreach ($roots as $root) {
+            $html .= $this->renderCategoryNodeForEdit($root, $currentCategory, $level);
+        }
+
+        return $html;
+    }
+
+    private function renderCategoryNodeForEdit($category, $currentCategory, $level = 0)
+    {
+        if ($category->id === $currentCategory->id) return ''; // Không hiển thị chính nó
+
+        $isChecked = $currentCategory->parents->pluck('id')->contains($category->id);
+
+        $html = '<div class="form-check ms-' . ($level * 6) . ' mb-2">';
+
+        $html .= '<input class="form-check-input" type="checkbox"
+                     name="parent_ids[]"
+                     id="cat_' . $category->id . '"
+                     value="' . $category->id . '" ' . ($isChecked ? 'checked' : '') . '>';
+
+        $html .= '<label class="form-check-label" for="cat_' . $category->id . '">';
+        $html .= str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $level);
+        if ($level > 0) $html .= '└─ ';
+        $html .= $category->category_name . ' <small class="text-muted">(L' . $category->level . ')</small>';
+        $html .= '</label>';
+        $html .= '</div>';
+
+        foreach ($category->children as $child) {
+            $html .= $this->renderCategoryNodeForEdit($child, $currentCategory, $level + 1);
+        }
+
+        return $html;
+    }
     public function edit(Category $category)
     {
-        $invalidIds = $category->getAllChildrenIds();
-//        dd($invalidIds);
-        $categories = Category::all();
+
+
+        $categoryTreeHtml = $this->buildCategoryTreeCheckboxForEdit($category);
+
         return view('admin.modules.category.edit_category', [
             'category' => $category,
-            'categories' => $categories,
-            'invalidIds' => $invalidIds
+            'categoryTreeHtml' => $categoryTreeHtml,
         ]);
+
     }
 
     /**
@@ -71,34 +176,31 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-//                dd($request->all());
-//        dd(Category::find(1));
+        $parentIds = $request->parent_ids ?? [];
+        $parentIds = array_filter($parentIds);
+        $parentIds = array_unique($parentIds);
+        $isRoot = empty($parentIds);
 
-        $request->validate([
-            'update_category' =>[
-                'required',
-                Rule::unique('categories', 'category_name')->ignore($category->id)
-            ]
-        ]);
-        //root dont have parent
-        if ($category->is_root && $request->parent_id){
-            return redirect()->back();
-        }
-
-        //child is not parent
-        if ($request->parent_id){
-            $parent = Category::find($request->parent_id);
-            if ($parent && $parent->parent_id != null){
-                return redirect()->back();
-            }
-        }
-//        dd($category, $parent);
         $category->update([
-            'category_name' => $request->update_category,
-            'parent_id' => $request->filled('parent_id') ? $request->parent_id : null,
+            'category_name' => $request->category_name,
+            'description'   => $request->description,
+            'order'         => $request->order ?? $category->order,
+            'is_root'       => $isRoot,
         ]);
-//        dd($category, $parent);
-        return redirect()->back();
+
+        // Sync danh mục cha
+        $category->parents()->sync($parentIds);
+
+        // Cập nhật lại level
+        if (!$isRoot && count($parentIds) > 0) {
+            $maxLevel = Category::whereIn('id', $parentIds)->max('level') ?? 0;
+            $category->update(['level' => $maxLevel + 1]);
+        } else {
+            $category->update(['level' => 1]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Cập nhật danh mục thành công!');
     }
 
     /**
@@ -106,7 +208,25 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        // Kiểm tra xem danh mục có sản phẩm không
+        if ($category->products()->exists()) {
+            return redirect()->route('admin.categories.index')
+                ->with('error', 'Không thể xóa danh mục này vì đang có sản phẩm liên kết!');
+        }
+
+        // Kiểm tra có danh mục con không
+        if ($category->children()->exists()) {
+            return redirect()->route('admin.categories.index')
+                ->with('error', 'Không thể xóa danh mục này vì đang có danh mục con!');
+        }
+
+        // Xóa quan hệ
+        $category->parents()->detach();
+        $category->children()->detach();
+
         $category->delete();
-        return redirect()->route('categories.index');
+
+        return redirect()->route('admin.categories.index')
+            ->with('success', 'Xóa danh mục thành công!');
     }
 }

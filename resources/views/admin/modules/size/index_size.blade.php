@@ -6,7 +6,7 @@
             <div class="col p-md-0">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Size</a></li>
                 </ol>
             </div>
         </div>
@@ -17,12 +17,12 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">List of sizes</h4>
+                            <h4 class="card-title">Bảng Size</h4>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered zero-configuration">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>#</th>
                                         <th>Name</th>
                                         <th>Act</th>
                                     </tr>
@@ -37,19 +37,31 @@
                                                 {{ $size->size_name }}
                                             </td>
                                             <td>
-                                                <a href=" {{ route('admin.sizes.edit', $size->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                                <form action="{{ route('admin.sizes.destroy',$size->id ) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
-                                                </form>
+                                                <div class="d-flex gap-2">  <!-- Thêm div này -->
+                                                    <!-- Button Edit -->
+                                                    <a href="{{ route('admin.sizes.edit', $size->id) }}"
+                                                       class="btn btn-primary btn-sm me-2" style="margin-right: 10px">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </a>
+
+                                                    <!-- Button Delete -->
+                                                    <form action="{{ route('admin.sizes.destroy', $size->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                                class="btn btn-danger btn-sm d-inline"
+                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa size này?')">
+                                                            <i class="fa-solid fa-trash-can"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>#</th>
                                         <th>Name</th>
                                         <th>Act</th>
                                     </tr>

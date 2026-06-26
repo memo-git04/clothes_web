@@ -185,7 +185,7 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $product->update([
-//            'product_name' => $request->product_name,
+            'product_name' => $request->product_name,
 //            'category_id' => $request->category_id,
 //            'brand_id' => $request->brand_id,
 //            'material_id' => $request->material_id,
@@ -237,6 +237,63 @@ class ProductController extends Controller
                                     'image_url' => $path,
                                 ]);
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        // ====================== TẠO VARIANT MỚI (new_variants) ======================
+        if ($request->has('new_variants')) {
+            $colors = Color::pluck('color_name', 'id');
+            $sizes  = Size::pluck('size_name', 'id');
+
+            $productCode = strtoupper($this->shortname($product->product_name)) . $product->id;
+
+            foreach ($request->new_variants as $key => $variantData) {
+                // Bỏ qua nếu thiếu thông tin quan trọng
+                if (empty($variantData['color_id']) || empty($variantData['size_id'])) {
+                    continue;
+                }
+
+                $basePrice     = $this->normalizePrice($variantData['base_price'] ?? 0);
+                $sellingPrice  = $this->normalizePrice($variantData['selling_price'] ?? 0);
+                $originalPrice = $this->normalizePrice($variantData['original_price'] ?? 0);
+
+                $variant = ProductVariant::create([
+                    'product_id'      => $product->id,
+                    'color_id'        => $variantData['color_id'],
+                    'size_id'         => $variantData['size_id'],
+                    'stock_quantity'  => $variantData['stock_quantity'] ?? 0,
+                    'base_price'      => $basePrice,
+                    'selling_price'   => $sellingPrice,
+                    'original_price'  => $originalPrice,
+                    'sku'             => 'TEMP-' . uniqid(), // tạm thời
+                ]);
+
+                // ==================== TẠO SKU TỰ ĐỘNG ====================
+                $colorName = Str::slug($colors[$variantData['color_id']] ?? 'color');
+                $sizeName  = Str::slug($sizes[$variantData['size_id']] ?? 'size');
+
+                $sku = $productCode
+                    . '-' . strtoupper($colorName)
+                    . '-' . strtoupper($sizeName)
+                    . '-' . $variant->id;
+
+                $variant->update(['sku' => $sku]);
+
+                // ==================== UPLOAD ẢNH CHO VARIANT MỚI ====================
+                if (!empty($variantData['images'])) {
+                    foreach ($variantData['images'] as $index => $image) {
+                        if ($image && $image->isValid()) {
+                            $folder = 'products/product_' . $product->id;
+                            $name = time() . '_' . $index . '.' . $image->extension();
+                            $path = $image->storeAs($folder, $name, 'public');
+
+                            ProductImage::create([
+                                'product_variant_id' => $variant->id,
+                                'image_url' => $path,
+                            ]);
                         }
                     }
                 }

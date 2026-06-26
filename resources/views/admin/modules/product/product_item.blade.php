@@ -58,7 +58,7 @@
                                     <div class="card-header">
                                         <h4 class="card-title mt-3">Thông tin biến thể sản phẩm</h4>
                                     </div>
-                                    <div class="card-body">
+                                    <div class="card-body" id="variants-container">
                                         @foreach($product->variants as $variant)
                                             <div class="border p-3 mb-3">
 
@@ -159,7 +159,7 @@
 
                                                             <button type="button"
                                                                     class="btn btn-danger btn-delete-variant"
-                                                                    data-url="{{ route('variants.destroy', $variant->id) }}">
+                                                                    data-url="{{ route('admin.variants.destroy', $variant->id) }}">
                                                                 Delete Variant
                                                             </button>
                                                         </td>
@@ -168,6 +168,7 @@
                                             </div>
                                         @endforeach
                                     </div>
+
                                 </div>
 
                                 <div  style="display: flex">
@@ -178,9 +179,9 @@
                                         <button type="submit" class="btn btn-primary"> Update </button>
                                     </div>
                                     <div class="add mt-2 mx-4">
-                                        <a href="" class="btn btn-success">
+                                        <button type="button" id="btn-add-variant" class="btn btn-success">
                                             + Thêm variant
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </form>
@@ -193,117 +194,120 @@
                 </div>
             </div>
         </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        $(document).ready(function() {
 
-            document.querySelectorAll('.btn-delete-variant').forEach(btn => {
+            let variantIndex = Date.now();
 
-                btn.addEventListener('click', function () {
+            const variantTemplate = $('#variant-template').html();
 
-                    let url = this.dataset.url;
+            $('#btn-add-variant').on('click', function() {
+                let newVariantHTML = variantTemplate.replace(/new_variants\[\d+\]/g, 'new_variants[' + variantIndex + ']');
 
-                    if (confirm('Bạn có chắc muốn xoá biến thể này không?')) {
+                // === QUAN TRỌNG: Thêm vào đúng vị trí ===
+                $('#variants-container').append(newVariantHTML);
 
-                        let form = document.getElementById('delete-variant-form');
+                variantIndex++;
 
-                        form.action = url;
-
-                        form.submit();
-                    }
-                });
-
+                // Khởi tạo preview cho variant mới
+                initPreviewForNewVariant();
             });
 
-        });
+            // Xóa variant mới
+            $(document).on('click', '.btn-remove-variant', function() {
+                $(this).closest('.new-variant').remove();
+            });
 
-        document.addEventListener('DOMContentLoaded', function () {
+            // Preview ảnh cho variant mới
+            function initPreviewForNewVariant() {
+                $('.preview-input').off('change').on('change', function() {
+                    let previewContainer = $(this).closest('td').find('.preview');
+                    previewContainer.empty();
 
-            // =========================
-            // 🟢 PREVIEW + XOÁ ẢNH MỚI
-            // =========================
-            document.querySelectorAll('.preview-input').forEach(input => {
+                    let files = this.files;
 
-                input.addEventListener('change', function (e) {
-
-                    let preview = this.closest('td').querySelector('.preview');
-                    preview.innerHTML = "";
-
-                    let files = Array.from(this.files);
-
-                    files.forEach((file, index) => {
-
+                    for (let i = 0; i < files.length; i++) {
                         let reader = new FileReader();
-
-                        reader.onload = function (e) {
-
-                            let div = document.createElement('div');
-                            div.classList.add('image-item');
-                            div.style.position = 'relative';
-                            div.dataset.index = index;
-
-                            let img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.style.width = '80px';
-
-                            // 🔴 NÚT X
-                            let btn = document.createElement('button');
-                            btn.innerHTML = '×';
-                            btn.type = 'button';
-                            btn.classList.add('btn','btn-danger','btn-sm');
-                            btn.style.position = 'absolute';
-                            btn.style.top = '0';
-                            btn.style.right = '0';
-
-                            btn.addEventListener('click', function () {
-
-                                div.remove();
-
-                                let dt = new DataTransfer();
-
-                                let currentFiles = Array.from(input.files);
-
-                                currentFiles.forEach((f, i) => {
-                                    if (i !== index) {
-                                        dt.items.add(f);
-                                    }
-                                });
-
-                                input.files = dt.files;
-                            });
-
-                            div.appendChild(img);
-                            div.appendChild(btn);
-                            preview.appendChild(div);
+                        reader.onload = function(e) {
+                            let divHTML = `
+                            <div class="image-item position-relative d-inline-block me-2" style="margin-bottom:8px;">
+                                <img src="${e.target.result}" width="80" class="rounded border">
+                                <button type="button" class="btn btn-danger btn-sm remove-preview-btn"
+                                        style="position:absolute; top:-6px; right:-6px; width:20px; height:20px; padding:0;">×</button>
+                            </div>`;
+                            previewContainer.append(divHTML);
                         };
-
-                        reader.readAsDataURL(file);
-                    });
-
-                });
-            });
-
-
-            // =========================
-            // 🔴 XOÁ ẢNH CŨ (DB)
-            // =========================
-            document.querySelectorAll('.btn-remove-image').forEach(btn => {
-
-                btn.addEventListener('click', function () {
-
-                    let container = this.closest('.image-item');
-
-                    let input = container.querySelector('.delete-image-input');
-
-                    if (input) {
-                        input.value = this.dataset.id;
+                        reader.readAsDataURL(files[i]);
                     }
-
-                    // ẩn UI
-                    container.style.display = 'none';
                 });
+            }
 
+            // Xóa preview ảnh
+            $(document).on('click', '.remove-preview-btn', function() {
+                $(this).closest('.image-item').remove();
             });
 
+            // Khởi tạo preview cho các input hiện có
+            initPreviewForNewVariant();
         });
     </script>
+    <!-- Template cho variant mới -->
+    <template id="variant-template">
+        <div class="border p-3 mb-3 new-variant">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Màu</th>
+                    <td>
+                        <select name="new_variants[{{ time() }}][color_id]" class="form-control" required>
+                            @foreach(\App\Models\Color::all() as $color)
+                                <option value="{{ $color->id }}">{{ $color->color_name }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Size</th>
+                    <td>
+                        <select name="new_variants[{{ time() }}][size_id]" class="form-control" required>
+                            @foreach(\App\Models\Size::all() as $size)
+                                <option value="{{ $size->id }}">{{ $size->size_name }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Số lượng</th>
+                    <td><input type="number" name="new_variants[{{ time() }}][stock_quantity]" value="0" min="0" class="form-control" required></td>
+                </tr>
+                <tr>
+                    <th>Giá nhập</th>
+                    <td><input type="text" name="new_variants[{{ time() }}][base_price]" class="form-control price-format" value="0"></td>
+                </tr>
+                <tr>
+                    <th>Giá bán</th>
+                    <td><input type="text" name="new_variants[{{ time() }}][selling_price]" class="form-control price-format" value="0"></td>
+                </tr>
+                <tr>
+                    <th>Giá gốc</th>
+                    <td><input type="text" name="new_variants[{{ time() }}][original_price]" class="form-control price-format" value="0"></td>
+                </tr>
+                <tr>
+                    <th>Ảnh</th>
+                    <td>
+                        <div class="preview d-flex flex-wrap gap-2 mb-2"></div>
+                        <input type="file" name="new_variants[{{ time() }}][images][]" multiple class="form-control preview-input">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Hành động</th>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-remove-variant">Xóa variant này</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </template>
+
 @endsection

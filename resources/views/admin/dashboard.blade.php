@@ -9,6 +9,7 @@
 
     <!-- theme meta -->
     <meta name="theme-name" content="admin" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Admin</title>
     <!-- Favicon icon -->
@@ -74,10 +75,10 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text bg-transparent border-0 pr-2 pr-sm-3" id="basic-addon1"><i class="mdi mdi-magnify"></i></span>
                     </div>
-                    <input type="search" class="form-control" placeholder="Search Dashboard" aria-label="Search Dashboard">
+                    <input type="search" class="form-control" placeholder="Tìm kiếm Dashboard" aria-label="Search Dashboard">
                     <div class="drop-down animated flipInX d-md-none">
                         <form action="#">
-                            <input type="text" class="form-control" placeholder="Search">
+                            <input type="text" class="form-control" placeholder="Tìm kiếm">
                         </form>
                     </div>
                 </div>
@@ -237,7 +238,7 @@
                                 <div class="dropdown-content-body">
                                     <ul>
                                         <li>
-                                            <a href="{{ route('admin.loginAdmin')}}"><i class="icon-lock"></i> <span>Login</span></a>
+                                            <a href="{{ route('admin.loginAdmin')}}"><i class="icon-lock"></i> <span>Đăng nhập</span></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -268,102 +269,135 @@
                 </li>
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-brands fa-slack"></i><span class="nav-text">Product Management</span>
+                        <i class="fa-brands fa-slack"></i><span class="nav-text"> Quản lý sản phẩm</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{route('admin.products.index')}}">Product Management</a></li>
-                        <li><a href="{{route('admin.products.create')}}">Add new product</a></li>
+                        <li><a href="{{route('admin.products.index')}}"> Quản lý sản phẩm</a></li>
+                        <li><a href="{{route('admin.products.create')}}">Thêm mới sản phẩm</a></li>
                     </ul>
                 </li>
 
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-chart-simple"></i><span class="nav-text">Category Management</span>
+                        <i class="fa-solid fa-chart-simple"></i><span class="nav-text"> Quản lý danh mục</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{route('admin.categories.index')}} ">Category Management</a></li>
-                        <li><a href="{{route('admin.categories.create')}} ">Add new category</a></li>
+                        <li><a href="{{route('admin.categories.index')}} ">Danh sách danh mục</a></li>
+                        <li><a href="{{route('admin.categories.create')}} ">Thêm mới danh mục</a></li>
                     </ul>
                 </li>
 
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-cart-shopping"></i><span class="nav-text">Order Management </span>
+                        <i class="fa-solid fa-cart-shopping"></i><span class="nav-text">Quản lý đơn hàng </span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{route('admin.orders.index')}}">Order management</a></li>
+                        <li><a href="{{route('admin.orders.index')}}">Quản lý đơn hàng</a></li>
 
                     </ul>
                 </li>
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                         <i class="fa-solid fa-gift"></i>
-                        <span class="nav-text">Promotion Management</span>
+                        <span class="nav-text"> Quản lý mã giảm giá</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('admin.promotions.index') }}">Promotion List </a></li>
-                        <li><a href="{{ route('admin.promotions.create') }}">Add new vouncher</a></li>
+                        <li><a href="{{ route('admin.promotions.index') }}">Danh sách mã  </a></li>
+                        <li><a href="{{ route('admin.promotions.create') }}">Thêm mới mã giảm giá</a></li>
                     </ul>
                 </li>
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-people-group"></i><span class="nav-text">Account Management</span>
+                        <i class="fa-solid fa-people-group"></i><span class="nav-text"> Quản lý tài khoản</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{route('admin.users.index')}}">Account List </a></li>
-                        <li><a href="{{route('admin.users.create')}}">Add new account</a></li>
-                        <li><a href="{{route('admin.roles.index')}}">Role - Permission Management</a></li>
-                    </ul>
-                </li>
-
-                <li class="mega-menu mega-menu-sm">
-                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-shirt"></i><span class="nav-text">Brand Management</span>
-                    </a>
-                    <ul aria-expanded="false">
-                        <li><a href="{{ route('admin.brands.index') }}">Brand List </a></li>
-                        <li><a href="{{ route('admin.brands.create') }}">Add new brand</a></li>
+                        <li><a href="{{route('admin.users.index')}}">Danh sách tài khoản</a></li>
+                        <li><a href="{{route('admin.users.create')}}">Thêm mới tài khoàn</a></li>
                     </ul>
                 </li>
 
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-palette"></i></i><span class="nav-text">Color Management</span>
+                        <i class="fa-solid fa-user-shield"></i
+                        <span class="nav-text">Quản lý vai trò - quyền</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('admin.colors.index') }}">Color List </a></li>
-                        <li><a href="{{ route('admin.colors.create') }}">Add new Color</a></li>
+                        <li><a href="{{route('admin.roles.index')}}">Danh sách vai trò </a></li>
+                        <li><a href="{{route('admin.permissions.index')}}">Danh sách quyền</a></li>
+                        <li><a href="{{route('admin.roles.index')}}">Quản lý vai trò - quyền</a></li>
                     </ul>
                 </li>
 
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-brands fa-cotton-bureau"></i></i><span class="nav-text">Material Management</span>
+                        <i class="fa-solid fa-shirt"></i><span class="nav-text"> Quản lý thương hiệu</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('admin.materials.index') }}">Material List </a></li>
-                        <li><a href="{{ route('admin.materials.create') }}">Add new material</a></li>
+                        <li><a href="{{ route('admin.brands.index') }}">Danh sách thương hiệu</a></li>
+                        <li><a href="{{ route('admin.brands.create') }}">Thêm mới thương hiệu</a></li>
+                    </ul>
+                </li>
+
+                <li class="mega-menu mega-menu-sm">
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                        <i class="fa-solid fa-palette"></i></i><span class="nav-text"> Quản lý màu</span>
+                    </a>
+                    <ul aria-expanded="false">
+                        <li><a href="{{ route('admin.colors.index') }}">Danh sách màu</a></li>
+                        <li><a href="{{ route('admin.colors.create') }}">Thêm mới màu</a></li>
+                    </ul>
+                </li>
+
+                <li class="mega-menu mega-menu-sm">
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                        <i class="fa-brands fa-cotton-bureau"></i></i><span class="nav-text"> Quản lý chất liệu</span>
+                    </a>
+                    <ul aria-expanded="false">
+                        <li><a href="{{ route('admin.materials.index') }}">Danh sách chất liệu </a></li>
+                        <li><a href="{{ route('admin.materials.create') }}">Thêm mới chất liệu</a></li>
                     </ul>
                 </li>
 
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                         <i class="fa-solid fa-ruler"></i></i>
-                       <span class="nav-text">Size Management</span>
+                       <span class="nav-text"> Quản lý size</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{ route('admin.sizes.index') }}">Size List </a></li>
-                        <li><a href="{{ route('admin.sizes.create') }}">Add new size</a></li>
+                        <li><a href="{{ route('admin.sizes.index') }}">Danh sách size </a></li>
+                        <li><a href="{{ route('admin.sizes.create') }}">Thêm mới size</a></li>
                     </ul>
                 </li>
 
-                <li>
+                <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-file-shield"></i></i><span class="nav-text">Settings</span>
+                        <i class="fa-solid fa-star"></i>
+                        <span class="nav-text">Quản lý đánh giá</span>
                     </a>
                     <ul aria-expanded="false">
-                        <li><a href="{{route('admin.logoutAdmin')}}">Profile</a></li>
-                        <li><a href="{{route('admin.logoutAdmin')}}">Logout</a></li>
+                        <li><a href="{{ route('admin.reviews.index') }}">Danh sách đánh giá</a></li>
+                        <li><a href="{{ route('admin.reviews.index', ['status' => 'pending']) }}">Chờ duyệt</a></li>
+                    </ul>
+                </li>
+
+                <li class="mega-menu mega-menu-sm">
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span class="nav-text">Quản lý liên hệ</span>
+                    </a>
+                    <ul aria-expanded="false">
+                        <li><a href="{{ route('admin.contacts.index') }}">Danh sách liên hệ</a></li>
+                    </ul>
+                </li>
+
+
+                <li>
+                    <a class="has-arrow" href="javascript:void()" aria-expanded="false">
+                        <i class="fa-solid fa-file-shield"></i></i><span class="nav-text">Cài đặt</span>
+                    </a>
+                    <ul aria-expanded="false">
+                        <li><a href="{{route('admin.logoutAdmin')}}">Thông tin cá nhân</a></li>
+                        <li><a href="{{route('admin.logoutAdmin')}}">Đăng xuất</a></li>
                     </ul>
                 </li>
             </ul>

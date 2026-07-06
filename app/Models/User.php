@@ -28,9 +28,19 @@ class User extends Authenticatable
         'gender',
         'date_of_birth',
         'address',
+        'img',
         'status',
     ];
     public $timestamps = true;
+
+    /**
+     * Tài khoản có phải quản trị viên không (admin/manager/staff).
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasAnyRole(['admin', 'manager', 'staff']);
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class);

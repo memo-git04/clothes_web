@@ -33,6 +33,19 @@
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Chi tiết Đơn hàng #{{ $order->order_code }}</h6>
                 </div>
+
+                <div class="card">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show"
+                             role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+                </div>
+
                 <div class="card-body shadow">
                     <!-- Customer Info -->
                     <div class="row">
@@ -43,10 +56,33 @@
                             <p><strong>Khách hàng:</strong> {{ $order->user->full_name }}</p>
                             <p><strong>SĐT:</strong> {{ $order->user->phone }}</p>
                             <p><strong>Địa chỉ:</strong> {{ $order->user->address }}</p>
-                            <p><strong>Tổng tiền:</strong> {{ number_format($order->total_amount) }} VNĐ</p>
                             <p><strong>Ngày đặt:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
                             <p><strong>Trạng thái hiện tại:</strong>
                                 <span class="text-primary">{{ $order->status->status_name }}</span>
+                            </p>
+                            <p><strong>Thanh toán:</strong>
+                                @php
+                                    $paymentStatus = $order->payment->status ?? 'pending';
+                                    $paymentClass = match($paymentStatus) {
+                                        'paid' => 'text-success',
+                                        'failed' => 'text-danger',
+                                        default => 'text-warning'
+                                    };
+                                @endphp
+                                <span class="{{ $paymentClass }}">
+                                    {{ $paymentStatus === 'paid' ? 'Đã thanh toán' :
+                                       ($paymentStatus === 'failed' ? 'Thanh toán thất bại' : 'Chưa thanh toán') }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-sm-6">
+                            <label><b>Thông tin thanh toán</b></label>
+                            <hr>
+                            <p><strong>Phương thức:</strong> {{ $order->payment->method ?? 'N/A' }}</p>
+                            <p><strong>Số tiền:</strong> {{ number_format($order->final_amount) }} VNĐ</p>
+                            <p><strong>Giảm giá:</strong> {{ number_format($order->discount_amount) }} VNĐ</p>
+                            <p><strong>Ngày thanh toán:</strong>
+                                {{ $order->payment->paid_at ? $order->payment->paid_at->format('d/m/Y H:i') : 'N/A' }}
                             </p>
                         </div>
                     </div>
@@ -78,6 +114,12 @@
                             @endforeach
                             </tbody>
                         </table>
+                        <!-- Final Amount -->
+                        <div class="text-right mt-3">
+                            <h4 class="text-danger font-bold">
+                                Thành tiền: {{ number_format($order->final_amount) }} VNĐ
+                            </h4>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -90,17 +132,35 @@
                             @csrf
                             <div class="form-group">
                                 <label><strong>Chọn trạng thái mới:</strong></label>
-                                <select name="order_status" class="form-control" style="width: 400px;">
+                                <select name="order_status" class="form-control" style="width: 400px;" id="order_status">
+                                    @php
+                                        $currentStatus = $order->status_id;
+                                        $allowedStatuses = [];
+
+                                        switch($currentStatus) {
+                                            case 1: // Chờ xác nhận
+                                                $allowedStatuses = [2, 5]; // Chờ lấy hàng, Hủy
+                                                break;
+                                            case 2: // Chờ lấy hàng
+                                                $allowedStatuses = [3]; // Đang giao, Hủy
+                                                break;
+                                            case 3: // Đang giao
+                                                $allowedStatuses = [4]; // Giao thành công
+                                                break;
+                                        }
+                                    @endphp
+
                                     @foreach($statuses as $status)
                                         @php
-                                          $isCurrent = $order->status_id == $status->id;
+                                            $isCurrent = $order->status_id == $status->id;
+                                            $isDisabled = !in_array($status->id, $allowedStatuses);
                                         @endphp
                                         <option
                                             value="{{ $status->id }}"
-                                            @if(!in_array($status->id, $validStatuses))
+                                            @if($isDisabled)
                                             disabled
                                             @endif
-                                            {{ $order->status_id == $status->id ? 'selected' : '' }}>
+                                            {{ $isCurrent ? 'selected' : '' }}>
                                             {{ $status->status_name }}
                                             @if($isCurrent)
                                                 (Hiện tại)
@@ -114,13 +174,22 @@
                             <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary mb-5">Quay lại danh sách</a>
                         </form>
                     @else
-                        <div class="alert alert-{{ $order->status_id == 5 ? 'success' : 'danger' }}">
-                            <strong>Đơn hàng đã {{ $order->status_id == 5 ? 'giao thành công' : 'bị hủy' }}.
-                                Không thể thay đổi trạng thái nữa.</strong>
+                        <div class="alert alert-{{ $order->status_id == 5 ? 'danger' : 'success' }}">
+                            <strong>
+                                @switch($order->status_id)
+                                    @case(4)
+                                    Đơn hàng đã giao thành công!
+                                    @break
+                                    @case(5)
+                                    Đơn hàng đã bị hủy!
+                                    @break
+                                    @default
+                                    Đơn hàng đã hoàn tất!
+                                @endswitch
+                            </strong>
                         </div>
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">Quay lại danh sách</a>
                     @endif
-
                 </div>
             </div>
         </div>

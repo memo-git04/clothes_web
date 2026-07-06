@@ -23,6 +23,12 @@ class StoreProductImageRequest extends FormRequest
     public function rules(): array
     {
         return [
+           //
+        ];
+    }
+    public function messages(): array
+    {
+        return [
             //
         ];
     }

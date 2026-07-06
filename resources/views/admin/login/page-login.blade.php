@@ -23,19 +23,9 @@
                     <div class="card login-form mb-0">
                         <div class="card-body pt-5">
                             <a class="text-center" href="">
-                                <h4>Admin Login</h4>
+                                <h4>Admin - Đăng nhập</h4>
                             </a>
                         </div>
-
-{{--                        @if ($errors->any())--}}
-{{--                            <div class="alert alert-danger">--}}
-{{--                                <ul style="margin-bottom:0;">--}}
-{{--                                    @foreach ($errors->all() as $error)--}}
-{{--                                        <li>{{ $error }}</li>--}}
-{{--                                    @endforeach--}}
-{{--                                </ul>--}}
-{{--                            </div>--}}
-{{--                        @endif--}}
 
                         <form class="mt-5 mb-5 login-input"
                               action="{{route('admin.loginProcess')}}"
@@ -50,12 +40,12 @@
                             </div>
                             <div class="form-group">
                                 {{--                                    <label>Email</label>--}}
-                                <input type="password" name="password" class="form-control" placeholder="Password">
+                                <input type="password" name="password" class="form-control" placeholder="Mật khẩu">
                                 @error('password')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
-                            <button class="btn login-form__btn submit w-100" name="login" value="login" type="submit">Log In</button>
+                            <button class="btn login-form__btn submit w-100" name="login" value="login" type="submit">Đăng nhập</button>
                         </form>
 
                     </div>

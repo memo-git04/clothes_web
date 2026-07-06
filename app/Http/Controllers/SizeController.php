@@ -36,7 +36,8 @@ class SizeController extends Controller
             'size_name' => $request->size_name,
         ]);
         //return
-        return redirect()->route('admin.sizes.index');
+        return redirect()->route('admin.sizes.index')
+            ->with('success', 'Thêm kích thước thành công!');
     }
 
     /**
@@ -63,9 +64,10 @@ class SizeController extends Controller
     public function update(UpdateSizeRequest $request, Size $size)
     {
         $size->update([
-            'size_name' => $request->edit_size,
+            'size_name' => $request->size_name,
         ]);
-        return redirect()->back();
+        return redirect()->route('admin.sizes.index')
+            ->with('success', 'Cập nhật kích thước thành công!');
     }
 
     /**
@@ -73,6 +75,11 @@ class SizeController extends Controller
      */
     public function destroy(Size $size)
     {
+        //check if size is used in product variants
+        if ($size->productVariants()->count() > 0) {
+            return redirect()->route('admin.sizes.index')
+                ->with('error', 'Không thể xóa kích thước này vì có sản phẩm liên quan!');
+        }
         $size->delete();
         return redirect()->route('admin.sizes.index');
     }

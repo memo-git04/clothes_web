@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-<main class="pt-[120px]">
+<main class="pt-[20px]">
         <section class="mx-auto max-w-[1800px] px-6 lg:px-10 mb-24">
             <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
                 <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
@@ -9,7 +9,7 @@
                     <span class="absolute top-6 left-6 bg-black text-white text-[9px] px-3 py-1 uppercase tracking-widest">New Arrival</span>
                 </div>
                 <div class="mt-10 lg:mt-0 lg:pl-12">
-                    <p class="text-[11px] uppercase tracking-[0.3em] text-gray-400 mb-4">Summer Collection 2026</p>
+                    <p class="text-[11px] uppercase tracking-[0.3em] text-gray-400 mb-4">Bộ sưu tập hè 2026</p>
                     <h2 class="font-serif text-5xl lg:text-7xl font-light leading-tight mb-8">
                         The Oversized <br>Pea Blazer
                     </h2>
@@ -18,14 +18,13 @@
                         Thiết kế dành riêng cho những tín đồ thời trang hiện đại.
                     </p>
                     <a href="/shop" class="inline-block border-b border-black pb-2 text-[11px] uppercase tracking-[0.2em] hover:text-gray-400 hover:border-gray-400 transition">
-                        Shop the Collection
+                        bst của cửa hàng
                     </a>
                 </div>
             </div>
         </section>
         <div class="w-full bg-[#f2f2f2] border-y border-gray-200 py-8 mb-16"> <div class="max-w-[1800px] mx-auto px-6 lg:px-10 text-center relative"> <div class="inline-block">
-            <span class="text-[9px] uppercase tracking-[0.4em] text-gray-500 block mb-1">Curated Selection</span>
-            <h2 class="font-serif text-3xl md:text-4xl font-normal tracking-wider text-black">Best Sellers</h2>
+            <h2 class="font-serif text-3xl md:text-4xl font-normal tracking-wider text-black"> SẢN PHẨM BÁN CHẠY</h2>
         </div>
 
         <section class="mx-auto max-w-[1800px] px-6 lg:px-10 pb-20">

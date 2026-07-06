@@ -37,7 +37,8 @@ class ColorController extends Controller
         ]);
 //        dd($request->color_name);
         //return
-        return redirect()->route('admin.colors.index');
+        return redirect()->route('admin.colors.index')
+            ->with('success', 'Thêm màu sắc thành công');
     }
 
     /**
@@ -64,9 +65,10 @@ class ColorController extends Controller
     public function update(UpdateColorRequest $request, Color $color)
     {
         $color->update([
-            'color_name' => $request->edit_color,
+            'color_name' => $request->color_name
         ]);
-        return redirect()->back();
+        return redirect()->route('admin.colors.index')
+                ->with('success', 'Cập nhật màu sắc thành công');
     }
 
     /**
@@ -74,7 +76,10 @@ class ColorController extends Controller
      */
     public function destroy(Color $color)
     {
+        if ($color->productVariants()->count() > 0) {
+            return redirect()->back()->with('error', 'Không thể xóa màu sắc này vì có sản phẩm liên quan.');
+        }
         $color->delete();
-        return redirect()->route('admin.colors.index');
+        return redirect()->back()->with('success', 'Xóa màu sắc thành công');
     }
 }

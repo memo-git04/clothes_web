@@ -22,9 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
 
-        //redirect khi chưa đăng nhập
-        $middleware->redirectGuestsTo(function () {
-            return route('admin.loginAdmin');
+        //redirect khi chưa đăng nhập: admin -> trang admin login, khách hàng -> trang login
+        $middleware->redirectGuestsTo(function ($request) {
+            if ($request->is('admin') || $request->is('admin/*')) {
+                return route('admin.loginAdmin');
+            }
+            return route('login');
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {

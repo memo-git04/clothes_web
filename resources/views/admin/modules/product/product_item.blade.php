@@ -6,7 +6,8 @@
             <div class="col p-md-0">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active">Chi tiết</li>
                 </ol>
             </div>
         </div>
@@ -21,6 +22,20 @@
                                 @csrf
                                 @method('PUT')
                                 <h4 class="card-title">Thông tin sản phẩm</h4>
+                                @if(session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
+                                @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
                                 <div class="card">
                                     <div class="card-body">
                                         <table class="table table-bordered">
@@ -28,14 +43,16 @@
                                                 <th width="200">Tên sản phẩm</th>
                                                 <td>
                                                     <input type="text" name="product_name"
-                                                           value="{{ $product->product_name }}" class="form-control">
+                                                           value="{{ old('product_name', $product->product_name) }}"
+                                                           class="form-control @error('product_name') is-invalid @enderror">
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th>Mô tả</th>
                                                 <td>
-                                                    <textarea name="description" class="form-control">
-                                                        {{ $product->description }}
+                                                    <textarea name="description"
+                                                              class="form-control @error('description') is-invalid @enderror">
+                                                        {{ old('description', $product->description) }}
                                                     </textarea>
                                                 </td>
                                             </tr>
@@ -83,18 +100,18 @@
                                                         <td>
                                                             <input type="number"
                                                                    name="variants[{{ $variant->id }}][stock_quantity]"
-                                                                   value="{{ $variant->stock_quantity }}"
-                                                                   class="form-control">
+                                                                   value="{{ old('variants.' . $variant->id . '.stock_quantity', $variant->stock_quantity) }}"
+                                                                   class="form-control @error('variants.' . $variant->id . '.stock_quantity') is-invalid @enderror">
                                                         </td>
                                                     </tr>
 
                                                     <tr>
-                                                        <th>Giá nhập</th>
+                                                        <th>Giá gốc</th>
                                                         <td>
                                                             <input type="text"
                                                                    name="variants[{{ $variant->id }}][base_price]"
-                                                                   value="{{number_format(optional($variant)->base_price ?? 0, 0, ',', '.') }}"
-                                                                   class="form-control">
+                                                                   value="{{ old('variants.' . $variant->id . '.base_price', number_format($variant->base_price ?? 0, 0, ',', '.')) }}"
+                                                                   class="form-control price-format @error('variants.' . $variant->id . '.base_price') is-invalid @enderror">
                                                         </td>
                                                     </tr>
 
@@ -103,18 +120,8 @@
                                                         <td>
                                                             <input type="text"
                                                                    name="variants[{{ $variant->id }}][selling_price]"
-                                                                   value="{{  number_format(optional($variant)->selling_price ?? 0, 0, ',', '.') }}"
-                                                                   class="form-control">
-                                                        </td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <th>Giá gốc</th>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="variants[{{ $variant->id }}][original_price]"
-                                                                   value="{{  number_format(optional($variant)->original_price ?? 0, 0, ',', '.') }}"
-                                                                   class="form-control">
+                                                                   value="{{ old('variants.' . $variant->id . '.selling_price', number_format($variant->selling_price ?? 0, 0, ',', '.')) }}"
+                                                                   class="form-control price-format @error('variants.' . $variant->id . '.selling_price') is-invalid @enderror">
                                                         </td>
                                                     </tr>
 
@@ -159,8 +166,9 @@
 
                                                             <button type="button"
                                                                     class="btn btn-danger btn-delete-variant"
-                                                                    data-url="{{ route('admin.variants.destroy', $variant->id) }}">
-                                                                Delete Variant
+                                                                    data-id="{{ $variant->id }}"
+                                                                    data-url="{{ route('admin.products.variants.destroy', $variant->id) }}">
+                                                                Xóa biến thể
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -173,10 +181,10 @@
 
                                 <div  style="display: flex">
                                     <div class="add mt-2 mx-4">
-                                        <a href="{{route('admin.products.index')}}"><button type="button" class="btn btn-success"> Back </button></a>
+                                        <a href="{{route('admin.products.index')}}"><button type="button" class="btn btn-success"> Quay trở lại </button></a>
                                     </div>
                                     <div class="add mt-2 mx-4">
-                                        <button type="submit" class="btn btn-primary"> Update </button>
+                                        <button type="submit" class="btn btn-primary"> Cập nhật </button>
                                     </div>
                                     <div class="add mt-2 mx-4">
                                         <button type="button" id="btn-add-variant" class="btn btn-success">
@@ -195,6 +203,8 @@
             </div>
         </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <script>
         $(document).ready(function() {
@@ -203,40 +213,70 @@
 
             const variantTemplate = $('#variant-template').html();
 
+            // ==================== THÊM VARIANT MỚI ====================
             $('#btn-add-variant').on('click', function() {
                 let newVariantHTML = variantTemplate.replace(/new_variants\[\d+\]/g, 'new_variants[' + variantIndex + ']');
-
-                // === QUAN TRỌNG: Thêm vào đúng vị trí ===
                 $('#variants-container').append(newVariantHTML);
-
                 variantIndex++;
-
-                // Khởi tạo preview cho variant mới
                 initPreviewForNewVariant();
             });
 
-            // Xóa variant mới
-            $(document).on('click', '.btn-remove-variant', function() {
-                $(this).closest('.new-variant').remove();
+            // ==================== XÓA VARIANT (CŨ + MỚI) ====================
+            $(document).on('click', '.btn-delete-variant, .btn-remove-variant', function(e) {
+                e.preventDefault();
+
+                let btn = $(this);
+                let isNewVariant = btn.hasClass('btn-remove-variant');
+
+                if (!confirm('Bạn có chắc chắn muốn xóa biến thể này?')) return;
+
+                if (isNewVariant) {
+                    // Xóa variant mới (chưa lưu)
+                    btn.closest('.border.p-3.mb-3').fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                    return;
+                }
+
+                // Xóa variant cũ (đã có trong DB) - AJAX
+                let url = btn.data('url');
+                $.ajax({
+                    url: url,
+                    method: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content') || $('#delete-variant-form input[name="_token"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            btn.closest('.border.p-3.mb-3').fadeOut(300, function() {
+                                $(this).remove();
+                            });
+                            toastr.success(response.message || 'Đã xóa biến thể thành công');
+                        }
+                    },
+                    error: function(xhr) {
+                        let message = xhr.responseJSON?.message || 'Có lỗi xảy ra khi xóa biến thể';
+                        toastr.error(message);
+                    }
+                });
             });
 
-            // Preview ảnh cho variant mới
+            // ==================== PREVIEW ẢNH ====================
             function initPreviewForNewVariant() {
                 $('.preview-input').off('change').on('change', function() {
                     let previewContainer = $(this).closest('td').find('.preview');
                     previewContainer.empty();
 
                     let files = this.files;
-
                     for (let i = 0; i < files.length; i++) {
                         let reader = new FileReader();
                         reader.onload = function(e) {
                             let divHTML = `
-                            <div class="image-item position-relative d-inline-block me-2" style="margin-bottom:8px;">
-                                <img src="${e.target.result}" width="80" class="rounded border">
-                                <button type="button" class="btn btn-danger btn-sm remove-preview-btn"
-                                        style="position:absolute; top:-6px; right:-6px; width:20px; height:20px; padding:0;">×</button>
-                            </div>`;
+                        <div class="image-item position-relative d-inline-block me-2" style="margin-bottom:8px;">
+                            <img src="${e.target.result}" width="80" class="rounded border">
+                            <button type="button" class="btn btn-danger btn-sm remove-preview-btn"
+                                    style="position:absolute; top:-6px; right:-6px; width:20px; height:20px; padding:0;">×</button>
+                        </div>`;
                             previewContainer.append(divHTML);
                         };
                         reader.readAsDataURL(files[i]);
@@ -249,7 +289,15 @@
                 $(this).closest('.image-item').remove();
             });
 
-            // Khởi tạo preview cho các input hiện có
+            // Xóa ảnh cũ (đánh dấu xóa)
+            $(document).on('click', '.btn-remove-image', function() {
+                let imageItem = $(this).closest('.image-item');
+                let imageId = imageItem.find('.delete-image-input').data('id');
+                imageItem.find('.delete-image-input').val(imageId);
+                imageItem.fadeOut();
+            });
+
+            // Khởi tạo ban đầu
             initPreviewForNewVariant();
         });
     </script>
@@ -260,7 +308,7 @@
                 <tr>
                     <th>Màu</th>
                     <td>
-                        <select name="new_variants[{{ time() }}][color_id]" class="form-control" required>
+                        <select name="new_variants[NEW_INDEX][color_id]" class="form-control" required>
                             @foreach(\App\Models\Color::all() as $color)
                                 <option value="{{ $color->id }}">{{ $color->color_name }}</option>
                             @endforeach
@@ -270,7 +318,7 @@
                 <tr>
                     <th>Size</th>
                     <td>
-                        <select name="new_variants[{{ time() }}][size_id]" class="form-control" required>
+                        <select name="new_variants[NEW_INDEX][size_id]" class="form-control" required>
                             @foreach(\App\Models\Size::all() as $size)
                                 <option value="{{ $size->id }}">{{ $size->size_name }}</option>
                             @endforeach
@@ -279,31 +327,27 @@
                 </tr>
                 <tr>
                     <th>Số lượng</th>
-                    <td><input type="number" name="new_variants[{{ time() }}][stock_quantity]" value="0" min="0" class="form-control" required></td>
+                    <td><input type="number" name="new_variants[NEW_INDEX][stock_quantity]" value="0" min="0" class="form-control"></td>
                 </tr>
                 <tr>
                     <th>Giá nhập</th>
-                    <td><input type="text" name="new_variants[{{ time() }}][base_price]" class="form-control price-format" value="0"></td>
+                    <td><input type="text" name="new_variants[NEW_INDEX][base_price]" class="form-control price-format" value="0"></td>
                 </tr>
                 <tr>
                     <th>Giá bán</th>
-                    <td><input type="text" name="new_variants[{{ time() }}][selling_price]" class="form-control price-format" value="0"></td>
-                </tr>
-                <tr>
-                    <th>Giá gốc</th>
-                    <td><input type="text" name="new_variants[{{ time() }}][original_price]" class="form-control price-format" value="0"></td>
+                    <td><input type="text" name="new_variants[NEW_INDEX][selling_price]" class="form-control price-format" value="0"></td>
                 </tr>
                 <tr>
                     <th>Ảnh</th>
                     <td>
                         <div class="preview d-flex flex-wrap gap-2 mb-2"></div>
-                        <input type="file" name="new_variants[{{ time() }}][images][]" multiple class="form-control preview-input">
+                        <input type="file" name="new_variants[NEW_INDEX][images][]" multiple class="form-control preview-input">
                     </td>
                 </tr>
                 <tr>
                     <th>Hành động</th>
                     <td>
-                        <button type="button" class="btn btn-danger btn-remove-variant">Xóa variant này</button>
+                        <button type="button" class="btn btn-danger btn-remove-variant">Xóa biến thể này</button>
                     </td>
                 </tr>
             </table>

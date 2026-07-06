@@ -36,7 +36,8 @@ class BrandController extends Controller
             'brand_name' => $request->brand_name,
         ]);
         //return
-        return redirect()->route('admin.brands.index');
+        return redirect()->route('admin.brands.index')
+            ->with('success', 'Thêm thương hiệu thành công!');
     }
 
     /**
@@ -63,9 +64,10 @@ class BrandController extends Controller
     public function update(UpdateBrandRequest $request, Brand $brand)
     {
         $brand->update([
-            'brand_name' => $request->edit_brand,
+            'brand_name' => $request->brand_name
         ]);
-        return redirect()->back();
+        return redirect()->route('admin.brands.index')
+            ->with('success', 'Cập nhật thương hiệu thành công!');
     }
 
     /**
@@ -73,6 +75,11 @@ class BrandController extends Controller
      */
     public function destroy(Brand $brand)
     {
+        //check
+        if ($brand->products()->count() > 0) {
+            return redirect()->route('admin.brands.index')
+                ->with('error', 'Không thể xóa thương hiệu này vì có sản phẩm liên quan!');
+        }
         $brand->delete();
         return redirect()->route('admin.brands.index');
     }

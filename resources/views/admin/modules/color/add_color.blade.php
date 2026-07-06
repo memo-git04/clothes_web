@@ -6,7 +6,8 @@
             <div class="col p-md-0">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Color</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Màu sắc</a></li>
+                    <li class="breadcrumb-item active">Thêm mới màu</li>
                 </ol>
             </div>
         </div>
@@ -17,6 +18,15 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Thêm mới màu</h4>
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
 
                             <form class="form-valide" action="{{ route('admin.colors.store') }}" method="post">
                                 @csrf
@@ -27,11 +37,11 @@
                                     </label>
                                     <div class="col-lg-7">
                                         <input type="text"
-                                               class="form-control"
+                                               class="form-control @error('color_name') is-invalid @enderror"
                                                id="color_name"
                                                name="color_name"
                                                placeholder="Nhập tên màu (ví dụ: Đỏ, Xanh Navy...)"
-                                               required>
+                                        >
                                     </div>
                                 </div>
 

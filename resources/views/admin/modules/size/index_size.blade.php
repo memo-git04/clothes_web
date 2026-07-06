@@ -6,7 +6,7 @@
             <div class="col p-md-0">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Size</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Kích thước</a></li>
                 </ol>
             </div>
         </div>
@@ -18,6 +18,16 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Bảng Size</h4>
+                            @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+                            @if(session('error'))
+                                <div class="alert alert-danger">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered zero-configuration">
                                     <thead>

@@ -7,7 +7,7 @@
             <div class="col p-md-0">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Promotions</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Mã Giảm Giá</a></li>
                 </ol>
             </div>
         </div>
@@ -18,20 +18,25 @@
                     <div class="card">
 
                         <div class="card-body">
-                            <h4 class="card-title">List of Promotions</h4>
-
+                            <h4 class="card-title">Danh sách mã giảm giá</h4>
+                            @if(session('success'))
+                                <div class="alert alert-success alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                    {{ session('success') }}
+                                </div>
+                            @endif
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered zero-configuration">
                                     <thead>
                                     <tr>
                                         <th>STT</th>
-                                        <th>Code</th>
-                                        <th>Description</th>
-                                        <th>Usage Limit</th>
-                                        <th>Current Usage</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Act</th>
+                                        <th>Mã giảm giá</th>
+                                        <th>Mô tả</th>
+                                        <th>Giới hạn sử dụng</th>
+                                        <th>Đã sử dụng</th>
+                                        <th>Ngày bắt đầu</th>
+                                        <th>Ngày kết thúc</th>
+                                        <th>Thao tác</th>
                                     </tr>
                                     </thead>
 
@@ -77,7 +82,9 @@
                                                 <form action="{{ route('admin.promotions.destroy', $promotion->id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                    <button type="submit"
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('Bạn có chắc chắn muốn xóa mã giảm giá này không?')">
                                                         <i class="fa-solid fa-trash-can"></i>
                                                     </button>
                                                 </form>
@@ -90,13 +97,13 @@
                                     <tfoot>
                                     <tr>
                                         <th>STT</th>
-                                        <th>Code</th>
-                                        <th>Description</th>
-                                        <th>Usage Limit</th>
-                                        <th>Current Usage</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Act</th>
+                                        <th>Mã giảm giá</th>
+                                        <th>Mô tả</th>
+                                        <th>Giới hạn sử dụng</th>
+                                        <th>Đã sử dụng</th>
+                                        <th>Ngày bắt đầu</th>
+                                        <th>Ngày kết thúc</th>
+                                        <th>Thao tác</th>
                                     </tr>
                                     </tfoot>
                                 </table>
@@ -106,7 +113,7 @@
                             <div class="add mt-2 mx-4">
                                 <a href="{{ route('admin.promotions.create') }}">
                                     <button type="button" class="btn btn-success">
-                                        <i class="fa-solid fa-plus"></i> Add new promotion
+                                        <i class="fa-solid fa-plus"></i> Thêm mã giảm giá mới
                                     </button>
                                 </a>
                             </div>

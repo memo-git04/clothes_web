@@ -36,13 +36,14 @@ class PromotionController extends Controller
             'code' => $request->code,
             'promotion_name' => $request->promotion_name,
             'description' => $request->description,
-            'discount_type' => $request->discount_type,
             'discount_value' => $request->discount_value,
+            'min_order_amount' => $request->min_order_amount,
             'usage_limit' => $request->usage_limit,
+            'per_user_limit' => 1,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
-        return redirect()->route('promotions.index');
+        return redirect()->route('admin.promotions.index')->with('success', 'Thêm mã giảm giá thành công!');
     }
 
     /**
@@ -72,13 +73,15 @@ class PromotionController extends Controller
             'code' => $request->code,
             'promotion_name' => $request->promotion_name,
             'description' => $request->description,
-            'discount_type' => $request->discount_type,
             'discount_value' => $request->discount_value,
+            'min_order_amount' => $request->min_order_amount,
             'usage_limit' => $request->usage_limit,
+            'status' => $request->is_active,
             'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
+            'end_date' => $request->end_date
         ]);
-        return redirect()->back();
+//        dd($data);
+        return redirect()->back()->with('success', 'Cập nhật mã giảm giá thành công!');
     }
 
     /**
@@ -86,6 +89,11 @@ class PromotionController extends Controller
      */
     public function destroy(Promotion $promotion)
     {
-        //
+        //check if có đơn hàng đang áp mã
+        if ($promotion->orders()->exists()) {
+            return redirect()->back()->with('error', 'Mã khuyến mãi đang được sử dụng, không thể xóa');
+        }
+        $promotion->delete();
+        return redirect()->back()->with('success', 'Xóa mã khuyến mãi thành công!');
     }
 }

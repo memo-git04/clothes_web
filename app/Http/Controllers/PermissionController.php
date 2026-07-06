@@ -84,7 +84,7 @@ class PermissionController extends Controller
     }
     public function assignRole(Permission $permission)
     {
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'customer')->get();
         return view('admin.modules.permission.assign_role', [
             'permission' => $permission,
             'roles' => $roles
@@ -94,10 +94,11 @@ class PermissionController extends Controller
     {
         $request->validate([
             'roles' => 'required|array',
+            'roles.*' => 'exists:roles,name',
         ]);
 
-        $permission->roles()->sync($request->roles);
+        $permission->syncRoles($request->roles);
 
-        return redirect()->route('admin.permissions.index')->with('success', 'Gán role thành công!');
+        return redirect()->back()->with('success', 'Gán role thành công!');
     }
 }

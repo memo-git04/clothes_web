@@ -4,13 +4,15 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
 
 class UpdateColorRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -20,10 +22,24 @@ class UpdateColorRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            //
+            'color_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('colors', 'color_name')->ignore($this->color->id),
+            ],
+        ];
+    }
+    public function messages()
+    {
+        return [
+            'color_name.required' => "Tên màu không được để trống",
+            'color_name.string' => "Tên màu phải là chuỗi",
+            'color_name.max' => "Tên màu không được vượt quá 255 ký tự",
+            'color_name.unique' => 'Tên màu đã tồn tại, vui lòng chọn tên khác.'
         ];
     }
 }

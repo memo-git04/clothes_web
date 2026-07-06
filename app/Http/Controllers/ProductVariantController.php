@@ -62,31 +62,52 @@ class ProductVariantController extends Controller
      */
     public function destroy(ProductVariant $productVariant)
     {
-        // check đơn hàng
-        if ($productVariant->orderItems()->exists()) {
-            return back()->with('error', 'Không thể xoá vì đã có đơn hàng');
-        }
+        try {
+            // check đơn hàng
+            if ($productVariant->orderItems()->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể xoá vì đã có đơn hàng'
+                ], 422);
+            }
 
-        // check còn hàng
-        if ($productVariant->stock_quantity > 0) {
-            return back()->with('error', 'Phải hết hàng mới được xoá');
-        }
-        //get product truoc khi xoa
-        $product = $productVariant->product;
-        // xoá ảnh
-        foreach ($productVariant->images as $img) {
-            Storage::disk('public')->delete($img->image_url);
-            $img->delete();
-        }
-        // soft delete
-        $productVariant->delete();
-        //check sau khi delete
-        if ($product->variants()->count() == 0) {
-            $product->update([
-                'status' => 'inactive'
+            // check còn hàng
+            if ($productVariant->stock_quantity > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Phải hết hàng mới được xoá'
+                ], 422);
+            }
+
+            //get product truoc khi xoa
+            $product = $productVariant->product;
+
+            // xoá ảnh
+            foreach ($productVariant->images as $img) {
+                Storage::disk('public')->delete($img->image_url);
+                $img->delete();
+            }
+
+            // soft delete
+            $productVariant->delete();
+
+            //check sau khi delete
+            if ($product->variants()->count() == 0) {
+                $product->update([
+                    'status' => 'inactive'
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xoá biến thể'
             ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
         }
-
-        return back()->with('success', 'Đã xoá biến thể');
     }
+
 }

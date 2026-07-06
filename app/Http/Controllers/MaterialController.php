@@ -36,7 +36,8 @@ class MaterialController extends Controller
             'material_name' => $request->material_name,
         ]);
         //return
-        return redirect()->route('admin.materials.index');
+        return redirect()->route('admin.materials.index')
+            ->with('success', 'Thêm chất liệu thành công!');
     }
 
     /**
@@ -63,9 +64,9 @@ class MaterialController extends Controller
     public function update(UpdateMaterialRequest $request, Material $material)
     {
         $material->update([
-            'material_name' => $request->edit_material,
+            'material_name' => $request->material_name,
         ]);
-        return redirect()->back();
+        return redirect()->route('admin.materials.index')->with('success', 'Cập nhật chất liệu thành công!');
     }
 
     /**
@@ -73,6 +74,10 @@ class MaterialController extends Controller
      */
     public function destroy(Material $material)
     {
+        //check if the material is used in any products
+        if ($material->products()->count() > 0) {
+            return redirect()->route('admin.materials.index')->with('error', 'Không thể xóa chất liệu này vì nó đang được sử dụng trong sản phẩm!');
+        }
         $material->delete();
         return redirect()->route('admin.materials.index');
     }

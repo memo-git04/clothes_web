@@ -6,18 +6,19 @@
         <div class="row page-titles mx-0">
             <div class="col p-md-0">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('admin.roles.index') }}">Roles</a></li>
-                    <li class="breadcrumb-item active">Edit Role</li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.roles.index') }}">Vai trò</a></li>
+                    <li class="breadcrumb-item active">Chỉnh sửa vai trò</li>
                 </ol>
             </div>
         </div>
+
         <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Edit Role</h4>
+                            <h4 class="card-title">Chỉnh sửa vai trò</h4>
 
                             @if(session('success'))
                                 <div class="alert alert-success">{{ session('success') }}</div>
@@ -37,10 +38,10 @@
                             @csrf
                             @method('PUT')
 
-                            <!-- Tên Role -->
+                            <!-- Tên vai trò -->
                                 <div class="form-group row">
                                     <label class="col-lg-4 col-form-label">
-                                        Tên Vai Trò <span class="text-danger">*</span>
+                                        Tên vai trò <span class="text-danger">*</span>
                                     </label>
                                     <div class="col-lg-8">
                                         <input
@@ -58,8 +59,12 @@
 
                                 <div class="form-group row">
                                     <div class="col-lg-8 ml-auto">
-                                        <button type="submit" class="btn btn-primary">Cập nhật</button>
-                                        <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">Hủy</a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa-solid fa-save"></i> Cập nhật vai trò
+                                        </button>
+                                        <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary ml-2">
+                                            Hủy
+                                        </a>
                                     </div>
                                 </div>
                             </form>
@@ -69,7 +74,6 @@
                 </div>
             </div>
         </div>
-        ```
-
     </div>
+
 @endsection

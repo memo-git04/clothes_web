@@ -2,9 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('home');
-});
 //customer
 //register
 Route::get('/register', [\App\Http\Controllers\Auth\AuthController::class, 'register'])
@@ -30,50 +27,88 @@ Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])
     ->name('home');
 Route::get('/product/{id}', [\App\Http\Controllers\HomeController::class, 'productDetail'])
     ->name('product.detail');
-//cart
-// Cart routes
-Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])
-    ->name('cart.index');
-Route::post('/cart', [\App\Http\Controllers\CartController::class, 'addToCart'])
-    ->name('cart.add');
-Route::post('/cart/update-quantity', [\App\Http\Controllers\CartController::class, 'updateQuantity'])
-    ->name('cart.update-quantity');
-Route::post('/cart/remove', [\App\Http\Controllers\CartController::class, 'removeItem'])
-    ->name('cart.remove');
-Route::post('/cart/clear', [\App\Http\Controllers\CartController::class, 'clearCart'])
-    ->name('cart.clear');
 
-// Coupon
-Route::post('/cart/apply-coupon', [\App\Http\Controllers\CartController::class, 'applyCoupon'])
-    ->name('cart.apply-coupon');
-Route::post('/cart/remove-coupon', [\App\Http\Controllers\CartController::class, 'removeCoupon'])
-    ->name('cart.remove-coupon');
-//checkout
-Route::get('/checkout', [\App\Http\Controllers\CartController::class, 'checkout'])
-    ->name('checkout');
-Route::post('/checkout', [\App\Http\Controllers\CartController::class, 'store'])
-    ->name('checkout.store');
+// Shop + tìm kiếm (public)
+Route::get('/shop', [\App\Http\Controllers\ProductController::class, 'shop'])
+    ->name('shop');
+Route::get('/shop_men', [\App\Http\Controllers\ProductController::class, 'shopMen'])
+    ->name('shop.men');
+Route::get('/shop_women', [\App\Http\Controllers\ProductController::class, 'shopWomen'])
+    ->name('shop.women');
+Route::get('/search', [\App\Http\Controllers\ProductController::class, 'search'])
+    ->name('search');
 
-Route::get('/payment-return', function (){
-    return view('payment_return');
+//blog
+Route::get('/blog', [\App\Http\Controllers\HomeController::class, 'blog'])
+    ->name('blog');
+
+// Contact us (public)
+Route::get('/contactus', [\App\Http\Controllers\ContactController::class, 'create'])
+    ->name('contact');
+Route::post('/contactus', [\App\Http\Controllers\ContactController::class, 'store'])
+    ->name('contact.store');
+
+// VNPay return
+Route::get('/payment-return', [\App\Http\Controllers\CartController::class, 'paymentReturn'])
+    ->name('payment.return');
+
+// ============ Khu vực yêu cầu đăng nhập (khách hàng) ============
+Route::middleware('auth')->group(function () {
+    //cart
+    Route::get('/cart', [\App\Http\Controllers\CartController::class, 'index'])
+        ->name('cart.index');
+    Route::post('/cart', [\App\Http\Controllers\CartController::class, 'addToCart'])
+        ->name('cart.add');
+    Route::post('/cart/update-quantity', [\App\Http\Controllers\CartController::class, 'updateQuantity'])
+        ->name('cart.update-quantity');
+    Route::post('/cart/remove', [\App\Http\Controllers\CartController::class, 'removeItem'])
+        ->name('cart.remove');
+    Route::post('/cart/clear', [\App\Http\Controllers\CartController::class, 'clearCart'])
+        ->name('cart.clear');
+
+    // Coupon + Checkout
+    Route::post('/checkout/apply-coupon', [\App\Http\Controllers\CartController::class, 'applyCoupon'])
+        ->name('checkout.apply-coupon');
+    Route::get('/checkout/remove-coupon', [\App\Http\Controllers\CartController::class, 'removeCoupon'])
+        ->name('checkout.remove-coupon');
+    Route::get('/checkout', [\App\Http\Controllers\CartController::class, 'checkout'])
+        ->name('checkout');
+    Route::post('/checkout', [\App\Http\Controllers\CartController::class, 'store'])
+        ->name('checkout.store');
+
+    // Thông tin tài khoản
+    Route::get('/my-account', [\App\Http\Controllers\UserController::class, 'show'])
+        ->name('profile');
+    Route::put('/my-account', [\App\Http\Controllers\UserController::class, 'updateProfile'])
+        ->name('profile.update');
+
+    // Wishlist
+    Route::get('/wishlist', [\App\Http\Controllers\WishlistController::class, 'index'])
+        ->name('wishlist');
+    Route::post('/wishlist/toggle', [\App\Http\Controllers\WishlistController::class, 'toggle'])
+        ->name('wishlist.toggle');
+    Route::delete('/wishlist/{wishlist}', [\App\Http\Controllers\WishlistController::class, 'destroy'])
+        ->name('wishlist.destroy');
+
+    // Đánh giá sản phẩm
+    Route::post('/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])
+        ->name('reviews.store');
+
+    // Lịch sử đơn hàng
+    Route::get('/order-history', [\App\Http\Controllers\OrderController::class, 'orderHistory'])
+        ->name('orderHistory');
+    Route::get('/order-history/filter/{status_id}', [\App\Http\Controllers\OrderController::class, 'filter'])
+        ->name('orders.filter');
+    Route::get('/order-detail/{order}', [\App\Http\Controllers\OrderController::class, 'show'])
+        ->name('orderDetail');
+    Route::post('/order/{order}/cancel', [\App\Http\Controllers\OrderController::class, 'cancel'])
+        ->name('order.cancel');
 });
-
-Route::post('/apply-discount', [\App\Http\Controllers\CartController::class, 'applyDiscount'])->name('discount.apply');
-
-//Order - History
-Route::get('/order-history', [\App\Http\Controllers\OrderController::class, 'orderHistory'])
-    ->name('orderHistory');
-Route::get('/order-history/filter/{status_id}', [\App\Http\Controllers\OrderController::class, 'filter'])
-    ->name('orders.filter');
-Route::get('/order-detail/{order}', [\App\Http\Controllers\OrderController::class, 'show'])
-    ->name('orderDetail');
-Route::post('/order/{order}/cancel', [\App\Http\Controllers\OrderController::class, 'cancel'])
-    ->name('order.cancel');
 
 
 
 //admin - login/logout
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     Route::get('/loginAdmin', [\App\Http\Controllers\UserController::class, 'login'])
         ->name('loginAdmin');
@@ -81,18 +116,26 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->name('loginProcess');
     Route::get('/logout', [\App\Http\Controllers\UserController::class, 'logout'])
         ->name('logoutAdmin');
-    //admin - dashboard
-    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
-        ->name('dashboard');
 
     Route::middleware(['auth', 'admin'])->group(function (){
+        //admin - dashboard / báo cáo thống kê
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
+            ->name('dashboard');
+        // AJAX cho biểu đồ (bấm biểu đồ -> load danh sách)
+        Route::get('/reports/revenue', [\App\Http\Controllers\Admin\DashboardController::class, 'revenue'])
+            ->name('reports.revenue');
+        Route::get('/reports/orders', [\App\Http\Controllers\Admin\DashboardController::class, 'ordersList'])
+            ->name('reports.orders');
+        Route::get('/reports/top-products', [\App\Http\Controllers\Admin\DashboardController::class, 'topProductsList'])
+            ->name('reports.topProducts');
+
         //account
         Route::prefix('users')->group(function () {
             Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])
                 ->name('users.index');
             Route::get('/create', [\App\Http\Controllers\UserController::class, 'create'])
                 ->name('users.create');
-            Route::post('/store', [\App\Http\Controllers\UserController::class, 'store'])
+            Route::post('/store', [\App\Http\Controllers\UserController::class, 'createAccountByAdmin'])
                 ->name('users.store');
             Route::get('/edit/{user}', [\App\Http\Controllers\UserController::class, 'edit'])
                 ->name('users.edit');
@@ -100,7 +143,56 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->name('users.update');
             Route::delete('/delete/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])
                 ->name('users.destroy');
+            //
+            Route::get('/permissions/{user}', [\App\Http\Controllers\UserController::class, 'addPermissions'])
+                ->name('users.permissions');
+            Route::post('/permissions/{user}', [\App\Http\Controllers\UserController::class, 'addPermissionsPost'])
+                ->name('users.permissions.post');
+            Route::get('/show/permissions/{user}', [\App\Http\Controllers\UserController::class, 'showPermissions'])
+                ->name('users.show.permissions');
+
         });
+        // Roles & Permissions
+        Route::prefix('roles')->group(function () {
+            Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])
+                ->name('roles.index');
+            Route::get('/create', [\App\Http\Controllers\RoleController::class, 'create'])
+                ->name('roles.create');
+            Route::post('/store', [\App\Http\Controllers\RoleController::class, 'store'])
+                ->name('roles.store');
+            Route::get('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'edit'])
+                ->name('roles.edit');
+            Route::put('/update/{role}', [\App\Http\Controllers\RoleController::class, 'update'])
+                ->name('roles.update');
+            Route::delete('/delete/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])
+                ->name('roles.destroy');
+
+            // Permission Matrix
+            Route::get('/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'editPermissions'])
+                ->name('roles.permissions.edit');
+            Route::post('/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])
+                ->name('roles.permissions.update');
+        });
+        Route::prefix('permissions')->group(function () {
+            Route::get('/', [\App\Http\Controllers\PermissionController::class, 'index'])
+                ->name('permissions.index');
+            Route::get('/create', [\App\Http\Controllers\PermissionController::class, 'create'])
+                ->name('permissions.create');
+            Route::post('/store', [\App\Http\Controllers\PermissionController::class, 'store'])
+                ->name('permissions.store');
+            Route::get('/edit/{permission}', [\App\Http\Controllers\PermissionController::class, 'edit'])
+                ->name('permissions.edit');
+            Route::put('/update/{permission}', [\App\Http\Controllers\PermissionController::class, 'update'])
+                ->name('permissions.update');
+            Route::delete('/delete/{permission}', [\App\Http\Controllers\PermissionController::class, 'destroy'])
+                ->name('permissions.destroy');
+            Route::get('/{permission}/assign-role', [\App\Http\Controllers\PermissionController::class, 'assignRole'])
+                ->name('permissions.assignRole');
+            Route::post('/{permission}/assign-role', [\App\Http\Controllers\PermissionController::class, 'assignRoleStore'])
+                ->name('permissions.assignRoleStore');
+        });
+
+
         //category, brand, material
         Route::resource('categories', \App\Http\Controllers\CategoryController::class)->names([
             'index' => 'categories.index',
@@ -108,6 +200,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             'store' => 'categories.store',
             'edit' => 'categories.edit',
             'update' => 'categories.update',
+            'show' => 'categories.show',
             'destroy' => 'categories.destroy',
         ]);
         Route::resource('brands', \App\Http\Controllers\BrandController::class)->names([
@@ -176,48 +269,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 'update' => 'promotions.update',
                 'destroy' => 'promotions.destroy',
             ]);
-        // Roles & Permissions
-        Route::prefix('roles')->group(function () {
-            Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])
-                ->name('roles.index');
-            Route::get('/create', [\App\Http\Controllers\RoleController::class, 'create'])
-                ->name('roles.create');
-            Route::post('/store', [\App\Http\Controllers\RoleController::class, 'store'])
-                ->name('roles.store');
-            Route::get('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'edit'])
-                ->name('roles.edit');
-            Route::put('/update/{role}', [\App\Http\Controllers\RoleController::class, 'update'])
-                ->name('roles.update');
-            Route::delete('/delete/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])
-                ->name('roles.destroy');
 
-            // Permission Matrix
-            Route::get('/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'editPermissions'])
-                ->name('roles.permissions.edit');
-            Route::post('/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])
-                ->name('roles.permissions.update');
-            });
-            Route::resource('permissions', \App\Http\Controllers\PermissionController::class)
-                ->names(
-[
-                    'index' => 'permissions.index',
-                    'create' => 'permissions.create',
-                    'store' => 'permissions.store',
-                    'edit' => 'permissions.edit',
-                    'update' => 'permissions.update',
-                    'destroy' => 'permissions.destroy',
-            ]);
 
 
             // Products
         Route::prefix('products')->group(function () {
-            Route::get('/', [\App\Http\Controllers\ProductController::class, 'index'])->name('products.index');
-            Route::get('/create', [\App\Http\Controllers\ProductController::class, 'create'])->name('products.create');
-            Route::post('/store', [\App\Http\Controllers\ProductController::class, 'store'])->name('products.store');
-            Route::get('/show/{product}', [\App\Http\Controllers\ProductController::class, 'show'])->name('products.show');
-            Route::put('/update/{product}', [\App\Http\Controllers\ProductController::class, 'update'])->name('products.update');
+            Route::get('/', [\App\Http\Controllers\ProductController::class, 'index'])
+                ->name('products.index');
+            Route::get('/create', [\App\Http\Controllers\ProductController::class, 'create'])
+                ->name('products.create');
+            Route::post('/store', [\App\Http\Controllers\ProductController::class, 'store'])
+                ->name('products.store');
+            Route::get('/show/{product}', [\App\Http\Controllers\ProductController::class, 'show'])
+                ->name('products.show');
+            Route::put('/update/{product}', [\App\Http\Controllers\ProductController::class, 'update'])
+                ->name('products.update');
+            //
             Route::delete('/variants/{productVariant}', [\App\Http\Controllers\ProductVariantController::class, 'destroy'])
-                ->name('variants.destroy');
+                ->name('products.variants.destroy');
         });
         Route::prefix('orders')->group(function (){
             Route::get('/', [\App\Http\Controllers\OrderController::class, 'index'])
@@ -234,180 +303,29 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->name('delete');
         });
 
+        // Duyệt đánh giá sản phẩm
+        Route::prefix('reviews')->group(function () {
+            Route::get('/', [\App\Http\Controllers\ReviewController::class, 'adminIndex'])
+                ->name('reviews.index');
+            Route::post('/{review}/approve', [\App\Http\Controllers\ReviewController::class, 'approve'])
+                ->name('reviews.approve');
+            Route::delete('/{review}', [\App\Http\Controllers\ReviewController::class, 'destroy'])
+                ->name('reviews.destroy');
+        });
 
+        // Liên hệ (Contact Us)
+        Route::prefix('contacts')->group(function () {
+            Route::get('/', [\App\Http\Controllers\ContactController::class, 'adminIndex'])
+                ->name('contacts.index');
+            Route::get('/{contact}', [\App\Http\Controllers\ContactController::class, 'adminShow'])
+                ->name('contacts.show');
+            Route::delete('/{contact}', [\App\Http\Controllers\ContactController::class, 'destroy'])
+                ->name('contacts.destroy');
+        });
 
     });
 });
 
-
-
-//CURD
-//category
-//Route::get('/categories', [\App\Http\Controllers\CategoryController::class, 'index'])
-//    ->name('categories.index');
-//Route::get('/categories/create', [\App\Http\Controllers\CategoryController::class, 'create'])
-//    ->name('categories.create');
-//Route::post('/categories/store', [\App\Http\Controllers\CategoryController::class, 'store'])
-//    ->name('categories.store');
-//Route::get('/categories/edit/{category}', [\App\Http\Controllers\CategoryController::class, 'edit'])
-//    ->name('categories.edit');
-//Route::put('/categories/edit/{category}', [\App\Http\Controllers\CategoryController::class, 'update'])
-//    ->name('categories.update');
-//Route::delete('/categories/{category}', [\App\Http\Controllers\CategoryController::class, 'destroy'])
-//    ->name('categories.destroy');
-//brand
-//Route::get('/brands', [\App\Http\Controllers\BrandController::class, 'index'])
-//    ->name('brands.index');
-//Route::get('/brands/create', [\App\Http\Controllers\BrandController::class, 'create'])
-//    ->name('brands.create');
-//Route::post('/brands/store', [\App\Http\Controllers\BrandController::class, 'store'])
-//    ->name('brands.store');
-//Route::get('/brands/edit/{brand}', [\App\Http\Controllers\BrandController::class, 'edit'])
-//    ->name('brands.edit');
-//Route::put('/brands/edit/{brand}', [\App\Http\Controllers\BrandController::class, 'update'])
-//    ->name('brands.update');
-//Route::delete('/brands/{brand}', [\App\Http\Controllers\BrandController::class, 'destroy'])
-//    ->name('brands.destroy');
-//material
-//Route::prefix('/materials')->group(function () {
-//    Route::get('/', [\App\Http\Controllers\MaterialController::class, 'index'])
-//        ->name('materials.index');
-//    Route::get('/create', [\App\Http\Controllers\MaterialController::class, 'create'])
-//        ->name('materials.create');
-//
-//    Route::post('/store', [\App\Http\Controllers\MaterialController::class, 'store'])
-//        ->name('materials.store');
-//
-//    Route::get('/edit/{material}', [\App\Http\Controllers\MaterialController::class, 'edit'])
-//        ->name('materials.edit');
-//    Route::put('/edit/{material}', [\App\Http\Controllers\MaterialController::class, 'update'])
-//        ->name('materials.update');
-//    Route::delete('/{material}', [\App\Http\Controllers\MaterialController::class, 'destroy'])
-//        ->name('materials.destroy');
-//});
-//color
-//Route::prefix('/colors')->group(function () {
-//    Route::get('/', [\App\Http\Controllers\ColorController::class, 'index'])
-//        ->name('colors.index');
-//    Route::get('/create', [\App\Http\Controllers\ColorController::class, 'create'])
-//        ->name('colors.create');
-//    Route::post('/store', [\App\Http\Controllers\ColorController::class, 'store'])
-//        ->name('colors.store');
-//    Route::get('/edit/{color}', [\App\Http\Controllers\ColorController::class, 'edit'])
-//        ->name('colors.edit');
-//    Route::put('/edit/{color}', [\App\Http\Controllers\ColorController::class, 'update'])
-//        ->name('colors.update');
-//    Route::delete('/{color}', [\App\Http\Controllers\ColorController::class, 'destroy'])
-//        ->name('colors.destroy');
-//});
-//size
-//Route::prefix('/sizes')->group(function () {
-//    Route::get('/', [\App\Http\Controllers\SizeController::class, 'index'])
-//        ->name('sizes.index');
-//    Route::get('/create', [\App\Http\Controllers\SizeController::class, 'create'])
-//        ->name('sizes.create');
-//    Route::post('/store', [\App\Http\Controllers\SizeController::class, 'store'])
-//        ->name('sizes.store');
-//    Route::get('/edit/{size}', [\App\Http\Controllers\SizeController::class, 'edit'])
-//        ->name('sizes.edit');
-//    Route::put('/edit/{size}', [\App\Http\Controllers\SizeController::class, 'update'])
-//        ->name('sizes.update');
-//    Route::delete('/{size}', [\App\Http\Controllers\SizeController::class, 'destroy'])
-//        ->name('sizes.destroy');
-//});
-//order_status
-//Route::prefix('/order-status')->group(function () {
-//    Route::get('/', [\App\Http\Controllers\OrderStatusController::class, 'index'])
-//        ->name('order-status.index');
-//    Route::get('/create', [\App\Http\Controllers\OrderStatusController::class, 'create'])
-//        ->name('order-status.create');
-//    Route::post('/store', [\App\Http\Controllers\OrderStatusController::class, 'store'])
-//        ->name('order-status.store');
-//});
-////promotion
-//Route::prefix('/promotions')->group(function () {
-//    Route::get('/', [\App\Http\Controllers\PromotionController::class, 'index'])
-//        ->name('promotions.index');
-//    Route::get('/create', [\App\Http\Controllers\PromotionController::class, 'create'])
-//        ->name('promotions.create');
-//    Route::post('/store', [\App\Http\Controllers\PromotionController::class, 'store'])
-//        ->name('promotions.store');
-//    Route::get('/edit/{promotion}', [\App\Http\Controllers\PromotionController::class, 'edit'])
-//        ->name('promotions.edit');
-//    Route::put('/edit/{promotion}', [\App\Http\Controllers\PromotionController::class, 'update'])
-//        ->name('promotions.update');
-//    Route::delete('/{promotion}', [\App\Http\Controllers\PromotionController::class, 'destroy'])
-//        ->name('promotions.destroy');
-//});
-//role
-//Route::prefix('/roles')->group(function () {
-//    Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])
-//        ->name('roles.index');
-//    Route::get('/create', [\App\Http\Controllers\RoleController::class, 'create'])
-//        ->name('roles.create');
-//    Route::post('/store', [\App\Http\Controllers\RoleController::class, 'store'])
-//        ->name('roles.store');
-//    Route::get('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'edit'])
-//        ->name('roles.edit');
-//    Route::put('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'update'])
-//        ->name('roles.update');
-//    Route::delete('/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])
-//        ->name('roles.destroy');
-//});
-//role
-//Route::prefix('/roles')->group(function () {
-//    Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])
-//        ->name('roles.index');
-//    Route::get('/create', [\App\Http\Controllers\RoleController::class, 'create'])
-//        ->name('roles.create');
-//    Route::post('/store', [\App\Http\Controllers\RoleController::class, 'store'])
-//        ->name('roles.store');
-//    Route::get('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'edit'])
-//        ->name('roles.edit');
-//    Route::put('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'update'])
-//        ->name('roles.update');
-//    Route::delete('/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])
-//        ->name('roles.destroy');
-//    // show matrix
-//    Route::get('/roles/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'editPermissions'])
-//        ->name('roles.permissions.edit');
-//    // update matrix
-//    Route::post('/roles/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])
-//        ->name('roles.permissions.update');
-//});
-//permission
-//Route::prefix('/permissions')->group(function () {
-//    Route::get('/', [\App\Http\Controllers\PermissionController::class, 'index'])
-//        ->name('permissions.index');
-//    Route::get('/create', [\App\Http\Controllers\PermissionController::class, 'create'])
-//        ->name('permissions.create');
-//    Route::post('/store', [\App\Http\Controllers\PermissionController::class, 'store'])
-//        ->name('permissions.store');
-//    Route::get('/edit/{permission}', [\App\Http\Controllers\PermissionController::class, 'edit'])
-//        ->name('permissions.edit');
-//    Route::put('/edit/{permission}', [\App\Http\Controllers\PermissionController::class, 'update'])
-//        ->name('permissions.update');
-//    Route::delete('/{permission}', [\App\Http\Controllers\PermissionController::class, 'destroy'])
-//        ->name('permissions.destroy');
-//});
-
-//});
-//product
-//Route::prefix('/products')->group(function () {
-//    Route::get('/', [\App\Http\Controllers\ProductController::class, 'index'])
-//        ->name('products.index');
-//    Route::get('/create', [\App\Http\Controllers\ProductController::class, 'create'])
-//        ->name('products.create');
-//    Route::post('/store', [\App\Http\Controllers\ProductController::class, 'store'])
-//        ->name('products.store');
-//    Route::put('/show/{product}', [\App\Http\Controllers\ProductController::class, 'update'])
-//        ->name('products.update');
-//    Route::get('/show/{product}', [\App\Http\Controllers\ProductController::class, 'show'])
-//        ->name('products.show');
-//    Route::delete('/variants/{productVariant}',
-//        [\App\Http\Controllers\ProductVariantController::class, 'destroy']
-//    )->name('variants.destroy');
-//});
 
 
 

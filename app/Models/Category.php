@@ -5,78 +5,73 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
     /** @use HasFactory<\Database\Factories\CategoryFactory> */
     use HasFactory;
     use SoftDeletes;
+
     protected $table = 'categories';
     protected $primaryKey = 'id';
     protected $fillable = [
         'category_name',
         'description',
+        'parent_id',
         'level',
         'is_root',
-        'order',
     ];
     public $timestamps = true;
 
-    // Thêm hàm lấy tất cả cha (ancestors) đệ quy
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function products(){
+        return $this->hasMany(Product::class, 'category_id');
+    }
+
+//    public function scopeCategories($query)
+//    {
+//        return $query->where('is_root', 0);
+//    }
+//
+//    // Lấy các danh mục gốc
+//    public function scopeRootCategories($query)
+//    {
+//        return $query->whereNull('parent_id');
+//    }
+    // Get all parent categories
     public function getAllParents()
     {
         $parents = collect();
+        $parent = $this->parent;
 
-        $currentParents = $this->parents;
-
-        while ($currentParents->isNotEmpty()) {
-            $parents = $parents->merge($currentParents);
-            $nextLevel = collect();
-
-            foreach ($currentParents as $parent) {
-                $nextLevel = $nextLevel->merge($parent->parents);
-            }
-
-            $currentParents = $nextLevel;
+        while ($parent) {
+            $parents->push($parent);
+            $parent = $parent->parent;
         }
 
-        return $parents->unique('id');
+        return $parents;
     }
 
-
-
-    //function get all id
-    public function getAllChildrenIds()
+    // Get all child categories
+    public function getAllChildren()
     {
-        $ids = [];
-
+        $children = collect();
         foreach ($this->children as $child) {
-            $ids[] = $child->id;
-            $ids = array_merge($ids, $child->getAllChildrenIds());
+            $children->push($child);
+            $children = $children->merge($child->getAllChildren());
         }
-
-        return $ids;
-    }
-
-    //category parent
-    public function parents()
-    {
-        return $this->belongsToMany(Category::class, 'category_parent', 'category_id', 'parent_id')
-            ->withPivot('order')
-            ->orderBy('order');
-    }
-
-    // Category con
-    public function children()
-    {
-        return $this->belongsToMany(Category::class, 'category_parent', 'parent_id', 'category_id')
-            ->withPivot('order')
-            ->orderBy('order');
-    }
-
-    public function products()
-    {
-        return $this->hasMany(Product::class, 'category_id');
+        return $children;
     }
 
 }

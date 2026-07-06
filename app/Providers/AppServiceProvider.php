@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        view()->composer('*', function ($view) {
+            if (auth()->check()) {
+                $view->with('wishlistCount', \App\Models\Wishlist::where('user_id', auth()->id())->count());
+            } else {
+                $view->with('wishlistCount', 0);
+            }
+        });
     }
 }

@@ -21,8 +21,6 @@ return new class extends Migration
             $table->integer('stock_quantity')->default(0);
             $table->decimal('base_price', 15, 2); // Giá gốc của sản phẩm
             $table->decimal('selling_price', 15, 2); // Giá bán hiện tại của sản phẩm
-            $table->decimal('original_price', 15, 2)->nullable(); // Giá gốc ban đầu của sản phẩm, có thể null nếu không có giảm giá
-
             $table->softDeletes();
             $table->timestamps();
         });

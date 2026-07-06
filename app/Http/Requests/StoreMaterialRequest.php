@@ -10,7 +10,7 @@ class StoreMaterialRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -20,10 +20,19 @@ class StoreMaterialRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            //
+            'material_name' => 'required|string|max:255|unique:materials,material_name',
+        ];
+    }
+    public function messages()
+    {
+        return [
+            'material_name.required' => "Tên chất liệu không được để trống",
+            'material_name.string' => "Tên chất liệu phải là chuỗi",
+            'material_name.max' => "Tên chất liệu không được vượt quá 255 ký tự",
+            'material_name.unique' => 'Tên chất liệu đã tồn tại, vui lòng chọn tên khác.'
         ];
     }
 }

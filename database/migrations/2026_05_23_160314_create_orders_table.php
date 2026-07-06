@@ -22,6 +22,9 @@ return new class extends Migration
             $table->foreignId('status_id')
                 ->constrained('order_statuses')
                 ->cascadeOnUpdate();
+            $table->string('receiver_name', 255);
+            $table->string('receiver_phone', 255);
+            $table->string('receiver_address', 255);
 
             // Giá trị tiền
             $table->decimal('total_amount', 15, 2);       // tổng tiền gốc

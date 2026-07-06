@@ -63,4 +63,43 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    /**
+     * Biến thể mặc định (dùng để thêm vào giỏ / wishlist từ danh sách).
+     */
+    public function getDefaultVariantAttribute()
+    {
+        return $this->variants->first();
+    }
+
+    /**
+     * Ảnh đại diện sản phẩm (ảnh chính của biến thể đầu tiên).
+     */
+    public function getMainImageUrlAttribute(): string
+    {
+        $variant = $this->variants->first();
+        if ($variant) {
+            $img = $variant->images->firstWhere('is_main', 1) ?? $variant->images->first();
+            if ($img) {
+                return asset('storage/' . $img->image_url);
+            }
+        }
+        return asset('storage/default.jpg');
+    }
+
+    /**
+     * Giá hiển thị = giá bán thấp nhất trong các biến thể.
+     */
+    public function getDisplayPriceAttribute()
+    {
+        return optional($this->variants->sortBy('selling_price')->first())->selling_price ?? 0;
+    }
+
+    /**
+     * Sản phẩm mới (tạo trong 14 ngày gần đây).
+     */
+    public function getIsNewAttribute(): bool
+    {
+        return $this->created_at && $this->created_at->gt(now()->subDays(14));
+    }
 }

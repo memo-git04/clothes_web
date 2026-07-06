@@ -15,6 +15,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         Role::firstOrCreate(['name' => 'admin']);
+        Role::firstOrCreate(['name' => 'customer']);
         Role::firstOrCreate(['name' => 'manager']);
         Role::firstOrCreate(['name' => 'staff']);
         $this->command->info('Roles đã được tạo.');

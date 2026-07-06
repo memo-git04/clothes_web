@@ -19,6 +19,16 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">List of brands</h4>
+                            @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+                            @if(session('error'))
+                                <div class="alert alert-danger">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered zero-configuration">
                                     <thead>
@@ -38,12 +48,18 @@
                                                 {{ $brand->brand_name }}
                                             </td>
                                             <td>
-                                                <a href=" {{ route('admin.brands.edit', $brand->id) }} "><button type="button" class="btn btn-primary btn-sm"><i class="fa-solid fa-pen-to-square"></i></button></a>
-                                                <form action="{{ route('admin.brands.destroy',$brand->id ) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
-                                                </form>
+                                                <div class="d-flex gap-2">
+                                                    <a href=" {{ route('admin.brands.edit', $brand->id) }} ">
+                                                        <button type="button" class="btn btn-primary btn-sm" style="margin-right: 10px">
+                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                        </button>
+                                                    </a>
+                                                    <form action="{{ route('admin.brands.destroy',$brand->id ) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" name="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach

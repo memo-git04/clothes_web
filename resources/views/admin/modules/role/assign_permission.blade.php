@@ -5,28 +5,27 @@
     <div class="content-body">
         <div class="container-fluid">
 
-            ```
             <div class="card">
                 <div class="card-body">
 
                     <h4 class="card-title mb-4">
-                        Gán Permission cho Role: {{ $role->name }}
+                        Gán quyền cho vai trò: <strong>{{ $role->name }}</strong>
                     </h4>
+
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
                     <form method="POST" action="{{ route('admin.roles.permissions.update', $role->id) }}">
                         @csrf
 
-{{--                        --}}{{-- Role --}}
-{{--                        <div class="mb-4">--}}
-{{--                            <label>Role:</label>--}}
-{{--                            <input type="text" class="form-control" value="{{ $role->name }}" disabled>--}}
-{{--                        </div>--}}
-
-                        {{-- Matrix --}}
                         @foreach($permissions as $module => $perms)
                             <div class="mb-4">
 
-                                <h5 class="bg-light p-2">
+                                <h5 class="bg-light p-2 rounded">
                                     {{ strtoupper($module) }}
                                 </h5>
 
@@ -38,7 +37,6 @@
                                                 @php
                                                     $parts = explode('.', $perm->name);
                                                 @endphp
-
                                                 {{ ucfirst($parts[1] ?? $parts[0]) }}
                                             </th>
                                         @endforeach
@@ -64,13 +62,15 @@
                             </div>
                         @endforeach
 
-                        <button class="btn btn-primary">
-                            Lưu
-                        </button>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-save"></i> Lưu phân quyền
+                            </button>
 
-                        <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">
-                            Quay lại
-                        </a>
+                            <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary ml-2">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
 
                     </form>
 
@@ -78,7 +78,6 @@
             </div>
 
         </div>
-        ```
-
     </div>
+
 @endsection

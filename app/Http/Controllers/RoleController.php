@@ -75,16 +75,20 @@ class RoleController extends Controller
             ]
         );
 
-        return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
+        return redirect()->route('admin.roles.index')->with('success', 'Vai trò đã được cập nhật thành công!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Role $role, $id)
+    public function destroy(Role $role)
     {
-        Role::find($id)->delete();
-        return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
+        //check if role has any users assigned
+        if ($role->users()->count() > 0) {
+            return redirect()->route('admin.roles.index')->with('error', 'Không thể xóa vai trò này vì có người dùng đang được gán!');
+        }
+        $role->delete();
+        return redirect()->route('admin.roles.index')->with('success', 'Vai trò đã được xóa thành công!');
     }
 
     public function editPermissions(Role $role)

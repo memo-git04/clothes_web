@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use App\Mail\OtpMail;
-
+use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     public function register()
@@ -115,6 +114,7 @@ class AuthController extends Controller
                 'email_verified_at' => now(),     // Vì đã verify OTP
                 'status'        => 'active',
             ]);
+            $user->assignRole('customer');
             Session::forget('register_pending');
             return redirect()->route('login')
                 ->with('success', 'Đăng ký tài khoản thành công! Vui lòng đăng nhập để tiếp tục.');
@@ -130,17 +130,22 @@ class AuthController extends Controller
     public function customerLogin(Request $request){
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|min:8',
+        ], [
+            'email.required' => 'Email không được để trống',
+            'password.required' => 'Mật khẩu không được để trống',
+            'password.min' => 'Mật khẩu phải ít nhất 8 ký tự'
         ]);
 
         if (\Illuminate\Support\Facades\Auth::attempt($request->only('email', 'password', 'phone'))) {
             $user = \Illuminate\Support\Facades\Auth::user();
             if ($user->status !== 'active') {
-                \Illuminate\Support\Facades\Auth::logout();
+                Auth::logout();
                 return redirect()
                     ->route('login')
                     ->with('error', 'Tài khoản của bạn đã bị khóa.');
             }
+            $request->session()->regenerate(true);
             return redirect()
                 ->route('home')
                 ->with('success', 'Đăng nhập thành công!');

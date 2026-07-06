@@ -1,74 +1,105 @@
 @extends('admin.dashboard')
-@section('content')
 
+@section('content')
     <div class="content-body">
         <div class="container-fluid">
-
             <div class="card">
                 <div class="card-body">
-
-                    <h4 class="card-title mb-4">Add new product</h4>
-
+                    <h4 class="card-title mb-4">Thêm sản phẩm mới</h4>
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                    @csrf
 
-                        {{-- ROW 1 --}}
+                    <!-- ROW 1 -->
                         <div class="row">
                             <div class="col-md-6">
-                                <label>Product Name</label>
-                                <input type="text" name="product_name" class="form-control">
+                                <label>Tên sản phẩm</label>
+                                <input type="text" name="product_name"
+                                       class="form-control @error('product_name') is-invalid @enderror"
+                                       value="{{ old('product_name') }}">
+
                             </div>
 
                             <div class="col-md-6">
-                                <label>Description</label>
-                                <textarea name="description" class="form-control"></textarea>
+                                <label>Mô tả</label>
+                                <textarea name="description" value="{{old('description')}}" class="form-control"></textarea>
                             </div>
                         </div>
 
-                        {{-- ROW 2 --}}
+                        <!-- ROW 2 -->
                         <div class="row mt-3">
+                            <!-- Replace your empty category div with this -->
                             <div class="col-md-4">
-                                <label>Category</label>
-                                <select name="category_id" class="form-control">
-                                    <option value="">Select</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
-                                    @endforeach
-                                </select>
+                                <label>Danh mục</label>
+                                <div class="category-select-container">
+                                    <select name="category_id" id="categorySelect"
+                                            class="form-control @error('category_id') is-invalid @enderror">
+                                        <option value="">Chọn danh mục</option>
+                                        @foreach($categories as $category)
+                                            <option value="" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                                {{ $category->category_name }}
+                                            </option>
+                                            @if($category->children->count() > 0)
+                                                <optgroup label="{{ $category->category_name }}">
+                                                    @foreach($category->children as $child)
+                                                        <option value="{{ $child->id }}">&nbsp;&nbsp;{{ $child->category_name }}</option>
+                                                        @if($child->children->count() > 0)
+                                                            @foreach($child->children as $grandChild)
+                                                                <option value="{{ $grandChild->id }}">&nbsp;&nbsp;&nbsp;&nbsp;{{ $grandChild->category_name }}</option>
+                                                            @endforeach
+                                                        @endif
+                                                    @endforeach
+                                                </optgroup>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="col-md-4">
-                                <label>Material</label>
-                                <select name="material_id" class="form-control">
-                                    <option value="">Select</option>
+                                <label>Chất liệu</label>
+                                <select name="material_id" class="form-control @error('material_id') is-invalid @enderror">
+                                    <option value="">Chọn</option>
                                     @foreach($materials as $material)
-                                        <option value="{{ $material->id }}">{{ $material->material_name }}</option>
+                                        <option value="{{ $material->id }}" {{ old('material_id') == $material->id ? 'selected' : '' }}>
+                                            {{ $material->material_name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
 
                             <div class="col-md-4">
-                                <label>Brand</label>
-                                <select name="brand_id" class="form-control">
-                                    <option value="">Select</option>
+                                <label>Thương hiệu</label>
+                                <select name="brand_id" class="form-control @error('brand_id') is-invalid @enderror">
+                                    <option value="">Chọn</option>
                                     @foreach($brands as $brand)
-                                        <option value="{{ $brand->id }}">{{ $brand->brand_name }}</option>
+                                        <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>
+                                            {{ $brand->brand_name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
 
-                        {{-- VARIANTS --}}
+                        <!-- VARIANTS -->
                         <div class="row mt-4">
                             <div class="col-12">
-                                <label><b>Variants (Color × Size)</b></label>
+                                <label><b>Biến thể (Màu × Kích cỡ)</b></label>
 
                                 <div class="table-responsive">
                                     <table class="table table-bordered text-center align-middle">
 
                                         <thead class="bg-light">
                                         <tr>
-                                            <th style="min-width:120px">Color \ Size</th>
+                                            <th style="min-width:120px">Màu \ Kích cỡ</th>
                                             @foreach($sizes as $size)
                                                 <th>{{ $size->size_name }}</th>
                                             @endforeach
@@ -78,7 +109,7 @@
                                         <tbody>
                                         @foreach($colors as $color)
 
-                                            {{-- ROW 1 --}}
+                                            <!-- ROW 1 -->
                                             <tr>
                                                 <td rowspan="2" class="align-middle">
                                                     <b>{{ $color->color_name }}</b>
@@ -88,50 +119,44 @@
                                                     <td>
                                                         <div class="variant-box">
 
-                                                            {{-- checkbox --}}
+                                                            <!-- checkbox -->
                                                             <input type="checkbox" class="size-check mb-1">
 
-                                                            {{-- stock --}}
+                                                            <!-- stock -->
                                                             <input type="number"
                                                                    name="variants[{{ $color->id }}][{{ $size->id }}][stock_quantity]"
                                                                    class="form-control mb-1 variant-input"
-                                                                   placeholder="Stock"
+                                                                   placeholder="Số lượng"
                                                                    disabled>
 
-                                                            {{-- base --}}
+                                                            <!-- base -->
                                                             <input type="text"
                                                                    name="variants[{{ $color->id }}][{{ $size->id }}][base_price]"
                                                                    class="form-control mb-1 variant-input money"
-                                                                   placeholder="Base price"
+                                                                   placeholder="Giá gốc"
                                                                    disabled>
 
-                                                            {{-- sell --}}
+                                                            <!-- sell -->
                                                             <input type="text"
                                                                    name="variants[{{ $color->id }}][{{ $size->id }}][selling_price]"
                                                                    class="form-control mb-1 variant-input money"
-                                                                   placeholder="Sell price"
+                                                                   placeholder="Giá bán"
                                                                    disabled>
-
-                                                            {{-- origin --}}
-                                                            <input type="text"
-                                                                   name="variants[{{ $color->id }}][{{ $size->id }}][original_price]"
-                                                                   class="form-control variant-input money"
-                                                                   placeholder="Origin price"
-                                                                   disabled>
-
                                                         </div>
                                                     </td>
                                                 @endforeach
                                             </tr>
 
-                                            {{-- ROW 2 IMAGE --}}
+                                            <!-- ROW 2 IMAGE -->
                                             <tr>
                                                 <td colspan="{{ count($sizes) }}">
                                                     <div class="image-upload-box">
-
+{{--                                                        @error('color_images')--}}
+{{--                                                        <div class="alert alert-danger">{{ $message }}</div>--}}
+{{--                                                        @enderror--}}
                                                         <input type="file"
                                                                name="color_images[{{ $color->id }}][]"
-                                                               class="form-control image-input"
+                                                               class="form-control image-input "
                                                                multiple>
 
                                                         <div class="preview mt-2 d-flex flex-wrap"></div>
@@ -147,16 +172,16 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-primary mt-4">Create Product</button>
+                        <button class="btn btn-primary mt-4">
+                            <span class="spinner-border spinner-border-sm d-none" id="loadingSpinner" role="status" aria-hidden="true"></span>
+                            Thêm mới sản phẩm
+                        </button>
 
                     </form>
-
                 </div>
             </div>
-
         </div>
     </div>
-
     {{-- CSS --}}
     <style>
         .variant-box input {
@@ -178,14 +203,10 @@
             border: 1px solid #ddd;
         }
     </style>
-
     {{-- JS --}}
     <script>
-
-        // enable/disable input
         document.querySelectorAll('.size-check').forEach(cb => {
             cb.addEventListener('change', function () {
-
                 let box = this.closest('.variant-box');
                 let inputs = box.querySelectorAll('.variant-input');
 
@@ -209,11 +230,9 @@
         let allFilesMap = new Map();
 
         document.querySelectorAll('.image-input').forEach((input, index) => {
-
             allFilesMap.set(index, []);
 
             input.addEventListener('change', function (e) {
-
                 let files = Array.from(e.target.files);
                 let currentFiles = allFilesMap.get(index);
 
@@ -224,22 +243,18 @@
 
                 renderPreview(input, index);
             });
-
         });
 
         function renderPreview(input, index) {
-
             let preview = input.closest('.image-upload-box').querySelector('.preview');
             preview.innerHTML = "";
 
             let files = allFilesMap.get(index);
 
             files.forEach((file, i) => {
-
                 let reader = new FileReader();
 
                 reader.onload = function (e) {
-
                     let div = document.createElement("div");
                     div.style.position = "relative";
                     div.style.marginRight = "5px";
@@ -272,7 +287,6 @@
         }
 
         function removeImage(inputIndex, fileIndex) {
-
             let files = allFilesMap.get(inputIndex);
             files.splice(fileIndex, 1);
 
@@ -283,7 +297,6 @@
         }
 
         function updateInputFiles(input, files) {
-
             let dataTransfer = new DataTransfer();
 
             files.forEach(file => {
@@ -292,9 +305,5 @@
 
             input.files = dataTransfer.files;
         }
-
     </script>
-
-
-
 @endsection

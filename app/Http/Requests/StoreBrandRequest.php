@@ -10,7 +10,7 @@ class StoreBrandRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -20,10 +20,19 @@ class StoreBrandRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            //
+            'brand_name' => 'required|string|max:255|unique:brands,brand_name',
+        ];
+    }
+    public function messages()
+    {
+        return [
+            'brand_name.required' => "Tên thương hiệu không được để trống",
+            'brand_name.string' => "Tên thương hiệu phải là chuỗi",
+            'brand_name.max' => "Tên thương hiệu không được vượt quá 255 ký tự",
+            'brand_name.unique' => 'Tên thương hiệu đã tồn tại, vui lòng chọn tên khác.'
         ];
     }
 }

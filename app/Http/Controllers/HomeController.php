@@ -7,13 +7,18 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    public function blog(){
+        return view('blog');
+    }
+
     public function index(){
         $products = Product::with([
             'category',
             'brand',
             'material',
             'variants.images'
-        ])->get();
+        ])->where('status', 'active')
+            ->get();
 //        dd($products);
         return view('home',[
             'products' => $products,
@@ -27,7 +32,8 @@ class HomeController extends Controller
             'material',
             'variants.color',
             'variants.size',
-            'variants.images'
+            'variants.images',
+            'reviews.user'
         ])->findOrFail($id);
         $relatedProducts = Product::where('id', '!=', $id)->take(5)->get();
         return view('product_details',[

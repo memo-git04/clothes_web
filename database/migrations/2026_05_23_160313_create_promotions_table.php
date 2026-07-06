@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('promotion_name', 100);
             $table->text('description')->nullable();
 
-            $table->string('discount_type'); // percent | fixed
             $table->decimal('discount_value', 15, 2);
+            $table->decimal('min_order_value', 10, 0)->nullable();
 
             $table->integer('usage_limit')->nullable();
             $table->integer('current_usage')->default(0);

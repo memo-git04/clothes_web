@@ -3,64 +3,65 @@
 namespace App\Http\Controllers;
 
 use App\Models\Wishlist;
-use App\Http\Requests\StoreWishlistRequest;
-use App\Http\Requests\UpdateWishlistRequest;
+use App\Models\ProductVariant;
+use Illuminate\Http\Request;
 
 class WishlistController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Danh sách yêu thích của người dùng hiện tại.
      */
     public function index()
     {
-        //
+        $wishlists = Wishlist::with([
+            'variant.product.category',
+            'variant.images',
+            'variant.size',
+            'variant.color',
+        ])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return view('wishlist', [
+            'wishlists' => $wishlists,
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Thêm/bỏ 1 biến thể khỏi wishlist (toggle).
      */
-    public function create()
+    public function toggle(Request $request)
     {
-        //
+        $request->validate([
+            'variant_id' => 'required|exists:product_variants,id',
+        ]);
+
+        $existing = Wishlist::where('user_id', auth()->id())
+            ->where('product_variant_id', $request->variant_id)
+            ->first();
+
+        if ($existing) {
+            return back()->with('success', 'Sản phẩm đã có trong danh sách yêu thích!');
+        }
+
+        Wishlist::create([
+            'user_id'            => auth()->id(),
+            'product_variant_id' => $request->variant_id,
+        ]);
+
+        return back()->with('success', 'Đã thêm vào danh sách yêu thích!');
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreWishlistRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Wishlist $wishlist)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Wishlist $wishlist)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateWishlistRequest $request, Wishlist $wishlist)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
+     * Xóa 1 mục wishlist (chỉ chủ sở hữu).
      */
     public function destroy(Wishlist $wishlist)
     {
-        //
+        abort_unless($wishlist->user_id === auth()->id(), 403);
+
+        $wishlist->delete();
+
+        return back()->with('success', 'Đã bỏ khỏi danh sách yêu thích.');
     }
 }

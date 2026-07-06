@@ -11,10 +11,9 @@
             <a href="{{ route('orderHistory') }}" class="px-3 py-1.5 text-xs font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition">Tất cả</a>
             <a href="{{ route('orders.filter', 1) }}" class="px-3 py-1.5 text-xs font-medium rounded border border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 transition">Chờ xác nhận</a>
             <a href="{{ route('orders.filter', 2) }}" class="px-3 py-1.5 text-xs font-medium rounded border border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 transition">Chờ lấy hàng</a>
-            <a href="{{ route('orders.filter', 3) }}" class="px-3 py-1.5 text-xs font-medium rounded border border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition">Đang lấy hàng</a>
-            <a href="{{ route('orders.filter', 4) }}" class="px-3 py-1.5 text-xs font-medium rounded border border-cyan-300 bg-cyan-50 text-cyan-700 hover:bg-cyan-100 transition">Đang vận chuyển</a>
-            <a href="{{ route('orders.filter', 5) }}" class="px-3 py-1.5 text-xs font-medium rounded border border-green-300 bg-green-50 text-green-700 hover:bg-green-100 transition">Giao thành công</a>
-            <a href="{{ route('orders.filter', 6) }}" class="px-3 py-1.5 text-xs font-medium rounded border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition">Đã hủy</a>
+            <a href="{{ route('orders.filter', 3) }}" class="px-3 py-1.5 text-xs font-medium rounded border border-indigo-300 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition">Đang giao</a>
+            <a href="{{ route('orders.filter', 4) }}" class="px-3 py-1.5 text-xs font-medium rounded border border-green-300 bg-green-50 text-green-700 hover:bg-green-100 transition">Giao thành công</a>
+            <a href="{{ route('orders.filter', 5) }}" class="px-3 py-1.5 text-xs font-medium rounded border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 transition">Đã hủy</a>
         </div>
 
         <div class="bg-white rounded-lg shadow border border-gray-200 overflow-x-auto">
@@ -37,7 +36,7 @@
                         </td>
                         <td class="border border-gray-200 px-4 py-3 text-sm text-gray-700 text-left">
                             <div class="font-medium text-gray-900">
-                                {{ $order->orderItems->first()?->productVariant?->product?->product_name ?? 'N/A' }}
+                                {{ $order->orderItems->first()?->variant->product?->product_name ?? 'N/A' }}
                             </div>
                             @if($order->orderItems->count() > 1)
                                 <div class="text-xs text-gray-500 mt-1">
@@ -46,7 +45,7 @@
                             @endif
                         </td>
                         <td class="border border-gray-200 px-4 py-3 text-sm font-bold text-right text-red-600">
-                            {{ number_format($order->total_amount) }} VNĐ
+                            {{ number_format($order->final_amount) }} VNĐ
                         </td>
                         <td class="border border-gray-200 px-4 py-3 text-sm text-center text-gray-600">
                             {{ $order->created_at->format('d/m/Y H:i') }}
@@ -56,9 +55,8 @@
                                 $statusClass = match($order->status_id) {
                                     1 => 'bg-yellow-50 text-yellow-700 border-yellow-200',
                                     2,3 => 'bg-blue-50 text-blue-700 border-blue-200',
-                                    4 => 'bg-cyan-50 text-cyan-700 border-cyan-200',
-                                    5 => 'bg-green-50 text-green-700 border-green-200',
-                                    6 => 'bg-red-50 text-red-700 border-red-200',
+                                    4 => 'bg-green-50 text-green-700 border-green-200',
+                                    5 => 'bg-red-50 text-red-700 border-red-200',
                                     default => 'bg-gray-50 text-gray-700 border-gray-200'
                                 };
                             @endphp

@@ -20,6 +20,17 @@ class Review extends Model
         'is_approved'
     ];
     public $timestamps = true;
+
+    protected $casts = [
+        'is_approved' => 'boolean',
+    ];
+
+    /** Chỉ lấy review đã được duyệt */
+    public function scopeApproved($query)
+    {
+        return $query->where('is_approved', true);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

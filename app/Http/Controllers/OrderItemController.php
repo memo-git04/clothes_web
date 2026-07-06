@@ -22,10 +22,9 @@ class OrderItemController extends Controller
 
         $statuses = OrderStatus::all();
         $current = $order->status_id;
-        // Trạng thái hợp lệ để update (theo logic của bạn)
-        $validStatuses = [1, 2, 3, 4, 5,6]; // Chờ xác nhận, Đang lấy hàng, Đang vận chuyển, Giao thành công
+        $validStatuses = [1, 2, 3, 4, 5]; // Chờ xác nhận, Đang lấy hàng, Đang vận chuyển, Giao thành công
 
-        $showUpdateForm = in_array($current, [1,2,3,4]);// Không cho update nếu đã hoàn thành hoặc hủy
+        $showUpdateForm = in_array($current, [1,2,3]);// Không cho update nếu đã hoàn thành hoặc hủy
 
         return view('admin.modules.orders.order_detail', [
             'order' => $order,
@@ -46,11 +45,9 @@ class OrderItemController extends Controller
             // Có thể implement logic release promotion usage ở đây
         }
         $allowedTransitions = [
-            1 => [2, 6],     // Chờ xác nhận → Chờ lấy hàng hoặc Hủy
-            2 => [3],     // Chờ lấy hàng → Đang lấy hàng hoặc Hủy
-            3 => [4],        // Đang lấy hàng → Đang vận chuyển
-            4 => [5],        // Đang vận chuyển → Giao thành công
-            // 5 và 6: Không cho thay đổi nữa
+            1 => [2, 5],     // Chờ xác nhận → Chờ lấy hàng hoặc Hủy
+            2 => [3],     // Chờ lấy hàng → Đang giao
+            3 => [4],        // Đang giao → Giao thành công
         ];
 
         if (!isset($allowedTransitions[$currentStatus]) ||
@@ -59,6 +56,22 @@ class OrderItemController extends Controller
             return redirect()->back()
                 ->with('error', 'Không được phép chuyển sang trạng thái này!');
         }
+        // Handle special cases
+        if ($newStatus == 5) { // Cancelled
+            // Update payment status to failed if exists
+            if ($order->payment) {
+                $order->payment->update(['status' => 'failed']);
+            }
+        } elseif ($newStatus == 4) { // Completed
+            // Update payment status to paid if exists
+            if ($order->payment) {
+                $order->payment->update([
+                    'status' => 'paid',
+                    'paid_at' => now(),
+                ]);
+            }
+        }
+
         $order->update([
             'status_id' => $newStatus
         ]);

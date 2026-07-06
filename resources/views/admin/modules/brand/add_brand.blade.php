@@ -6,42 +6,57 @@
             <div class="col p-md-0">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Home</a></li>
+                    <li class="breadcrumb-item active"><a href="{{ route('admin.brands.index') }}">Thương hiệu</a></li>
+                    <li class="breadcrumb-item active">Thêm mới thương hiệu</li>
                 </ol>
             </div>
         </div>
-        <!-- row -->
 
         <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Add new brand</h4>
-                            <div class="form-validation">
-                                <form class="form-valide" action="{{ route('admin.brands.store') }}" method="post">
-                                    @csrf
-                                    <div class="form-group row">
-                                        <label class="col-lg-4 col-form-label" for="val-username"> Brand Name<span class="text-danger"></span>
-                                        </label>
-                                        <div class="col-lg-6">
-                                            <input type="text" class="form-control" id="val-username" name="brand_name">
-                                        </div>
-                                    </div>
+                            <h4 class="card-title">Thêm mới thương hiệu</h4>
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                            <form class="form-valide" action="{{ route('admin.brands.store') }}" method="post">
+                                @csrf
 
-                                    <div class="form-group row">
-                                        <div class="col-lg-8 ml-auto">
-                                            <button type="submit" name="submit" class="btn btn-primary">Add new</button>
-                                        </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-3 col-form-label text-lg-right" for="brand_name">
+                                        Tên thương hiệu <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-lg-7">
+                                        <input type="text"
+                                               class="form-control @error('brand_name') is-invalid @enderror"
+                                               id="brand_name"
+                                               name="brand_name"
+                                               placeholder="Nhập tên thương hiệu (ví dụ: Nike, Adidas...)"
+                                        >
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+
+                                <!-- Phần nút bấm -->
+                                <div class="form-group row">
+                                    <div class="col-lg-3"></div>
+                                    <div class="col-lg-7">
+                                        <button type="submit" class="btn btn-primary">Lưu lại</button>
+                                        <a href="{{ route('admin.brands.index') }}" class="btn btn-danger">Hủy</a>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- #/ container -->
     </div>
-    <!--**********************************
 @endsection

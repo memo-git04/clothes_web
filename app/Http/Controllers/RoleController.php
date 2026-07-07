@@ -15,7 +15,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'customer')->get();
         return view('admin.modules.role.index', [
             'roles' => $roles
         ]);

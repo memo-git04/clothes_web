@@ -1,6 +1,6 @@
 @extends('admin.dashboard')
-@section('content')
 
+@section('content')
     <div class="content-body">
         <div class="row page-titles mx-0">
             <div class="col p-md-0">
@@ -24,7 +24,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Tên quyền</th>
-                                        <th>Gán vai trò</th>
+
                                         <th>Thao tác</th>
                                     </tr>
                                     </thead>
@@ -34,31 +34,28 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $permission->name }}</td>
                                             <td>
-                                                <a href="{{ route('admin.permissions.assignRole', $permission->id) }}"
-                                                   class="btn btn-primary btn-sm">
-                                                    <i class="fa-solid fa-user-tag"></i> Gán vai trò
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex gap-2">
-                                                    <!-- Edit -->
-                                                    <a href="{{ route('admin.permissions.edit', $permission->id) }}">
-                                                        <button type="button" class="btn btn-primary btn-sm" style="margin-right: 8px">
-                                                            <i class="fa-solid fa-pen-to-square"></i>
-                                                        </button>
-                                                    </a>
+                                                @can('role.edit')
+                                                    <div class="d-flex gap-2">
+                                                        <!-- Edit -->
+                                                        <a href="{{ route('admin.permissions.edit', $permission->id) }}">
+                                                            <button type="button" class="btn btn-primary btn-sm" style="margin-right: 8px">
+                                                                <i class="fa-solid fa-pen-to-square"></i>
+                                                            </button>
+                                                        </a>
 
-                                                    <!-- Delete -->
-                                                    <form action="{{ route('admin.permissions.destroy', $permission->id) }}"
-                                                          method="POST"
-                                                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa quyền này không?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm">
-                                                            <i class="fa-solid fa-trash-can"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
+                                                        <!-- Delete -->
+                                                        <form action="{{ route('admin.permissions.destroy', $permission->id) }}"
+                                                              method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa quyền này không?')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fa-solid fa-trash-can"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @else
+                                                    <span class="text-muted">Không có quyền</span>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach
@@ -67,7 +64,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Tên quyền</th>
-                                        <th>Gán vai trò</th>
+
                                         <th>Thao tác</th>
                                     </tr>
                                     </tfoot>
@@ -75,13 +72,15 @@
                             </div>
 
                             <!-- Nút thêm mới -->
-                            <div class="add mt-3">
-                                <a href="{{ route('admin.permissions.create') }}">
-                                    <button type="button" class="btn btn-success">
-                                        <i class="fa-solid fa-plus"></i> Thêm quyền mới
-                                    </button>
-                                </a>
-                            </div>
+                            @can('role.create')
+                                <div class="add mt-3">
+                                    <a href="{{ route('admin.permissions.create') }}">
+                                        <button type="button" class="btn btn-success">
+                                            <i class="fa-solid fa-plus"></i> Thêm quyền mới
+                                        </button>
+                                    </a>
+                                </div>
+                            @endcan
 
                         </div>
                     </div>
@@ -89,5 +88,4 @@
             </div>
         </div>
     </div>
-
 @endsection

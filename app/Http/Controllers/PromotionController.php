@@ -76,7 +76,7 @@ class PromotionController extends Controller
             'discount_value' => $request->discount_value,
             'min_order_amount' => $request->min_order_amount,
             'usage_limit' => $request->usage_limit,
-            'status' => $request->is_active,
+            'is_active'         => $request->has('status') ? 1 : 0,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date
         ]);

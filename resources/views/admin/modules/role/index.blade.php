@@ -1,6 +1,6 @@
 @extends('admin.dashboard')
-@section('content')
 
+@section('content')
     <div class="content-body">
         <div class="row page-titles mx-0">
             <div class="col p-md-0">
@@ -34,31 +34,37 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $role->name }}</td>
                                             <td>
-                                                <a href="{{ route('admin.roles.permissions.edit', $role->id) }}"
-                                                   class="btn btn-primary btn-sm">
-                                                    <i class="fa-solid fa-key"></i> Quản lý quyền
-                                                </a>
+                                                @can('role.edit')
+                                                    <a href="{{ route('admin.roles.permissions.edit', $role->id) }}"
+                                                       class="btn btn-primary btn-sm">
+                                                        <i class="fa-solid fa-key"></i> Quản lý quyền
+                                                    </a>
+                                                @endcan
                                             </td>
                                             <td>
-                                                <div class="d-flex gap-2">
-                                                    <!-- Edit -->
-                                                    <a href="{{ route('admin.roles.edit', $role->id) }}">
-                                                        <button type="button" class="btn btn-primary btn-sm" style="margin-right: 8px">
-                                                            <i class="fa-solid fa-pen-to-square"></i>
-                                                        </button>
-                                                    </a>
+                                                @can('role.edit')
+                                                    <div class="d-flex gap-2">
+                                                        <!-- Edit -->
+                                                        <a href="{{ route('admin.roles.edit', $role->id) }}">
+                                                            <button type="button" class="btn btn-primary btn-sm" style="margin-right: 8px">
+                                                                <i class="fa-solid fa-pen-to-square"></i>
+                                                            </button>
+                                                        </a>
 
-                                                    <!-- Delete -->
-                                                    <form action="{{ route('admin.roles.destroy', $role->id) }}"
-                                                          method="POST"
-                                                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa vai trò này không?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm">
-                                                            <i class="fa-solid fa-trash-can"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
+                                                        <!-- Delete -->
+                                                        <form action="{{ route('admin.roles.destroy', $role->id) }}"
+                                                              method="POST"
+                                                              onsubmit="return confirm('Bạn có chắc chắn muốn xóa vai trò này không?')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fa-solid fa-trash-can"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @else
+                                                    <span class="text-muted">Không có quyền</span>
+                                                @endcan
                                             </td>
                                         </tr>
                                     @endforeach
@@ -75,13 +81,15 @@
                             </div>
 
                             <!-- Nút thêm mới -->
-                            <div class="add mt-3">
-                                <a href="{{ route('admin.roles.create') }}">
-                                    <button type="button" class="btn btn-success">
-                                        <i class="fa-solid fa-plus"></i> Thêm vai trò mới
-                                    </button>
-                                </a>
-                            </div>
+                            @can('role.create')
+                                <div class="add mt-3">
+                                    <a href="{{ route('admin.roles.create') }}">
+                                        <button type="button" class="btn btn-success">
+                                            <i class="fa-solid fa-plus"></i> Thêm vai trò mới
+                                        </button>
+                                    </a>
+                                </div>
+                            @endcan
 
                         </div>
                     </div>
@@ -89,5 +97,4 @@
             </div>
         </div>
     </div>
-
 @endsection

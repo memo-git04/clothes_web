@@ -1,14 +1,13 @@
 @extends('admin.dashboard')
+
 @section('content')
-
     <div class="content-body">
-
         <div class="row page-titles mx-0">
             <div class="col p-md-0">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item active"><a href="{{ route('admin.users.index') }}">Tài khoản</a></li>
-                    <li class="breadcrumb-item active">Phân quyền</li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Tài khoản</a></li>
+                    <li class="breadcrumb-item active">Phân quyền cho tài khoản</li>
                 </ol>
             </div>
         </div>
@@ -18,76 +17,85 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Phân quyền cho tài khoản</h4>
 
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            @endif
+                            @can('user.edit')
+                                <h4 class="card-title">Phân quyền cho tài khoản</h4>
 
-                            @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
-                            <div class="form-validation">
-                                <form class="form-valide" action="{{ route('admin.users.permissions.post', $user->id) }}" method="POST">
-                                @csrf
-
-                                <!-- Thông tin người dùng -->
-                                    <div class="form-group row">
-                                        <label class="col-lg-4 col-form-label">Tên người dùng</label>
-                                        <div class="col-lg-6">
-                                            <input type="text" class="form-control" value="{{ $user->full_name }}" disabled>
-                                        </div>
+                                @if (session('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
+                                @endif
 
-                                    <!-- Danh sách quyền -->
-                                    <div class="form-group row">
-                                        <label class="col-lg-4 col-form-label">Các quyền hạn</label>
-                                        <div class="col-lg-6">
-                                            @foreach($permissions as $permission)
-                                                <div class="checkbox mb-2">
-                                                    <label>
-                                                        <input type="checkbox"
-                                                               name="permissions[]"
-                                                               value="{{ $permission->name }}"
-                                                            {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}>
-                                                        {{ $permission->name }}
-                                                    </label>
-                                                </div>
+                                @if ($errors->any())
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
                                             @endforeach
-                                        </div>
+                                        </ul>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
+                                @endif
 
-                                    <!-- Nút hành động -->
-                                    <div class="form-group row" style="flex-direction: row-reverse;">
-                                        <div class="col-lg-8 mb-3">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fa-solid fa-save"></i> Lưu phân quyền
-                                            </button>
+                                <div class="form-validation">
+                                    <form class="form-valide" action="{{ route('admin.users.permissions.post', $user->id) }}" method="POST">
+                                    @csrf
+
+                                    <!-- Thông tin người dùng -->
+                                        <div class="form-group row">
+                                            <label class="col-lg-4 col-form-label">Tên người dùng</label>
+                                            <div class="col-lg-6">
+                                                <input type="text" class="form-control" value="{{ $user->full_name }}" disabled>
+                                            </div>
                                         </div>
-                                        <div class="col-lg-8">
-                                            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
-                                                <i class="fa-solid fa-arrow-left"></i> Quay lại
-                                            </a>
+
+                                        <!-- Danh sách quyền -->
+                                        <div class="form-group row">
+                                            <label class="col-lg-4 col-form-label">Các quyền hạn</label>
+                                            <div class="col-lg-6">
+                                                @foreach($permissions as $permission)
+                                                    <div class="checkbox mb-2">
+                                                        <label>
+                                                            <input type="checkbox"
+                                                                   name="permissions[]"
+                                                                   value="{{ $permission->name }}"
+                                                                {{ in_array($permission->name, $user->permissions->pluck('name')->toArray()) ? 'checked' : '' }}>
+                                                            {{ $permission->name }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
-                            </div>
+
+                                        <!-- Nút hành động -->
+                                        <div class="form-group row" style="flex-direction: row-reverse;">
+                                            <div class="col-lg-8 mb-3">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fa-solid fa-save"></i> Lưu phân quyền
+                                                </button>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+                                                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            @else
+                            <!-- HIỂN THỊ THÔNG BÁO CHO MANAGER -->
+                                <div class="alert alert-danger text-center">
+                                    <h4><i class="fas fa-exclamation-triangle"></i> Cảnh báo!</h4>
+                                    <p>Bạn không có quyền truy cập chức năng này</p>
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary mt-3">Quay lại danh sách</a>
+                                </div>
+                            @endcan
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
-
 @endsection

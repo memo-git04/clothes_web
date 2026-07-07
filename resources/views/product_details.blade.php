@@ -60,9 +60,7 @@
                     <span class="text-2xl text-black font-weight-bold font-light"
                           x-text="selectedPrice ? numberFormat(selectedPrice) + ' VNĐ' : ''">
                     </span>
-                    <span class="text-lg text-[#d97771] line-through font-light"
-                          x-text="selectedBasePrice ? numberFormat(selectedBasePrice) + ' VNĐ' : ''">
-                    </span>
+
                 </div>
 
                 <p class="text-sm text-gray-600 leading-relaxed mb-10 font-light">
@@ -348,12 +346,47 @@
                 },
 
                 buyNow() {
-                    if (!this.canAddToCart) return;
-                    // Có thể redirect thẳng đến checkout sau khi add
-                    this.addToCart(); // hoặc gọi route riêng nếu có
+                    if (!this.canAddToCart) {
+                        if (this.quantity > this.selectedStock) {
+                            this.quantityError = `Chỉ còn ${this.selectedStock} sản phẩm!`;
+                        }
+                        return;
+                    }
+
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '{{ route("buy.now") }}';
+
+                    const csrf = document.createElement('input');
+                    csrf.type = 'hidden';
+                    csrf.name = '_token';
+                    csrf.value = '{{ csrf_token() }}';
+                    form.appendChild(csrf);
+
+                    const variantInput = document.createElement('input');
+                    variantInput.type = 'hidden';
+                    variantInput.name = 'variant_id';
+                    variantInput.value = this.selectedVariantId;
+                    form.appendChild(variantInput);
+
+                    const qtyInput = document.createElement('input');
+                    qtyInput.type = 'hidden';
+                    qtyInput.name = 'quantity';
+                    qtyInput.value = this.quantity;
+                    form.appendChild(qtyInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
                 },
+
                 toggleWishlist() {
                     if (!this.selectedVariantId || this.selectedStock <= 0) return;
+
+                    // Add validation for quantity
+                    if (this.quantity > this.selectedStock) {
+                        this.quantityError = 'Số lượng vượt quá tồn kho!';
+                        return;
+                    }
 
                     const form = document.createElement('form');
                     form.method = 'POST';

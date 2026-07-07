@@ -42,49 +42,68 @@
 
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Tên đăng nhập (Username)</label>
-                            <input type="text" name="user_name" required
+                            <input type="text" name="user_name" value="{{old('user_name')}}"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:border-[#1a2744]">
+                            @error('user_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Họ và tên</label>
-                            <input type="text" name="full_name" required
+                            <input type="text" name="full_name" value="{{old('full_name')}}"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:border-[#1a2744]">
+                            @error('full_name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Mật khẩu</label>
-                                <input type="password" name="password" required
+                                <input type="password" name="password"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:border-[#1a2744]">
+                                @error('password')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label class="block text-sm text-gray-600 mb-1">Nhập lại mật khẩu</label>
-                                <input type="password" name="password_confirmation" required
+                                <input type="password" name="password_confirmation"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:border-[#1a2744]">
+                                @error('password_confirmation')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Giới tính</label>
-                            <select name="gender" required class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:border-[#1a2744]">
+                            <select name="gender"  class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:border-[#1a2744]">
                                 <option value="">Chọn giới tính</option>
-                                <option value="male">Nam</option>
-                                <option value="female">Nữ</option>
-                                <option value="other">Khác</option>
+                                <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Nam</option>
+                                <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Nữ</option>
+                                <option value="other" {{ old('gender') === 'other' ? 'selected' : '' }}>Khác</option>
+
                             </select>
                         </div>
 
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Ngày sinh</label>
-                            <input type="date" name="date_of_birth"
+                            <input type="date" name="date_of_birth" value="{{old('date_of_birth')}}"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:border-[#1a2744]">
+                            @error('date_of_birth')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
                             <label class="block text-sm text-gray-600 mb-1">Địa chỉ</label>
-                            <textarea name="address" rows="2"
+                            <textarea name="address" rows="2" value="{{old('address')}}"
                                       class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:border-[#1a2744]"></textarea>
+                            @error('address')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <button type="submit"

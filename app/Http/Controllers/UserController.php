@@ -32,6 +32,7 @@ class UserController extends Controller
         ]);
         $accounts = $request->only(['email', 'password']);
         //        dd($accounts);
+        Auth::logout();//đăng xuất session cũ
         if (Auth::attempt($accounts)){
             $user = Auth::user();
 
@@ -42,7 +43,8 @@ class UserController extends Controller
                     'email' => 'Tài khoản của bạn đã bị khóa'
                 ]);
             }
-            $request->session()->regenerate(true);
+            $request->session()->regenerate();
+            $request->session()->regenerateToken();
             return redirect()
                 ->route('admin.dashboard')
                 ->with('success', 'Chúc mừng bạn đã đăng nhập thành công!');
@@ -50,9 +52,11 @@ class UserController extends Controller
         return Redirect::back()->withErrors(['email' => 'Invalid email or password.']);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
+        $request->session()->invalidate();      // Xóa toàn bộ session
+        $request->session()->regenerateToken();
         return Redirect::route('admin.loginAdmin');
     }
     /**
@@ -301,6 +305,11 @@ class UserController extends Controller
         */
         public function update(Request $request, User $user)
         {
+            if ($user->hasRole('customer')) {
+                return redirect()
+                    ->route('admin.users.index')
+                    ->with('error', 'Không được chỉnh sửa thông tin tài khoản khách hàng!');
+            }
             $validated = $request->validate([
                 'full_name' => [
                     'required',
@@ -400,14 +409,11 @@ class UserController extends Controller
             ]);
         }
         public function addPermissionsPost(User $user, Request $request){
-            $request->validate([
-                'permissions' => 'required|array',
-                'permissions.*' => 'exists:permissions,name',
-            ]);
-            $permissions = $request->input('permissions');
+            $permissions = $request->input('permissions', []);
+//            dd($permissions);
             $user->syncPermissions($permissions);
-
-            return redirect()->back()->with('success', 'Permissions updated successfully!');
+            $user = User::with('permissions')->findOrFail($user->id);
+            return redirect()->back()->with('success', 'Tài khoản đã cập nhật quyền thành công !');
         }
         public function showPermissions(User $user){
             $allPermissions = $user->getAllPermissions();
@@ -422,8 +428,12 @@ class UserController extends Controller
         public function destroy($id)
         {
             $user = User::findOrFail($id);
+            if ($user->hasRole('customer')){
+                return redirect()->back()->with('error', 'Không thể xóa tài khoản khách hàng!');
+            }
             $user->syncRoles([]); // Remove all roles associated with the user
+            $user->syncPermissions([]);
             $user->delete();
-            return redirect()->route('admin.users.index')->with('success', 'User deleted successfully!');
+            return redirect()->route('admin.users.index')->with('success', 'Xóa tài khoản thành công!');
         }
 }

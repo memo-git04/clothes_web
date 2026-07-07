@@ -16,6 +16,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
+                            @can('user.create')
                             <h4 class="card-title">Thêm tài khoản mới</h4>
 
                             @if ($errors->any())
@@ -205,13 +206,21 @@
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-save"></i> Thêm tài khoản
                                         </button>
-                                        <a href="{{ route('admin.users.index') }}"
-                                           class="btn btn-secondary ml-2">
+                                        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary ml-2">
                                             <i class="fas fa-arrow-left"></i> Quay lại
                                         </a>
                                     </div>
                                 </div>
                             </form>
+
+                            @else
+                                <div class="alert alert-danger text-center">
+                                    <h4><i class="fas fa-exclamation-triangle"></i> Cảnh báo!</h4>
+                                    <p>Bạn không có quyền truy cập chức năng này</p>
+                                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary mt-3">Quay lại danh sách</a>
+                                </div>
+                            @endcan
+
                         </div>
                     </div>
                 </div>
@@ -221,7 +230,6 @@
 
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <script>
-        // Toggle password visibility
         document.querySelectorAll('.toggle-password').forEach(button => {
             button.addEventListener('click', function() {
                 const input = this.closest('.input-group').querySelector('input');
@@ -239,36 +247,38 @@
             });
         });
 
-        // Form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const password = document.querySelector('input[name="password"]').value;
-            const confirmPassword = document.querySelector('input[name="password_confirmation"]').value;
+        // Form validation (Sửa lỗi crash trang khi Manager vào)
+        const userForm = document.querySelector('form.form-valide');
+        if(userForm) {
+            userForm.addEventListener('submit', function(e) {
+                const password = document.querySelector('input[name="password"]').value;
+                const confirmPassword = document.querySelector('input[name="password_confirmation"]').value;
 
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('Mật khẩu xác nhận không khớp');
-                return false;
-            }
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Mật khẩu xác nhận không khớp');
+                    return false;
+                }
 
-            // Phone number validation
-            const phone = document.querySelector('input[name="phone"]').value;
-            const phoneRegex = /^[0-9]{10,11}$/;
-            if (!phoneRegex.test(phone)) {
-                e.preventDefault();
-                alert('Số điện thoại không hợp lệ (10-11 số)');
-                return false;
-            }
+                const phone = document.querySelector('input[name="phone"]').value;
+                const phoneRegex = /^[0-9]{10,11}$/;
+                if (!phoneRegex.test(phone)) {
+                    e.preventDefault();
+                    alert('Số điện thoại không hợp lệ (10-11 số)');
+                    return false;
+                }
 
-            // Date of birth validation
-            const dob = new Date(document.querySelector('input[name="date_of_birth"]').value);
-            const today = new Date();
-            const age = today.getFullYear() - dob.getFullYear();
+                const dob = new Date(document.querySelector('input[name="date_of_birth"]').value);
+                const today = new Date();
+                const age = today.getFullYear() - dob.getFullYear();
 
-            if (age < 18) {
-                e.preventDefault();
-                alert('Người dùng phải từ 18 tuổi trở lên');
-                return false;
-            }
-        });
+                if (age < 18) {
+                    e.preventDefault();
+                    alert('Người dùng phải từ 18 tuổi trở lên');
+                    return false;
+                }
+            });
+        }
     </script>
+
 @endsection

@@ -76,21 +76,30 @@
                     <h2 class="font-serif text-4xl text-black font-light">ĐĂNG NHẬP</h2>
                     <p class="text-gray-600 mt-2">Nhập thông tin đăng nhập của bạn để truy cập vào tài khoản.</p>
                 </div>
-
+                @if(session('error'))
+                    <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>{{ session('error') }}</span>
+                    </div>
+                @endif
                 <form action="{{route('customerLogin')}}" method="POST" class="space-y-6">
                     @csrf
-                    <!-- Email / Phone / Username -->
                     <div>
-                        <input type="text" name="email" required
-                               class="w-full px-4 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition-all text-base placeholder:text-gray-400"
-                               placeholder="Email hoặc SĐT hoặc Tên đăng nhập">
+                        <input type="text" name="email" value="{{old('email')}}"
+                               class="@error('email') is-invalid @enderror w-full px-4 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition-all text-base placeholder:text-gray-400"
+                               placeholder="Email">
+                        @error('email')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Password -->
                     <div class="relative">
                         <input
                             :type="showPassword ? 'text' : 'password'"
-                            name="password" required
+                            name="password"
                             class="w-full px-4 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-black transition-all text-base pr-12 placeholder:text-gray-400"
                             placeholder="Mật khẩu">
                         <button type="button" @click="showPassword = !showPassword"
@@ -98,6 +107,9 @@
                             <template x-if="!showPassword">👁️</template>
                             <template x-if="showPassword">🙈</template>
                         </button>
+                        @error('password')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Remember & Forgot -->

@@ -58,19 +58,19 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-start" style="margin-top: 8px">
                             <div>
                                 <a href="{{ route('product.detail', $product->id) }}" >
-                                    <h3 class="font-serif text-sm font-light">
-                                        {{ $product->product_name }}
+                                    <h3 class="font-tiny text-sm font-light ">
+                                        <b>{{ $product->product_name }}</b>
                                     </h3>
                                 </a>
                                 <p class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">
-                                    {{ $product->category->category_name ?? '' }}
+                                   <b> {{ $product->category->category_name ?? '' }}</b>
                                 </p>
                             </div>
-                            <p class="text-xs font-light">
-                                {{ number_format($variant->selling_price ?? 0) }}đ
+                            <p class="font-italic text-sm font-light">
+                                <b>{{ number_format($variant->selling_price ?? 0) }}đ</b>
                             </p>
                         </div>
                     </div>

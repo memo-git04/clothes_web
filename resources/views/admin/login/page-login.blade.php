@@ -26,14 +26,18 @@
                                 <h4>Admin - Đăng nhập</h4>
                             </a>
                         </div>
-
+                        @if(session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         <form class="mt-5 mb-5 login-input"
                               action="{{route('admin.loginProcess')}}"
                               method="post" style="padding: 30px">
                             @csrf
                             <div class="form-group">
                                 {{--                                    <label>Email</label>--}}
-                                <input type="email" value="" name="email" class="form-control" placeholder="Email">
+                                <input type="email" value="{{old('email')}}" name="email" class="form-control" placeholder="Email">
                                 @error('email')
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror

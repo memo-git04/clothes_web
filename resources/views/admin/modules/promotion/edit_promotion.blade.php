@@ -149,10 +149,9 @@
                                                    class="custom-control-input"
                                                    id="status"
                                                    name="status"
-                                                {{ $promotion->is_active === 1 ? 'checked' : '' }}>
-                                            <label class="custom-control-label"
-                                                   for="status">
-                                                {{ $promotion->is_active === 1 ? 'Kích hoạt (Có hiệu lực)' : 'Vô hiệu hóa' }}
+                                                {{ old('status', $promotion->is_active) ? 'checked' : '' }}>
+                                            <label class="custom-control-label" for="status">
+                                                Kích hoạt
                                             </label>
                                         </div>
                                     </div>

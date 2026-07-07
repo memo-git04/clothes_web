@@ -310,24 +310,35 @@
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                         <i class="fa-solid fa-people-group"></i><span class="nav-text"> Quản lý tài khoản</span>
                     </a>
-                    <ul aria-expanded="false">
-                        <li><a href="{{route('admin.users.index')}}">Danh sách tài khoản</a></li>
-                        <li><a href="{{route('admin.users.create')}}">Thêm mới tài khoàn</a></li>
-                    </ul>
+
+                        <ul aria-expanded="false">
+                            @can('user.view')
+                            <li><a href="{{route('admin.users.index')}}">Danh sách tài khoản</a></li>
+                            @endcan
+                            @can('user.create')
+                            <li><a href="{{route('admin.users.create')}}">Thêm mới tài khoàn</a></li>
+                            @endcan
+                        </ul>
+
                 </li>
 
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
-                        <i class="fa-solid fa-user-shield"></i
+                        <i class="fa-solid fa-user-shield"></i>
                         <span class="nav-text">Quản lý vai trò - quyền</span>
                     </a>
-                    <ul aria-expanded="false">
-                        <li><a href="{{route('admin.roles.index')}}">Danh sách vai trò </a></li>
-                        <li><a href="{{route('admin.permissions.index')}}">Danh sách quyền</a></li>
-                        <li><a href="{{route('admin.roles.index')}}">Quản lý vai trò - quyền</a></li>
-                    </ul>
-                </li>
 
+                        <ul aria-expanded="false">
+                            @can('role.view')
+                            <li><a href="{{route('admin.roles.index')}}">Danh sách vai trò </a></li>
+                            @endcan
+                            @can('permission.view')
+                            <li><a href="{{route('admin.permissions.index')}}">Danh sách quyền</a></li>
+                                @endcan
+
+                        </ul>
+
+                </li>
                 <li class="mega-menu mega-menu-sm">
                     <a class="has-arrow" href="javascript:void()" aria-expanded="false">
                         <i class="fa-solid fa-shirt"></i><span class="nav-text"> Quản lý thương hiệu</span>

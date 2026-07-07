@@ -71,7 +71,7 @@ class PermissionController extends Controller
         $permission->update([
             'name' => $request->name,
         ]);
-        return redirect()->route('admin.permissions.index')->with('success', 'Permission updated successfully!');
+        return redirect()->route('admin.permissions.index')->with('success', 'Cập nhật thành công!');
     }
 
     /**
@@ -80,7 +80,7 @@ class PermissionController extends Controller
     public function destroy(Permission $permission)
     {
         $permission->delete();
-        return redirect()->route('admin.permissions.index')->with('success', 'Permission deleted successfully!');
+        return redirect()->route('admin.permissions.index')->with('success', 'Xóa thành công!');
     }
     public function assignRole(Permission $permission)
     {

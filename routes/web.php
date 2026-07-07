@@ -75,6 +75,8 @@ Route::middleware('auth')->group(function () {
         ->name('checkout');
     Route::post('/checkout', [\App\Http\Controllers\CartController::class, 'store'])
         ->name('checkout.store');
+    Route::post('/buy-now', [\App\Http\Controllers\CartController::class, 'buyNow'])
+        ->name('buy.now');
 
     // Thông tin tài khoản
     Route::get('/my-account', [\App\Http\Controllers\UserController::class, 'show'])
@@ -105,20 +107,18 @@ Route::middleware('auth')->group(function () {
         ->name('order.cancel');
 });
 
-
-
-//admin - login/logout
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
-
+//admin - login/logout (k cần auth)
+Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/loginAdmin', [\App\Http\Controllers\UserController::class, 'login'])
         ->name('loginAdmin');
     Route::post('/loginAdmin', [\App\Http\Controllers\UserController::class, 'loginProcess'])
         ->name('loginProcess');
     Route::get('/logout', [\App\Http\Controllers\UserController::class, 'logout'])
         ->name('logoutAdmin');
-
-    Route::middleware(['auth', 'admin'])->group(function (){
-        //admin - dashboard / báo cáo thống kê
+});
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin|manager'])->group(function () {
+        //AI CŨNG CÓ QUYỀN XEM DASHBOARD
+        //dashboard / báo cáo thống kê
         Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
             ->name('dashboard');
         // AJAX cho biểu đồ (bấm biểu đồ -> load danh sách)
@@ -129,69 +129,102 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::get('/reports/top-products', [\App\Http\Controllers\Admin\DashboardController::class, 'topProductsList'])
             ->name('reports.topProducts');
 
-        //account
-        Route::prefix('users')->group(function () {
-            Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])
-                ->name('users.index');
-            Route::get('/create', [\App\Http\Controllers\UserController::class, 'create'])
-                ->name('users.create');
-            Route::post('/store', [\App\Http\Controllers\UserController::class, 'createAccountByAdmin'])
-                ->name('users.store');
-            Route::get('/edit/{user}', [\App\Http\Controllers\UserController::class, 'edit'])
-                ->name('users.edit');
-            Route::put('/update/{user}', [\App\Http\Controllers\UserController::class, 'update'])
-                ->name('users.update');
-            Route::delete('/delete/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])
-                ->name('users.destroy');
-            //
-            Route::get('/permissions/{user}', [\App\Http\Controllers\UserController::class, 'addPermissions'])
-                ->name('users.permissions');
-            Route::post('/permissions/{user}', [\App\Http\Controllers\UserController::class, 'addPermissionsPost'])
-                ->name('users.permissions.post');
-            Route::get('/show/permissions/{user}', [\App\Http\Controllers\UserController::class, 'showPermissions'])
-                ->name('users.show.permissions');
+    //account
+    Route::prefix('users')->group(function () {
+        //admin - manager đều có quyền user.create nên vào được trang danh sách
+        Route::get('/', [\App\Http\Controllers\UserController::class, 'index'])
+            ->middleware('permission:user.view')
+            ->name('users.index');
 
-        });
-        // Roles & Permissions
-        Route::prefix('roles')->group(function () {
-            Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])
-                ->name('roles.index');
-            Route::get('/create', [\App\Http\Controllers\RoleController::class, 'create'])
-                ->name('roles.create');
-            Route::post('/store', [\App\Http\Controllers\RoleController::class, 'store'])
-                ->name('roles.store');
-            Route::get('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'edit'])
-                ->name('roles.edit');
-            Route::put('/update/{role}', [\App\Http\Controllers\RoleController::class, 'update'])
-                ->name('roles.update');
-            Route::delete('/delete/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])
-                ->name('roles.destroy');
+        //chỉ AI CÓ QUYỀN USER.CREATE MỚI TRUY CẬP ĐƯỢC
+        Route::get('/create', [\App\Http\Controllers\UserController::class, 'create'])
+            ->middleware('permission:user.create')
+            ->name('users.create');
+        Route::post('/store', [\App\Http\Controllers\UserController::class, 'createAccountByAdmin'])
+            ->middleware('permission:user.create')
+            ->name('users.store');
 
-            // Permission Matrix
-            Route::get('/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'editPermissions'])
-                ->name('roles.permissions.edit');
-            Route::post('/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])
-                ->name('roles.permissions.update');
-        });
-        Route::prefix('permissions')->group(function () {
-            Route::get('/', [\App\Http\Controllers\PermissionController::class, 'index'])
-                ->name('permissions.index');
-            Route::get('/create', [\App\Http\Controllers\PermissionController::class, 'create'])
-                ->name('permissions.create');
-            Route::post('/store', [\App\Http\Controllers\PermissionController::class, 'store'])
-                ->name('permissions.store');
-            Route::get('/edit/{permission}', [\App\Http\Controllers\PermissionController::class, 'edit'])
-                ->name('permissions.edit');
-            Route::put('/update/{permission}', [\App\Http\Controllers\PermissionController::class, 'update'])
-                ->name('permissions.update');
-            Route::delete('/delete/{permission}', [\App\Http\Controllers\PermissionController::class, 'destroy'])
-                ->name('permissions.destroy');
-            Route::get('/{permission}/assign-role', [\App\Http\Controllers\PermissionController::class, 'assignRole'])
-                ->name('permissions.assignRole');
-            Route::post('/{permission}/assign-role', [\App\Http\Controllers\PermissionController::class, 'assignRoleStore'])
-                ->name('permissions.assignRoleStore');
-        });
+        Route::get('/edit/{user}', [\App\Http\Controllers\UserController::class, 'edit'])
+            ->middleware('permission:user.edit')
+            ->name('users.edit');
+        Route::put('/update/{user}', [\App\Http\Controllers\UserController::class, 'update'])
+            ->middleware('permission:user.edit')
+            ->name('users.update');
+        Route::delete('/delete/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])
+            ->middleware('permission:user.delete')
+            ->name('users.destroy');
+        //
+        Route::get('/permissions/{user}', [\App\Http\Controllers\UserController::class, 'addPermissions'])
+            ->middleware('permission:user.edit')
+            ->name('users.permissions');
+        Route::post('/permissions/{user}', [\App\Http\Controllers\UserController::class, 'addPermissionsPost'])
+            ->middleware('permission:user.edit')
+            ->name('users.permissions.post');
 
+        Route::get('/show/permissions/{user}', [\App\Http\Controllers\UserController::class, 'showPermissions'])
+            ->middleware('permission:user.view')
+            ->name('users.show.permissions');
+
+    });
+    // Roles & Permissions
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [\App\Http\Controllers\RoleController::class, 'index'])
+            ->middleware('permission:role.view')
+            ->name('roles.index');
+
+        Route::get('/create', [\App\Http\Controllers\RoleController::class, 'create'])
+            ->middleware('permission:role.create')
+            ->name('roles.create');
+        Route::post('/store', [\App\Http\Controllers\RoleController::class, 'store'])
+            ->middleware('permission:role.create')
+            ->name('roles.store');
+        Route::get('/edit/{role}', [\App\Http\Controllers\RoleController::class, 'edit'])
+            ->middleware('permission:role.edit')
+            ->name('roles.edit');
+        Route::put('/update/{role}', [\App\Http\Controllers\RoleController::class, 'update'])
+            ->middleware('permission:role.edit')
+            ->name('roles.update');
+        Route::delete('/delete/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])
+            ->middleware('permission:role.delete')
+            ->name('roles.destroy');
+
+        // Permission Matrix
+        Route::get('/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'editPermissions'])
+            ->middleware('permission:role.edit')
+            ->name('roles.permissions.edit');
+        Route::post('/{role}/permissions', [\App\Http\Controllers\RoleController::class, 'updatePermissions'])
+            ->middleware('permission:role.edit')
+            ->name('roles.permissions.update');
+    });
+    Route::prefix('permissions')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PermissionController::class, 'index'])
+            ->middleware('permission:role.view')
+            ->name('permissions.index');
+
+        Route::get('/create', [\App\Http\Controllers\PermissionController::class, 'create'])
+            ->middleware('permission:role.create')
+            ->name('permissions.create');
+        Route::post('/store', [\App\Http\Controllers\PermissionController::class, 'store'])
+            ->middleware('permission:role.create')
+            ->name('permissions.store');
+
+        Route::get('/edit/{permission}', [\App\Http\Controllers\PermissionController::class, 'edit'])
+            ->middleware('permission:role.edit')
+            ->name('permissions.edit');
+        Route::put('/update/{permission}', [\App\Http\Controllers\PermissionController::class, 'update'])
+            ->middleware('permission:role.edit')
+            ->name('permissions.update');
+        Route::delete('/delete/{permission}', [\App\Http\Controllers\PermissionController::class, 'destroy'])
+            ->middleware('permission:role.delete')
+            ->name('permissions.destroy');
+
+        Route::get('/{permission}/assign-role', [\App\Http\Controllers\PermissionController::class, 'assignRole'])
+            ->middleware('permission:role.edit')
+            ->name('permissions.assignRole');
+        Route::post('/{permission}/assign-role', [\App\Http\Controllers\PermissionController::class, 'assignRoleStore'])
+            ->middleware('permission:role.edit')
+            ->name('permissions.assignRoleStore');
+    });
 
         //category, brand, material
         Route::resource('categories', \App\Http\Controllers\CategoryController::class)->names([
@@ -259,18 +292,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
                 'update' => 'order-status.update',
                 'destroy' => 'order-status.destroy',
             ]);
-        //Promotion
-        Route::resource('promotions', \App\Http\Controllers\PromotionController::class)
-            ->names([
-                'index' => 'promotions.index',
-                'create' => 'promotions.create',
-                'store' => 'promotions.store',
-                'edit' => 'promotions.edit',
-                'update' => 'promotions.update',
-                'destroy' => 'promotions.destroy',
-            ]);
-
-
 
             // Products
         Route::prefix('products')->group(function () {
@@ -323,7 +344,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
                 ->name('contacts.destroy');
         });
 
-    });
 });
 
 

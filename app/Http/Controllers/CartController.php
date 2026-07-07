@@ -7,9 +7,12 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\ProductVariant;
 use App\Models\Promotion;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -155,6 +158,60 @@ class CartController extends Controller
             'subtotal'        => $subtotal,
 
         ]);
+    }
+    public function buyNow(Request $request){
+        $variantId = $request->variant_id;
+        $quantity = $request->quantity;
+
+        try {
+            $variant = ProductVariant::with(['product', 'size', 'color', 'images'])
+                ->findOrFail($variantId);
+
+            // Check if out of stock
+            if ($variant->stock_quantity <= 0) {
+                return redirect()->back()->with('error', 'Sản phẩm hiện đang hết hàng!');
+            }
+
+            // Check if quantity exceeds available stock
+            if ($quantity > $variant->stock_quantity) {
+                return redirect()->back()->with('error', 'Số lượng vượt quá số lượng tồn kho!');
+            }
+
+            // Get image URL
+            $imageUrl = 'default.jpg';
+            if ($variant->images->isNotEmpty()) {
+                $mainImage = $variant->images->firstWhere('is_main', 1) ?? $variant->images->first();
+                $imageUrl = $mainImage->image_url;
+            }
+
+            // Create cart session with single item
+            $cart = [
+                $variantId => [
+                    'name' => $variant->product->product_name,
+                    'price' => $variant->selling_price,
+                    'quantity' => $quantity,
+                    'image' => asset('storage/' . $imageUrl),
+                    'size_name' => $variant->size->size_name ?? 'N/A',
+                    'color_name' => $variant->color->color_name ?? 'N/A',
+                    'size_id' => $variant->size_id,
+                    'color_id' => $variant->color_id,
+                    'product_id' => $variant->product_id,
+                    'variant_id' => $variant->id
+                ]
+            ];
+
+            // Set cart session
+            session()->put('cart', $cart);
+
+            // Redirect to checkout
+            return redirect()->route('checkout');
+
+        } catch (ModelNotFoundException $e) {
+            return redirect()->back()->with('error', 'Sản phẩm không tồn tại!');
+        } catch (Exception $e) {
+            Log::error('Lỗi khi mua ngay: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi vui lòng thử lại!');
+        }
     }
     public function store(Request $request)
     {
@@ -372,7 +429,7 @@ class CartController extends Controller
                 }
             }
         }
-        session()->regenerate(true);
+//        session()->regenerate(true);
 
         return view('payment_return', [
             'success' => $success,
